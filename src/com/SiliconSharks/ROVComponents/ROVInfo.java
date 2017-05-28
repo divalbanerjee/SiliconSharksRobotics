@@ -8,9 +8,7 @@ public class ROVInfo{
     public ROVStatus getCurrentROVStatus(){
         return ROVStatuses.peekLast();
     }
-    public boolean enqueueCurrentROVStatus(ROVStatus status){
-        if(){
-
-        }
+    public void enqueueCurrentROVStatus(ROVStatus status){
+        ROVStatuses.enqueue(status);
     }
 }
