@@ -1,5 +1,7 @@
 package com.SiliconSharks.ROVComponents;
 
+import com.SiliconSharks.Queue;
+
 public class ROVInfo{
     private Queue<ROVStatus> ROVStatuses;
     public ROVInfo(){
