@@ -1,11 +1,11 @@
 package com.SiliconSharks.Serial;
 
-/**
- * Created by richard on 5/27/17.
- */
+import com.SiliconSharks.Controller.Gamepad;
+
 public class SentPackage {
     private byte[] serialBytes;
-    public void setSerialBytes(){
+    void setSerialBytes(Gamepad gamepad){
 
     }
+    public byte[] getSerialBytes(){return  serialBytes;}
 }

@@ -2,15 +2,14 @@ package com.SiliconSharks.Serial;
 
 import com.SiliconSharks.ROVComponents.ROVStatus;
 
-/**
- * Created by richard on 5/27/17.
- */
 public class ReceivedPackage {
+    private byte[] serialBytes;
     public ReceivedPackage(){
-
+        serialBytes = new byte[10];
     }
-    public ROVStatus getROVStatus(){
+    ROVStatus getROVStatus(){
         ROVStatus status = new ROVStatus();
-
+        status.setStatus(serialBytes);
+        return status;
     }
 }
