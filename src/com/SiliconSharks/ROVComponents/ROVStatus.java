@@ -5,7 +5,12 @@ package com.SiliconSharks.ROVComponents;
  */
 public class ROVStatus {
     Thruster[] Thrusters;
+    Servo[] Servos;
     public ROVStatus(){
         Thrusters = new Thruster[3];
+        Servos = new Servo[3];
+    }
+    public void setStatus(byte[] serialBytes){
+
     }
 }

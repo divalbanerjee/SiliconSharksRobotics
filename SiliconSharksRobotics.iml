@@ -8,5 +8,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="natives" level="project" />
+    <orderEntry type="library" name="jinput" level="application" />
+    <orderEntry type="library" name="jssc-2.8.0" level="application" />
   </component>
 </module>
