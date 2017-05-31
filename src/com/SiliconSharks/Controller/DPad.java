@@ -1,7 +1,14 @@
 package com.SiliconSharks.Controller;
 
-/**
- * Created by richard on 5/28/17.
- */
-public class DPad extends GamepadComponent{
+import net.java.games.input.*;
+
+class DPad extends GamepadComponent{
+    private int DPadValue;
+    DPad(Component.Identifier identifier){
+        this.identifier = identifier;
+    }
+    void setValue(float value){
+        DPadValue = (int) (8*value+0.5);
+    }
+    int getDPadValue(){return DPadValue;}
 }
