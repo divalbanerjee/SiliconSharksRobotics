@@ -1,7 +1,9 @@
 package com.SiliconSharks.Controller;
 
-/**
- * Created by richard on 5/28/17.
- */
-public class Button {
+import net.java.games.input.*;
+public class Button extends GamepadComponent{
+    private boolean ButtonState;
+    public Button(Component.Identifier identifier){this.identifier = identifier;}
+    void setButtonstate(boolean state){ButtonState = state;}
+    boolean getButtonState(){return ButtonState;}
 }
