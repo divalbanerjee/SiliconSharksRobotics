@@ -16,7 +16,7 @@ public class Gamepad {
                                     new Joystick(Component.Identifier.Axis.RX, Component.Identifier.Axis.RY)};
     private GamepadComponent[] GamepadComponents = new GamepadComponent[numButtons+numDPad+2*numJoystick];
     private Controller controller;
-    public Gamepad(Controller controller){
+    Gamepad(Controller controller){
         this.controller = controller;
         int counter = 0;
         for(Button button: Buttons){GamepadComponents[counter++] = button;}
@@ -27,7 +27,7 @@ public class Gamepad {
         }
         assert(counter == numButtons+numDPad+2*numJoystick);
     }
-    public void pollController(){
+    void pollController(){
         if(controller != null){
             try {
                 controller.poll();
@@ -46,8 +46,10 @@ public class Gamepad {
                 for (GamepadComponent gamepadComponent : GamepadComponents) {
                     if(gamepadComponent.getIdentifier() == event.getComponent().getIdentifier()){
                         gamepadComponent.setValue(value);
+                        break;
                     }
                 }
+                System.out.println(buffer);
             }
         }
     }
