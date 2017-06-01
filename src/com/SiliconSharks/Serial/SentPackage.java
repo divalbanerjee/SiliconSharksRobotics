@@ -4,10 +4,9 @@ import com.SiliconSharks.Controller.*;
 import net.java.games.input.*;
 
 class SentPackage {
-    private double[] multipliers;
+    private double[] multipliers = {1, -1, 1,1,1,1};
     private byte[] serialBytes;
-    SentPackage(double[] multipliers, Gamepad gamepad){
-        this.multipliers = multipliers;
+    SentPackage(Gamepad gamepad){
         serialBytes = new byte[10];
         GamepadComponent someGamepadComponent = gamepad.getGamepadComponent(Component.Identifier.Axis.Y);
         if(someGamepadComponent instanceof JoystickAxis){
@@ -26,7 +25,7 @@ class SentPackage {
         }
     }
     private byte fromDouble(double a, int index){
-        int b = (int)(a*63*multipliers[index]+90); // WARNING : Do not set a*65 to a*90 or more or it will break serial
+        int b = (int)(a*90*multipliers[index]+90); // WARNING : Do not set a*90 to a*91 or more or it will break serial
         if(b>=128){
             b = -1*(256-b);
             return ((byte) b);

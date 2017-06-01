@@ -2,11 +2,10 @@ package com.SiliconSharks.Serial;
 
 import com.SiliconSharks.ROVComponents.ROVStatus;
 
-public class ReceivedPackage {
+class ReceivedPackage {
     private byte[] serialBytes;
-    public ReceivedPackage(){
-        serialBytes = new byte[10];
-    }
+    ReceivedPackage(){serialBytes = new byte[6];}
+    void setSerialBytes(byte[] serialBytes){this.serialBytes = serialBytes;}
     ROVStatus getROVStatus(){
         ROVStatus status = new ROVStatus();
         status.setStatus(serialBytes);

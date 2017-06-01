@@ -14,7 +14,6 @@ public class SerialCommunication implements SerialPortEventListener {
     private SerialPort serialPort = null;
     private ArrayList<String> prevPorts = new ArrayList<>();
     private String currentPort, successfulPort;
-    private double[] multipliers = {1,1,1,1,1,1,1,1,1,1};
     private int SendPackageCounter = 0;
     private int NotConnectedCounter= 0;
     private int NotReceivedCounter = 0;
@@ -117,25 +116,28 @@ public class SerialCommunication implements SerialPortEventListener {
         return ReceivedPackages.peekLast().getROVStatus();
     }
     public boolean getNewReceived(){return newReceived;}
-    public void sendPackage(){
+    private void sendPackage(){
         if(Connected) {
-            SentPackage newPackage = new SentPackage(multipliers,gamepad);
+            SentPackage newPackage = new SentPackage(gamepad);
             try{
                 serialPort.writeBytes(newPackage.getSerialBytes());
+                SentPackages.enqueue(newPackage);
             }catch(SerialPortException ex){
                 ex.printStackTrace();
             }
         }
     }
     public void serialEvent(SerialPortEvent event) {
-        if (event.isRXCHAR() && event.getEventValue() >= 11) {
+        if (event.isRXCHAR() && event.getEventValue() >= 7) {
             try {
                 byte a[] = serialPort.readBytes(1);
-                if(a[0] != 0){
+                if(a[0] != -1){
                     return;
                 }
-                a = serialPort.readBytes(10);
-
+                a = serialPort.readBytes(6);
+                ReceivedPackage receivedPackage = new ReceivedPackage();
+                receivedPackage.setSerialBytes(a);
+                ReceivedPackages.enqueue(receivedPackage);
             } catch (SerialPortException ex) {
                 System.out.println("Error in receiving string from COM-port: " + ex);
             }
