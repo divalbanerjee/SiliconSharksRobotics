@@ -2,12 +2,34 @@ package com.SiliconSharks.Controller;
 
 import net.java.games.input.*;
 import java.lang.reflect.Constructor;
+import java.util.Timer;
+import java.util.TimerTask;
 
 @SuppressWarnings("unchecked")
 
 public class GamepadCommunications {
-    private Gamepad gamepad = null;
+    private Gamepad gamepad = new Gamepad(null);
+    private boolean TimerTaskRunning = false;
     public GamepadCommunications(){
+        AttemptConnection();
+        Timer timer = new Timer();
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                if(!TimerTaskRunning) {
+                    TimerTaskRunning = true;
+                    if (gamepad.isConnected()) {
+                        gamepad.pollController();
+                    } else {
+                        AttemptConnection();
+                    }
+                    TimerTaskRunning = false;
+                }
+            }
+        };
+        timer.scheduleAtFixedRate(timerTask,1000,40);
+    }
+    private void AttemptConnection(){
         try{
             ControllerEnvironment controllerEnvironment = createDefaultEnvironment();
             Controller[] controllers = controllerEnvironment.getControllers();
