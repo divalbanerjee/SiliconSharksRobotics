@@ -6,8 +6,9 @@ import net.java.games.input.*;
 class SentPackage {
     private double[] multipliers = {1, -1, 1,1,1,1};
     private byte[] serialBytes;
+
     SentPackage(Gamepad gamepad){
-        serialBytes = new byte[10];
+        serialBytes = new byte[6];
         GamepadComponent someGamepadComponent = gamepad.getGamepadComponent(Component.Identifier.Axis.Y);
         if(someGamepadComponent instanceof JoystickAxis){
             JoystickAxis YAxis = (JoystickAxis) someGamepadComponent;

@@ -20,8 +20,8 @@ public class Gauge extends JComponent {
         this.minVal = min;
         this.maxVal = max;
         this.currentVal = min;
-        this.backColor = new Color(Color.DARK_GRAY);
-        this.foreColor = new Color(Color.RED);
+    //    this.backColor = new Color(Color.DARK_GRAY);
+     //   this.foreColor = new Color(Color.RED);
         this.gaugeLabel = label;
     }
 

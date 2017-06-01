@@ -36,7 +36,6 @@ public class Gamepad {
         }
         return null;
     }
-
     boolean pollController(){
         if(isConnected()){
             try {
