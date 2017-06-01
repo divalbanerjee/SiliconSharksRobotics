@@ -18,6 +18,7 @@ public class SerialCommunication implements SerialPortEventListener {
     private int NotConnectedCounter= 0;
     private int NotReceivedCounter = 0;
     private Gamepad gamepad;
+    private boolean timerRunning = false;
     public SerialCommunication(Gamepad gamepad){
         newReceived = false;
         Connected = false;
@@ -26,23 +27,27 @@ public class SerialCommunication implements SerialPortEventListener {
         AttemptConnection();
     }
     public void timerRefresh(){
-        if(Connected){
-            SendPackageCounter++;
-            if(SendPackageCounter >= 10){
-                SendPackageCounter = 0;
-                sendPackage();
+        if(timerRunning) {
+            timerRunning = true;
+            if (Connected) {
+                SendPackageCounter++;
+                if (SendPackageCounter >= 10) {
+                    SendPackageCounter = 0;
+                    sendPackage();
+                }
+                NotReceivedCounter++;
+                if (newReceived) {
+                    NotReceivedCounter = 0;
+                } else if (NotReceivedCounter > 70) {
+                    Disconnect();
+                }
+            } else {
+                NotConnectedCounter++;
+                if (NotConnectedCounter >= 30) {
+                    AttemptConnection();
+                }
             }
-            NotReceivedCounter++;
-            if(newReceived){
-                NotReceivedCounter = 0;
-            }else if(NotReceivedCounter > 100){
-                Disconnect();
-            }
-        }else{
-            NotConnectedCounter++;
-            if(NotConnectedCounter >= 3){
-                AttemptConnection();
-            }
+            timerRunning = false;
         }
     }
     private void Disconnect(){
@@ -134,6 +139,7 @@ public class SerialCommunication implements SerialPortEventListener {
                 if(a[0] != -1){
                     return;
                 }
+                newReceived = true;
                 a = serialPort.readBytes(6);
                 ReceivedPackage receivedPackage = new ReceivedPackage();
                 receivedPackage.setSerialBytes(a);

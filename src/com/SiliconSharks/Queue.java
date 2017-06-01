@@ -1,5 +1,6 @@
 package com.SiliconSharks;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -27,6 +28,19 @@ public class Queue<Item> implements Iterable<Item> {
     private static class Node<Item> {
         private Item item;
         private Node<Item> next;
+        private ArrayList<Item> getArrayList(){
+            ArrayList<Item> arrayList;
+            if(next != null)
+                arrayList = next.getArrayList();
+            else
+                arrayList = new ArrayList<>();
+            arrayList.add(item);
+            return arrayList;
+        }
+    }
+
+    public ArrayList<Item> getAllArrayList(){
+        return first.getArrayList();
     }
 
     public Queue() {

@@ -31,6 +31,6 @@ public class Main {
     public static void main(String[]args){
         serialCommunication = new SerialCommunication(gamepadCommunications.getGamepad());
         gTimer.scheduleAtFixedRate(gTimerTask,1000,30);
-        sTimer.scheduleAtFixedRate(sTimerTask, 1000, 40);
+        sTimer.scheduleAtFixedRate(sTimerTask, 1015, 30);
     }
 }
