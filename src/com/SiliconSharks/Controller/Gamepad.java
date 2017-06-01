@@ -10,7 +10,7 @@ public class Gamepad {
 
     private GamepadComponent[] GamepadComponents = new GamepadComponent[numCButtons+numDPad+2*numJoystick];
     private Controller controller;
-    Gamepad(Controller controller){
+    Gamepad(){
         CButton[] CButtons = {new CButton(Component.Identifier.Button.A),
                               new CButton(Component.Identifier.Button.B),
                               new CButton(Component.Identifier.Button.X),
@@ -18,7 +18,6 @@ public class Gamepad {
         DPad[] DPads = {new DPad(Component.Identifier.Axis.POV)};
         Joystick[] Joysticks = {new Joystick(Component.Identifier.Axis.X, Component.Identifier.Axis.Y),
                                 new Joystick(Component.Identifier.Axis.RX, Component.Identifier.Axis.RY)};
-        this.controller = controller;
         int counter = 0;
         for(CButton CButton: CButtons){GamepadComponents[counter++] = CButton;}
         for(DPad dPad: DPads){GamepadComponents[counter++] = dPad;}
@@ -28,12 +27,23 @@ public class Gamepad {
         }
         assert(counter == numCButtons+numDPad+2*numJoystick);
     }
-    void pollController(){
+    void setController(Controller controller){this.controller=controller;}
+    public GamepadComponent getGamepadComponent(Component.Identifier identifier) {
+        for(GamepadComponent gamepadComponent : GamepadComponents){
+            if(gamepadComponent.getIdentifier() == identifier){
+                return gamepadComponent;
+            }
+        }
+        return null;
+    }
+
+    boolean pollController(){
         if(isConnected()){
             try {
                 controller.poll();
             } catch (Exception ex) {
                 System.out.println("Trouble Polling Controller: Possible Disconnection");
+                return false;
             }
             EventQueue queue = controller.getEventQueue();
             Event event = new Event();
@@ -52,6 +62,9 @@ public class Gamepad {
                 }
                 System.out.println(buffer);
             }
+            return true;
+        }else{
+            return true;
         }
     }
     boolean isConnected(){return (controller != null);}

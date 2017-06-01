@@ -14,13 +14,42 @@ public class SerialCommunication implements SerialPortEventListener {
     private SerialPort serialPort = null;
     private ArrayList<String> prevPorts = new ArrayList<>();
     private String currentPort, successfulPort;
-    public SerialCommunication(){
+    private double[] multipliers = {1,1,1,1,1,1,1,1,1,1};
+    private int SendPackageCounter = 0;
+    private int NotConnectedCounter= 0;
+    private int NotReceivedCounter = 0;
+    private Gamepad gamepad;
+    public SerialCommunication(Gamepad gamepad){
         newReceived = false;
         Connected = false;
         successfulPort =" ";
+        this.gamepad = gamepad;
         AttemptConnection();
     }
-    public void Disconnect(){
+    public void timerRefresh(){
+        if(Connected){
+            SendPackageCounter++;
+            if(SendPackageCounter >= 10){
+                SendPackageCounter = 0;
+                sendPackage();
+            }
+            NotReceivedCounter++;
+            if(newReceived){
+                NotReceivedCounter = 0;
+            }else if(NotReceivedCounter > 100){
+                Disconnect();
+            }
+        }else{
+            NotConnectedCounter++;
+            if(NotConnectedCounter >= 3){
+                AttemptConnection();
+            }
+        }
+    }
+    private void Disconnect(){
+        SendPackageCounter = 0;
+        NotConnectedCounter = 0;
+        NotReceivedCounter = 0;
         try{
             serialPort.closePort();
         }catch(SerialPortException ex){
@@ -29,7 +58,7 @@ public class SerialCommunication implements SerialPortEventListener {
         serialPort = null;
         currentPort = "";
     }
-    public void AttemptConnection(){
+    private void AttemptConnection(){
         if(!Connected){
             String[] portNames = SerialPortList.getPortNames();
             if (portNames.length >= 1) {
@@ -72,6 +101,9 @@ public class SerialCommunication implements SerialPortEventListener {
                             SerialPort.FLOWCONTROL_RTSCTS_OUT);
                     serialPort.addEventListener(this, SerialPort.MASK_RXCHAR);
                     Connected = true;
+                    SendPackageCounter = 0;
+                    NotConnectedCounter = 0;
+                    NotReceivedCounter = 0;
                 }catch(SerialPortException ex){
                     ex.printStackTrace();
                 }
@@ -80,16 +112,14 @@ public class SerialCommunication implements SerialPortEventListener {
             }
         }
     }
-    public boolean getNewReceived(){return newReceived;}
-    public boolean getConnnected(){return Connected;}
     public ROVStatus getNewROVStatus(){
         newReceived = false;
         return ReceivedPackages.peekLast().getROVStatus();
     }
-    public void sendPackage(Gamepad gamepad){
+    public boolean getNewReceived(){return newReceived;}
+    public void sendPackage(){
         if(Connected) {
-            SentPackage newPackage = new SentPackage();
-            newPackage.setSerialBytes(gamepad);
+            SentPackage newPackage = new SentPackage(multipliers,gamepad);
             try{
                 serialPort.writeBytes(newPackage.getSerialBytes());
             }catch(SerialPortException ex){

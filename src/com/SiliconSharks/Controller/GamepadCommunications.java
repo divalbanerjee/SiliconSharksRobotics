@@ -2,38 +2,33 @@ package com.SiliconSharks.Controller;
 
 import net.java.games.input.*;
 import java.lang.reflect.Constructor;
-import java.util.Timer;
-import java.util.TimerTask;
 
 @SuppressWarnings("unchecked")
 
 public class GamepadCommunications {
-    private Gamepad gamepad = new Gamepad(null);
+    private Gamepad gamepad = new Gamepad();
     private boolean TimerTaskRunning = false;
     private int AttemptCommunicationsCounter = 0;
-    private final int AttemptCommunicationsCycleLength = 10;
     public GamepadCommunications(){
         AttemptConnection();
-        Timer timer = new Timer();
-        TimerTask timerTask = new TimerTask() {
-            @Override
-            public void run() {
-                if(!TimerTaskRunning) {
-                    TimerTaskRunning = true;
-                    if (gamepad.isConnected()) {
-                        gamepad.pollController();
-                    } else {
-                        AttemptCommunicationsCounter++;
-                        if(AttemptCommunicationsCounter >= AttemptCommunicationsCycleLength) {
-                            AttemptCommunicationsCounter = 0;
-                            AttemptConnection();
-                        }
-                    }
-                    TimerTaskRunning = false;
+    }
+    public Gamepad getGamepad(){return gamepad;}
+    public void timerRefresh(){
+        if(!TimerTaskRunning) {
+            TimerTaskRunning = true;
+            if (gamepad.isConnected()) {
+                if(!gamepad.pollController()){
+                    gamepad.setController(null);
+                }
+            } else {
+                AttemptCommunicationsCounter++;
+                if(AttemptCommunicationsCounter >= 10) {
+                    AttemptCommunicationsCounter = 0;
+                    AttemptConnection();
                 }
             }
-        };
-        timer.scheduleAtFixedRate(timerTask,1000,40);
+            TimerTaskRunning = false;
+        }
     }
     private void AttemptConnection(){
         try{
@@ -41,7 +36,7 @@ public class GamepadCommunications {
             Controller[] controllers = controllerEnvironment.getControllers();
             for(Controller controller : controllers){
                 if(controller.getType() == Controller.Type.GAMEPAD){
-                    gamepad = new Gamepad(controller);
+                    gamepad.setController(controller);
                     break;
                 }
             }
