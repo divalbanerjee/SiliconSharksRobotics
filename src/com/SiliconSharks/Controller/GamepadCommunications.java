@@ -10,6 +10,8 @@ import java.util.TimerTask;
 public class GamepadCommunications {
     private Gamepad gamepad = new Gamepad(null);
     private boolean TimerTaskRunning = false;
+    private int AttemptCommunicationsCounter = 0;
+    private final int AttemptCommunicationsCycleLength = 10;
     public GamepadCommunications(){
         AttemptConnection();
         Timer timer = new Timer();
@@ -21,7 +23,11 @@ public class GamepadCommunications {
                     if (gamepad.isConnected()) {
                         gamepad.pollController();
                     } else {
-                        AttemptConnection();
+                        AttemptCommunicationsCounter++;
+                        if(AttemptCommunicationsCounter >= AttemptCommunicationsCycleLength) {
+                            AttemptCommunicationsCounter = 0;
+                            AttemptConnection();
+                        }
                     }
                     TimerTaskRunning = false;
                 }
