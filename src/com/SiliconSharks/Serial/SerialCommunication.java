@@ -9,8 +9,8 @@ import java.util.ArrayList;
 
 public class SerialCommunication implements SerialPortEventListener {
     private boolean newReceived, Connected;
-    private Queue<SentPackage> SentPackages;
-    private Queue<ReceivedPackage> ReceivedPackages;
+    private Queue<SentPackage> SentPackages = new Queue<>();
+    private Queue<ReceivedPackage> ReceivedPackages = new Queue<>();
     private SerialPort serialPort = null;
     private ArrayList<String> prevPorts = new ArrayList<>();
     private String currentPort, successfulPort;
