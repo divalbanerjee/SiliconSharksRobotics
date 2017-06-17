@@ -19,7 +19,7 @@ public class Gamepad {
         Joystick[] Joysticks = {new Joystick(Component.Identifier.Axis.X, Component.Identifier.Axis.Y),
                                 new Joystick(Component.Identifier.Axis.RX, Component.Identifier.Axis.RY)};
         int counter = 0;
-        for(CButton CButton: CButtons){GamepadComponents[counter++] = CButton;}
+        for(CButton cButton: CButtons){GamepadComponents[counter++] = cButton;}
         for(DPad dPad: DPads){GamepadComponents[counter++] = dPad;}
         for(Joystick joystick: Joysticks){
             GamepadComponents[counter++] = joystick.getXAxis();
