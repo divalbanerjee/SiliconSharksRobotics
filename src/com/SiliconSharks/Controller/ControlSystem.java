@@ -1,18 +1,38 @@
 package com.SiliconSharks.Controller;
 
+import com.SiliconSharks.ROVComponents.ROVStatus;
 import net.java.games.input.*;
+
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.lang.reflect.Constructor;
 
 @SuppressWarnings("unchecked")
 
-public class GamepadCommunications {
+public class ControlSystem {
     private Gamepad gamepad = new Gamepad();
     private boolean TimerTaskRunning = false;
     private int AttemptCommunicationsCounter = 0;
-    public GamepadCommunications(){
+    public ControlSystem(){
         AttemptConnection();
     }
     public Gamepad getGamepad(){return gamepad;}
+    private CustomKeyboard customKeyboard = new CustomKeyboard();
+    private KeyListener keyListener = new KeyListener(){
+        @Override
+        public void keyTyped(KeyEvent e) {
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+            System.out.println("Key pressed code=" + e.getKeyCode() + ", char=" + e.getKeyChar());
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+        }
+    };
+    private ROVStatus currentROVStatus = new ROVStatus();
     public void timerRefresh(){
         if(!TimerTaskRunning) {
             TimerTaskRunning = true;
@@ -30,6 +50,7 @@ public class GamepadCommunications {
             TimerTaskRunning = false;
         }
     }
+    public KeyListener getKeyListener(){return keyListener;}
     private void AttemptConnection(){
         try{
             ControllerEnvironment controllerEnvironment = createDefaultEnvironment();

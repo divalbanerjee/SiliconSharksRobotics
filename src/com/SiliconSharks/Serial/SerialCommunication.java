@@ -27,10 +27,9 @@ public class SerialCommunication implements SerialPortEventListener {
         Connected = false;
         successfulPort =" ";
         this.gamepad = gamepad;
-        AttemptConnection();
     }
     public void timerRefresh(){
-        if(timerRunning) {
+        if(!timerRunning) {
             timerRunning = true;
             if (Connected) {
                 Message(0,"Serial is currently connected");
@@ -61,6 +60,7 @@ public class SerialCommunication implements SerialPortEventListener {
                 NotConnectedCounter++;
                 if (NotConnectedCounter >= 30) {
                     Message(0,"Attempting connection...");
+                    NotConnectedCounter = 0;
                     if(AttemptConnection()){
                         Message(0,"Connection Successful");
                     }else{
@@ -172,7 +172,12 @@ public class SerialCommunication implements SerialPortEventListener {
     public boolean getNewReceived(){return newReceived;}
     private boolean sendPackage(){
         if(Connected) {
-            SentPackage newPackage = new SentPackage(gamepad);
+            SentPackage newPackage;
+            if(gamepad != null && gamepad.isConnected()) {
+                newPackage = new SentPackage(gamepad);
+            }else{
+                newPackage = new SentPackage();
+            }
             try{
                 serialPort.writeBytes(newPackage.getSerialBytes());
                 SentPackages.enqueue(newPackage);

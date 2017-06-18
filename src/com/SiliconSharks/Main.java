@@ -1,6 +1,6 @@
 package com.SiliconSharks;
 
-import com.SiliconSharks.Controller.GamepadCommunications;
+import com.SiliconSharks.Controller.ControlSystem;
 import com.SiliconSharks.ROVComponents.ROVInfo;
 import com.SiliconSharks.Serial.SerialCommunication;
 
@@ -12,19 +12,13 @@ import java.util.TimerTask;
 public class Main {
     private final static boolean[] DebugPrintEnabled = {true, true, true, true}; // 0 is Unnecessary and Unimportant, 1 is Non-Critical, 2 is Error and Redundancy handling, 3 is critical messages
     private static ROVInfo rovInfo = new ROVInfo();
-    private static GamepadCommunications gamepadCommunications = new GamepadCommunications();
+    private static ControlSystem controlSystem = new ControlSystem();
     private static SerialCommunication serialCommunication;
-    private static Timer gTimer = new Timer();
-    private static TimerTask gTimerTask = new TimerTask() {
+    private static Timer timer = new Timer();
+    private static TimerTask timerTask = new TimerTask() {
         @Override
         public void run() {
-            gamepadCommunications.timerRefresh();
-        }
-    };
-    private static Timer sTimer = new Timer();
-    private static TimerTask sTimerTask = new TimerTask() {
-        @Override
-        public void run() {
+            controlSystem.timerRefresh();
             serialCommunication.timerRefresh();
             if(serialCommunication.getNewReceived()){
                 rovInfo.enqueueCurrentROVStatus(serialCommunication.getNewROVStatus());
@@ -32,9 +26,9 @@ public class Main {
         }
     };
     public static void main(String[]args){
-        serialCommunication = new SerialCommunication(gamepadCommunications.getGamepad());
-        gTimer.scheduleAtFixedRate(gTimerTask,1000,30);
-        sTimer.scheduleAtFixedRate(sTimerTask, 1015, 30);
+        serialCommunication = new SerialCommunication(controlSystem.getGamepad());
+        // gTimer.scheduleAtFixedRate(gTimerTask,1000,30);
+        timer.scheduleAtFixedRate(timerTask, 1015, 30);
     }
     public static void Message(int classification, String object){
         if(DebugPrintEnabled[classification]){

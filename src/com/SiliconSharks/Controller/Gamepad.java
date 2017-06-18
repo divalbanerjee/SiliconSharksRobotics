@@ -66,5 +66,5 @@ public class Gamepad {
             return true;
         }
     }
-    boolean isConnected(){return (controller != null);}
+    public boolean isConnected(){return (controller != null);}
 }

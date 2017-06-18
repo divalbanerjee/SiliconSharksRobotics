@@ -6,7 +6,12 @@ import net.java.games.input.*;
 class SentPackage {
     private double[] multipliers = {1, -1, 1,1,1,1};
     private byte[] serialBytes;
-
+    SentPackage(){
+        serialBytes = new byte[6];
+        for(int i =0; i < 6; i++){
+            serialBytes[i] = 90;
+        }
+    }
     SentPackage(Gamepad gamepad){
         serialBytes = new byte[6];
         GamepadComponent someGamepadComponent = gamepad.getGamepadComponent(Component.Identifier.Axis.Y);
