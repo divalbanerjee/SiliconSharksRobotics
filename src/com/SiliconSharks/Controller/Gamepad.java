@@ -1,5 +1,6 @@
 package com.SiliconSharks.Controller;
 
+import com.SiliconSharks.ROVComponents.ROVStatus;
 import net.java.games.input.*;
 
 public class Gamepad {
@@ -35,6 +36,18 @@ public class Gamepad {
             }
         }
         return null;
+    }
+    ROVStatus getROVStatus(){
+        ROVStatus rovStatus = new ROVStatus();
+        GamepadComponent gamepadComponent;
+        JoystickAxis joystickAxis;
+        gamepadComponent = getGamepadComponent(Component.Identifier.Axis.Y);
+        if(gamepadComponent instanceof JoystickAxis) {
+            joystickAxis = (JoystickAxis) gamepadComponent;
+            rovStatus.setThrusters(0,joystickAxis.getValue());
+            rovStatus.setThrusters(1,joystickAxis.getValue());
+        }
+        return rovStatus;
     }
     boolean pollController(){
         if(isConnected()){

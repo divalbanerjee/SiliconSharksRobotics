@@ -18,22 +18,9 @@ public class ControlSystem {
     }
     public Gamepad getGamepad(){return gamepad;}
     private CustomKeyboard customKeyboard = new CustomKeyboard();
-    private KeyListener keyListener = new KeyListener(){
-        @Override
-        public void keyTyped(KeyEvent e) {
-        }
-
-        @Override
-        public void keyPressed(KeyEvent e) {
-            System.out.println("Key pressed code=" + e.getKeyCode() + ", char=" + e.getKeyChar());
-        }
-
-        @Override
-        public void keyReleased(KeyEvent e) {
-        }
-    };
     private ROVStatus currentROVStatus = new ROVStatus();
     public void timerRefresh(){
+        customKeyboard.TimerRefresh();
         if(!TimerTaskRunning) {
             TimerTaskRunning = true;
             if (gamepad.isConnected()) {
@@ -50,7 +37,6 @@ public class ControlSystem {
             TimerTaskRunning = false;
         }
     }
-    public KeyListener getKeyListener(){return keyListener;}
     private void AttemptConnection(){
         try{
             ControllerEnvironment controllerEnvironment = createDefaultEnvironment();

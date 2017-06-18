@@ -6,8 +6,6 @@ package com.SiliconSharks.ROVComponents;
 public class Servo {
     private double rotation;
     public Servo(){rotation = 0;}
-    void fromSerial(double multiplier, int serial){
-        rotation = ((serial-90)/90*multiplier);
-    }
+    void setRotation(double rotation){this.rotation = rotation;}
     double getRotation(){return rotation;}
 }

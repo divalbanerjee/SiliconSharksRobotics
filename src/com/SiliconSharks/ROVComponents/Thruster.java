@@ -1,10 +1,8 @@
 package com.SiliconSharks.ROVComponents;
 
 public class Thruster {
-    private double Throttle;
-    public Thruster() {Throttle = 0;}
-    void fromSerial(double multiplier, int serial){
-        Throttle = ((serial-90)/90*multiplier);
-    }
-    public double getThrottle(){return Throttle;}
+    private double throttle;
+    public Thruster() {throttle = 0;}
+    void setThrottle(double throttle){this.throttle = throttle;}
+    public double getThrottle(){return throttle;}
 }

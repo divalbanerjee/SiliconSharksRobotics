@@ -16,15 +16,15 @@ public class ROVStatus {
             if(tempInt < 0){
                 tempInt += 256;
             }
-            switch(index){
-                case 0: Thrusters[0].fromSerial(multipliers[index],tempInt);
-                case 1: Thrusters[1].fromSerial(multipliers[index],tempInt);
-                case 2: Thrusters[2].fromSerial(multipliers[index],tempInt);
-                case 3: Servos[0].fromSerial(multipliers[index],tempInt);
-                case 4: Servos[1].fromSerial(multipliers[index],tempInt);
-                case 5: Servos[2].fromSerial(multipliers[index],tempInt);
+            double value = ((tempInt-90)*multipliers[index]/90);
+            if(index >= 3){
+                Servos[index-3].setRotation(value);
+            }else{
+                Thrusters[index].setThrottle(value);
             }
             index++;
         }
     }
+    public void setThrusters(int index, double throttle){Thrusters[index].setThrottle(throttle);}
+    public void setServos(int index, double rotation){Servos[index].setRotation(rotation);}
 }
