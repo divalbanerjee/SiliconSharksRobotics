@@ -16,6 +16,7 @@ public class ControlSystem {
     }
     private CustomKeyboard customKeyboard = new CustomKeyboard();
     private ROVStatus currentROVStatus = new ROVStatus();
+    public Gamepad getGamepad() {return gamepad;}
     public void timerRefresh(){
         customKeyboard.TimerRefresh();
         if(!TimerTaskRunning) {

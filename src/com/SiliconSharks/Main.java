@@ -28,7 +28,6 @@ public class Main {
     };
     public static void main(String[]args){
         serialCommunication = new SerialCommunication(controlSystem);
-        // gTimer.scheduleAtFixedRate(gTimerTask,1000,30);
         timer.scheduleAtFixedRate(timerTask, 1015, 30);
     }
     public static void Message(int classification, String object){

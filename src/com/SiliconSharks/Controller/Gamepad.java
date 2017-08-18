@@ -53,7 +53,7 @@ public class Gamepad {
             return true;
         }
     }
-    private boolean getButton(char c){
+    public boolean getButton(char c){
         switch (c){
             case 'A': return values[0] > 0.5;
             case 'B': return values[1] > 0.5;
@@ -63,7 +63,7 @@ public class Gamepad {
         System.out.println("Error: Unhandled getButton() call in Gamepad.java");
         return false;
     }
-    private double getAxis(String s){
+    public double getAxis(String s){
         switch(s){
             case "LX": return values[5];
             case "LY": return values[6];
@@ -73,7 +73,7 @@ public class Gamepad {
         System.out.println("Error: Unhandled getAxis() call in Gamepad.java");
         return 0;
     }
-    private String getDPad(){
+    public String getDPad(){
         String s;
         if(values[4] == 0.125 || values[4] == 1 || values[4] == 0.875) s = "L";
         else if(values[4] == 0.25 || values[4] == 0 || values[4] == 0.75) s = "M";
@@ -112,5 +112,5 @@ public class Gamepad {
                     break;
         }
     }
-    boolean isConnected(){return (controller != null);}
+    public boolean isConnected(){return (controller != null);}
 }
