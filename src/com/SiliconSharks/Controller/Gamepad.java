@@ -15,7 +15,7 @@ public class Gamepad {
                                                   Component.Identifier.Axis.Y,
                                                   Component.Identifier.Axis.RX,
                                                   Component.Identifier.Axis.RY};
-    private double[] values = new double[8];
+    private double[] values = new double[9];
     private Controller controller;
     Gamepad(){
         for(int i = 0; i < NumComponents; i++) values[i] = 0;

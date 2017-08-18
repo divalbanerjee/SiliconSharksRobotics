@@ -47,6 +47,7 @@ public class SerialCommunication implements SerialPortEventListener {
                 NotReceivedCounter++;
                 if (newReceived) {
                     Message(0,"Package Received!");
+                    newReceived = false;
                     NotReceivedCounter = 0;
                 } else if (NotReceivedCounter > 70) {
                     Message(0,"Long Duration without Telemetry, Attempting Disconnect...");
@@ -80,6 +81,7 @@ public class SerialCommunication implements SerialPortEventListener {
             NotReceivedCounter = 0;
             serialPort = null;
             currentPort = "";
+            Connected = false;
             return true;
         }catch(SerialPortException ex){
             Message(0,getStackTrace(ex));
@@ -174,6 +176,11 @@ public class SerialCommunication implements SerialPortEventListener {
     private boolean sendPackage(byte[] serialBytes){
         if(Connected) {
             try{
+                StringBuilder telemetry = new StringBuilder();
+                for(byte b : serialBytes){
+                    telemetry.append(b).append(' ');
+                }
+                Message(0,telemetry.toString());
                 serialPort.writeBytes(serialBytes);
                 SentPackages.enqueue(serialBytes);
             }catch(SerialPortException ex){
@@ -189,6 +196,7 @@ public class SerialCommunication implements SerialPortEventListener {
         if (event.isRXCHAR() && event.getEventValue() >= 9) {
             try {
                 byte a[] = serialPort.readBytes(1);
+                Message(0,"Byte read: " + a[0]);
                 if(a[0] != -1) return;
                 newReceived = true;
                 a = serialPort.readBytes(8);
