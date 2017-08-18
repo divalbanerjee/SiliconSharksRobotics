@@ -6,20 +6,20 @@ import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
 
 class CustomKeyboard {
-    private int[] time = {0,0,0,0,0,0};
-    private int[] taps = {0,0,0,0,0,0};
+    private static int[] time = {0,0,0,0,0,0};
+    private static int[] taps = {0,0,0,0,0,0};
     private static volatile boolean[] keyPressed = {false,false,false,false,false,false};
-    private static boolean getKeyPressed(char c) {
+    private static int getKeyTaps(char c) {
         synchronized (CustomKeyboard.class) {
             switch(c){
-                case 'W': return keyPressed[0];
-                case 'A': return keyPressed[1];
-                case 'S': return keyPressed[2];
-                case 'D': return keyPressed[3];
-                case 'Q': return keyPressed[4];
-                case 'E': return keyPressed[5];
+                case 'W': return taps[0];
+                case 'A': return taps[1];
+                case 'S': return taps[2];
+                case 'D': return taps[3];
+                case 'Q': return taps[4];
+                case 'E': return taps[5];
             }
-            return false;
+            return 0;
         }
     }
     private int KeyCodeToIndex(int KeyCode){
@@ -71,5 +71,13 @@ class CustomKeyboard {
                     return false;
                 }
             });
+    }
+    void update(ROVStatus rovStatus){
+        rovStatus.setThruster(0,((double)(getKeyTaps('W')-getKeyTaps('S')))/5);
+        rovStatus.setThruster(1,((double)(getKeyTaps('W')-getKeyTaps('S')))/5);
+        rovStatus.setThruster(0,rovStatus.getThruster(0)+((double)(getKeyTaps('A')-getKeyTaps('D')))/5);
+        rovStatus.setThruster(1,rovStatus.getThruster(1)+((double)(getKeyTaps('A')-getKeyTaps('D')))/5);
+        rovStatus.setThruster(2,((double)(getKeyTaps('Q')-getKeyTaps('E')))/5);
+        rovStatus.calibrate(0);
     }
 }

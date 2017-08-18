@@ -3,8 +3,6 @@ package com.SiliconSharks.Controller;
 import com.SiliconSharks.ROVComponents.ROVStatus;
 import net.java.games.input.*;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.lang.reflect.Constructor;
 
 @SuppressWarnings("unchecked")
@@ -16,7 +14,6 @@ public class ControlSystem {
     public ControlSystem(){
         AttemptConnection();
     }
-    public Gamepad getGamepad(){return gamepad;}
     private CustomKeyboard customKeyboard = new CustomKeyboard();
     private ROVStatus currentROVStatus = new ROVStatus();
     public void timerRefresh(){
@@ -26,12 +23,17 @@ public class ControlSystem {
             if (gamepad.isConnected()) {
                 if(!gamepad.pollController()){
                     gamepad.setController(null);
+                }else{
+                    gamepad.update(currentROVStatus);
                 }
             } else {
-                AttemptCommunicationsCounter++;
-                if(AttemptCommunicationsCounter >= 10) {
-                    AttemptCommunicationsCounter = 0;
-                    AttemptConnection();
+                if(AttemptCommunicationsCounter < 45){
+                    AttemptCommunicationsCounter++;
+                    if(AttemptCommunicationsCounter % 10 == 0) {
+                        AttemptConnection();
+                    }
+                }else{
+                    customKeyboard.update(currentROVStatus);
                 }
             }
             TimerTaskRunning = false;
@@ -63,5 +65,10 @@ public class ControlSystem {
         // Create object with default constructor
         return constructor.newInstance();
     }
-
+    public byte[] getSerialBytes(){
+        return currentROVStatus.getStatus();
+    }
+    public ROVStatus getCurrentROVStatus() {
+        return currentROVStatus;
+    }
 }

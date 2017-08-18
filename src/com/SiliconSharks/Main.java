@@ -21,12 +21,13 @@ public class Main {
             controlSystem.timerRefresh();
             serialCommunication.timerRefresh();
             if(serialCommunication.getNewReceived()){
-                rovInfo.enqueueCurrentROVStatus(serialCommunication.getNewROVStatus());
+                rovInfo.enqueueCurrentROVTelemetry(serialCommunication.getNewROVStatus());
+                rovInfo.enqueueCurrentROVStatus(controlSystem.getCurrentROVStatus());
             }
         }
     };
     public static void main(String[]args){
-        serialCommunication = new SerialCommunication(controlSystem.getGamepad());
+        serialCommunication = new SerialCommunication(controlSystem);
         // gTimer.scheduleAtFixedRate(gTimerTask,1000,30);
         timer.scheduleAtFixedRate(timerTask, 1015, 30);
     }

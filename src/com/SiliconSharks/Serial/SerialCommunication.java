@@ -1,6 +1,6 @@
 package com.SiliconSharks.Serial;
 
-import com.SiliconSharks.Controller.Gamepad;
+import com.SiliconSharks.Controller.ControlSystem;
 import com.SiliconSharks.Queue;
 import com.SiliconSharks.ROVComponents.ROVStatus;
 import jssc.*;
@@ -12,21 +12,22 @@ import static com.SiliconSharks.Main.getStackTrace;
 
 public class SerialCommunication implements SerialPortEventListener {
     private boolean newReceived, Connected;
-    private Queue<SentPackage> SentPackages = new Queue<>();
-    private Queue<ReceivedPackage> ReceivedPackages = new Queue<>();
+    private Queue<byte[]> SentPackages = new Queue<>();
+    private Queue<byte[]> ReceivedPackages = new Queue<>();
     private SerialPort serialPort = null;
     private ArrayList<String> prevPorts = new ArrayList<>();
     private String currentPort, successfulPort;
     private int SendPackageCounter = 0;
     private int NotConnectedCounter= 0;
     private int NotReceivedCounter = 0;
-    private Gamepad gamepad;
     private boolean timerRunning = false;
-    public SerialCommunication(Gamepad gamepad){
+    private ROVStatus currentROVStatus = new ROVStatus();
+    private ControlSystem controlSystem;
+    public SerialCommunication(ControlSystem controlSystem){
         newReceived = false;
         Connected = false;
         successfulPort =" ";
-        this.gamepad = gamepad;
+        this.controlSystem = controlSystem;
     }
     public void timerRefresh(){
         if(!timerRunning) {
@@ -37,7 +38,7 @@ public class SerialCommunication implements SerialPortEventListener {
                 if (SendPackageCounter >= 10) {
                     SendPackageCounter = 0;
                     Message(0,"Sending Package...");
-                    if(sendPackage()){
+                    if(sendPackage(controlSystem.getSerialBytes())){
                         Message(0,"Package Sent!");
                     }else{
                         Message(0,"Package Not Sent! Scroll up for Exception Stack Trace");
@@ -162,25 +163,19 @@ public class SerialCommunication implements SerialPortEventListener {
                 return false;
             }
         }else{
+            Message(0, "Error: Already Connected!");
             return false;
         }
     }
     public ROVStatus getNewROVStatus(){
-        newReceived = false;
-        return ReceivedPackages.peekLast().getROVStatus();
+        return currentROVStatus;
     }
     public boolean getNewReceived(){return newReceived;}
-    private boolean sendPackage(){
+    private boolean sendPackage(byte[] serialBytes){
         if(Connected) {
-            SentPackage newPackage;
-            if(gamepad != null && gamepad.isConnected()) {
-                newPackage = new SentPackage(gamepad);
-            }else{
-                newPackage = new SentPackage();
-            }
             try{
-                serialPort.writeBytes(newPackage.getSerialBytes());
-                SentPackages.enqueue(newPackage);
+                serialPort.writeBytes(serialBytes);
+                SentPackages.enqueue(serialBytes);
             }catch(SerialPortException ex){
                 Message(0,getStackTrace(ex));
                 return false;
@@ -191,17 +186,14 @@ public class SerialCommunication implements SerialPortEventListener {
         return true;
     }
     public void serialEvent(SerialPortEvent event) {
-        if (event.isRXCHAR() && event.getEventValue() >= 7) {
+        if (event.isRXCHAR() && event.getEventValue() >= 9) {
             try {
                 byte a[] = serialPort.readBytes(1);
-                if(a[0] != -1){
-                    return;
-                }
+                if(a[0] != -1) return;
                 newReceived = true;
-                a = serialPort.readBytes(6);
-                ReceivedPackage receivedPackage = new ReceivedPackage();
-                receivedPackage.setSerialBytes(a);
-                ReceivedPackages.enqueue(receivedPackage);
+                a = serialPort.readBytes(8);
+                currentROVStatus.setStatus(a);
+                ReceivedPackages.enqueue(a);
             } catch (SerialPortException ex) {
                 Message(0,"Error in receiving string from COM-port");
                 Message(0,getStackTrace(ex));
