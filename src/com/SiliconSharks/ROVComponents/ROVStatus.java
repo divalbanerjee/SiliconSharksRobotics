@@ -17,9 +17,9 @@ public class ROVStatus {
         for(byte b : serialBytes){
             tempInt = (int) b;
             if(tempInt < 0) tempInt += 256;
-            if(index == 7){
+            if(index == 6){
                 tempInt2 = tempInt;
-            }else if(index == 8){
+            }else if(index == 7){
                 Amperage = ((double)tempInt2 * 255 + tempInt)*50.15/1024; // The Arduino measures voltage from a 0.1 Ohm
             }else if(index >= 3){                                        // Shunt and finds the amperage
                 servos[index-numThrusters] = ((tempInt-90)*multipliers[index]/90);

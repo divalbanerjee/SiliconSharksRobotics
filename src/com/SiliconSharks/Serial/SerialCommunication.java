@@ -23,6 +23,7 @@ public class SerialCommunication implements SerialPortEventListener {
     private boolean timerRunning = false;
     private ROVStatus currentROVStatus = new ROVStatus();
     private ControlSystem controlSystem;
+    private ArrayList<Object> serialBytes = new ArrayList<>(0);
     public SerialCommunication(ControlSystem controlSystem){
         newReceived = false;
         Connected = false;
@@ -193,15 +194,30 @@ public class SerialCommunication implements SerialPortEventListener {
         return true;
     }
     public void serialEvent(SerialPortEvent event) {
-        if (event.isRXCHAR() && event.getEventValue() >= 9) {
+        if (event.isRXCHAR() && event.getEventValue() >= 1) {
             try {
-                byte a[] = serialPort.readBytes(1);
-                Message(0,"Byte read: " + a[0]);
-                if(a[0] != -1) return;
-                newReceived = true;
-                a = serialPort.readBytes(8);
-                currentROVStatus.setStatus(a);
-                ReceivedPackages.enqueue(a);
+                byte a[] = serialPort.readBytes(event.getEventValue());
+                for(byte b : a){
+                    serialBytes.add(b);
+                }
+                Message(0,"Byte read: " + a[0]+ " Message length: " + event.getEventValue());
+                for(int i = 0; i < serialBytes.size() - 8; i++){
+                    if(serialBytes.get(i).equals((byte)-1) && i + 8 < serialBytes.size()){
+                        byte[] telemetry = new byte[8];
+                        for(int j = 0; j < 8; j++){
+                            telemetry[j] = (byte) serialBytes.get(i+1+j);
+                        }
+                        currentROVStatus.setStatus(telemetry);
+                        ReceivedPackages.enqueue(telemetry);
+                        newReceived = true;
+                        serialBytes = new ArrayList<>(serialBytes.subList(i+4, serialBytes.size()-1));
+                    }
+                }
+                StringBuilder arraylist = new StringBuilder("ArrayList contains: ");
+                for(Object o : serialBytes){
+                    arraylist.append(o).append(" ");
+                }
+                Message(0,arraylist.toString());
             } catch (SerialPortException ex) {
                 Message(0,"Error in receiving string from COM-port");
                 Message(0,getStackTrace(ex));
