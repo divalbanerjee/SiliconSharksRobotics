@@ -34,9 +34,9 @@ public class SerialCommunication implements SerialPortEventListener {
         if(!timerRunning) {
             timerRunning = true;
             if (Connected) {
-                Message(0,"Serial is currently connected");
                 SendPackageCounter++;
                 if (SendPackageCounter >= 10) {
+                    Message(0,"Serial is currently connected");
                     SendPackageCounter = 0;
                     Message(0,"Sending Package...");
                     if(sendPackage(controlSystem.getSerialBytes())){
@@ -59,7 +59,7 @@ public class SerialCommunication implements SerialPortEventListener {
                     }
                 }
             } else {
-                Message(0,"Serial is not currently connected");
+                if(NotConnectedCounter%10 ==0)Message(0,"Serial is not currently connected");
                 NotConnectedCounter++;
                 if (NotConnectedCounter >= 30) {
                     Message(0,"Attempting connection...");
@@ -215,7 +215,7 @@ public class SerialCommunication implements SerialPortEventListener {
                 }
                 StringBuilder arraylist = new StringBuilder("ArrayList contains: ");
                 for(Object o : serialBytes){
-                    arraylist.append(o).append(" ");
+                    arraylist.append(o).append(' ');
                 }
                 Message(0,arraylist.toString());
             } catch (SerialPortException ex) {

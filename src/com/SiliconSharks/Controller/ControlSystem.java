@@ -5,6 +5,8 @@ import net.java.games.input.*;
 
 import java.lang.reflect.Constructor;
 
+import static com.SiliconSharks.Main.Message;
+import static com.SiliconSharks.Main.getStackTrace;
 @SuppressWarnings("unchecked")
 
 public class ControlSystem {
@@ -24,6 +26,7 @@ public class ControlSystem {
             if (gamepad.isConnected()) {
                 if(!gamepad.pollController()){
                     gamepad.setController(null);
+                    Message(0,"Error polling controller, disconnecting...");
                 }else{
                     gamepad.update(currentROVStatus);
                 }
@@ -42,16 +45,19 @@ public class ControlSystem {
     }
     private void AttemptConnection(){
         try{
+            Message(0,"Attempting connection...");
             ControllerEnvironment controllerEnvironment = createDefaultEnvironment();
             Controller[] controllers = controllerEnvironment.getControllers();
+            Message(0,"Found " + controllers.length + " controllers, scanning...");
             for(Controller controller : controllers){
                 if(controller.getType() == Controller.Type.GAMEPAD){
+                    Message(0,"Found gamepad: "+ controller.getName());
                     gamepad.setController(controller);
                     break;
                 }
             }
         }catch(ReflectiveOperationException ex){
-            ex.printStackTrace();
+            Message(0,getStackTrace(ex));
         }
     }
     private static ControllerEnvironment createDefaultEnvironment() throws ReflectiveOperationException {

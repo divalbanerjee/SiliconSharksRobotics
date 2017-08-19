@@ -3,6 +3,9 @@ package com.SiliconSharks.Controller;
 import com.SiliconSharks.ROVComponents.ROVStatus;
 import net.java.games.input.*;
 
+import static com.SiliconSharks.Main.Message;
+import static com.SiliconSharks.Main.getStackTrace;
+
 public class Gamepad {
     //This is a Logitech F310 implementation, edit the # of specific components and their identifiers when you plug them in for other controllers
     private final int NumComponents = 9;
@@ -26,7 +29,8 @@ public class Gamepad {
             try {
                 controller.poll();
             } catch (Exception ex) {
-                System.out.println("Trouble Polling Controller: Possible Disconnection");
+                Message(0,"Trouble Polling Controller: Possible Disconnection");
+                Message(0,getStackTrace(ex));
                 return false;
             }
             Component.Identifier eventIdentifier;
@@ -46,7 +50,7 @@ public class Gamepad {
                         break;
                     }
                 }
-                System.out.println(buffer);
+                Message(0,buffer.toString());
             }
             return true;
         }else{
@@ -60,7 +64,7 @@ public class Gamepad {
             case 'X': return values[2] > 0.5;
             case 'Y': return values[3] > 0.5;
         }
-        System.out.println("Error: Unhandled getButton() call in Gamepad.java");
+        Message(0,"Error: Unhandled getButton() call in Gamepad.java");
         return false;
     }
     public double getAxis(String s){
@@ -70,7 +74,7 @@ public class Gamepad {
             case "RX": return values[7];
             case "RY": return values[8];
         }
-        System.out.println("Error: Unhandled getAxis() call in Gamepad.java");
+        Message(0,"Error: Unhandled getAxis() call in Gamepad.java");
         return 0;
     }
     public String getDPad(){
