@@ -11,13 +11,15 @@ import java.util.TimerTask;
 
 public class Main {
     private final static boolean[] DebugPrintEnabled = {true, true, true, true}; // 0 is Unnecessary and Unimportant, 1 is Non-Critical, 2 is Error and Redundancy handling, 3 is critical messages
-    private static ROVInfo rovInfo = new ROVInfo();
+    private static ROVInfo rovInfo = new ROVInfo(30);
     private static ControlSystem controlSystem = new ControlSystem();
     private static SerialCommunication serialCommunication;
     private static Timer timer = new Timer();
+    private static CustomFrame frame = new CustomFrame(rovInfo);
     private static TimerTask timerTask = new TimerTask() {
         @Override
         public void run() {
+            frame.update();
             controlSystem.timerRefresh();
             serialCommunication.timerRefresh();
             if(serialCommunication.getNewReceived()){

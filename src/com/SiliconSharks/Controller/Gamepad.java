@@ -41,8 +41,8 @@ public class Gamepad {
                 buffer.append(" at ");
                 buffer.append(event.getNanos()).append(", ");
                 Component comp = event.getComponent();
-                buffer.append(comp.getName()).append(" changed to ");
                 float value = event.getValue();
+                buffer.append(comp.getName()).append(" changed to ").append(value);
                 eventIdentifier = event.getComponent().getIdentifier();
                 for(int i = 0; i < NumComponents; i++){
                     if(identifiers[i] == eventIdentifier){

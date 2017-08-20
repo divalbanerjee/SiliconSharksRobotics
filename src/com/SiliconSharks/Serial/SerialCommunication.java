@@ -204,20 +204,19 @@ public class SerialCommunication implements SerialPortEventListener {
                 for(int i = 0; i < serialBytes.size() - 8; i++){
                     if(serialBytes.get(i).equals((byte)-1) && i + 8 < serialBytes.size()){
                         byte[] telemetry = new byte[8];
+                        StringBuilder arraylist = new StringBuilder("ArrayList contains: ");
                         for(int j = 0; j < 8; j++){
                             telemetry[j] = (byte) serialBytes.get(i+1+j);
+                            arraylist.append(serialBytes.get(i+1+j)).append(' ');
                         }
+                        Message(0,arraylist.toString());
                         currentROVStatus.setStatus(telemetry);
                         ReceivedPackages.enqueue(telemetry);
                         newReceived = true;
                         serialBytes = new ArrayList<>(serialBytes.subList(i+4, serialBytes.size()-1));
                     }
                 }
-                StringBuilder arraylist = new StringBuilder("ArrayList contains: ");
-                for(Object o : serialBytes){
-                    arraylist.append(o).append(' ');
-                }
-                Message(0,arraylist.toString());
+
             } catch (SerialPortException ex) {
                 Message(0,"Error in receiving string from COM-port");
                 Message(0,getStackTrace(ex));

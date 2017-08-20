@@ -13,9 +13,7 @@ public class ControlSystem {
     private Gamepad gamepad = new Gamepad();
     private boolean TimerTaskRunning = false;
     private int AttemptCommunicationsCounter = 0;
-    public ControlSystem(){
-        AttemptConnection();
-    }
+    public ControlSystem(){   }
     private CustomKeyboard customKeyboard = new CustomKeyboard();
     private ROVStatus currentROVStatus = new ROVStatus();
     public Gamepad getGamepad() {return gamepad;}

@@ -5,6 +5,8 @@ import com.SiliconSharks.ROVComponents.ROVStatus;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
 
+import static com.SiliconSharks.Main.Message;
+
 class CustomKeyboard {
     private static int[] time = {0,0,0,0,0,0};
     private static int[] taps = {0,0,0,0,0,0};
@@ -58,6 +60,7 @@ class CustomKeyboard {
             (KeyEvent ke) -> {
                 synchronized (CustomKeyboard.class) {
                     int index = KeyCodeToIndex(ke.getKeyCode());
+                    Message(0, Integer.toString(index));
                     if(index < 0){return false;}
                     switch (ke.getID()) {
                         case KeyEvent.KEY_PRESSED:
