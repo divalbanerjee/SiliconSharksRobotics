@@ -1,5 +1,6 @@
 package com.SiliconSharks.ROVComponents;
 
+import static com.SiliconSharks.Main.Message;
 public class ROVStatus {
     private final int numThrusters = 3, numServos = 3;
     private final double[] multipliers = {1,1,1,1,1,1};
@@ -37,7 +38,7 @@ public class ROVStatus {
     public void calibrate(int nServos){
         //this function is designed for a 25 Amp cap, 23 for safety leeway
         int AmpCap = 23-nServos;
-        int AmpExp = (int)((thrusters[0]+thrusters[1]+thrusters[2])*25.0);
+        int AmpExp = (int)((Math.abs(thrusters[0])+Math.abs(thrusters[1])+Math.abs(thrusters[2]))*25.0);
         if(AmpExp > AmpCap) {
             AmpScale = ((double) AmpCap / AmpExp);
             thrusters[0] *= AmpScale;
@@ -46,6 +47,7 @@ public class ROVStatus {
         }else{
             AmpScale = -1;
         }
+        //Message(0,Integer.toString(AmpExp) + " Amps Expected!");
     }
     public byte[] getStatus(){
         byte[] serialBytes= new byte[7];

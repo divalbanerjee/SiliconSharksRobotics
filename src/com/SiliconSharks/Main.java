@@ -15,11 +15,11 @@ public class Main {
     private static ControlSystem controlSystem = new ControlSystem();
     private static SerialCommunication serialCommunication;
     private static Timer timer = new Timer();
-    private static CustomFrame frame = new CustomFrame(rovInfo);
+    //private static CustomPanel frame = new CustomPanel(rovInfo);
     private static TimerTask timerTask = new TimerTask() {
         @Override
         public void run() {
-            frame.update();
+
             controlSystem.timerRefresh();
             serialCommunication.timerRefresh();
             if(serialCommunication.getNewReceived()){

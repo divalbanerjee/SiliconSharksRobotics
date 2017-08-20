@@ -20,6 +20,7 @@ public class SerialCommunication implements SerialPortEventListener {
     private int SendPackageCounter = 0;
     private int NotConnectedCounter= 0;
     private int NotReceivedCounter = 0;
+    private int WaitSend = 0;
     private boolean timerRunning = false;
     private ROVStatus currentROVStatus = new ROVStatus();
     private ControlSystem controlSystem;
@@ -34,15 +35,21 @@ public class SerialCommunication implements SerialPortEventListener {
         if(!timerRunning) {
             timerRunning = true;
             if (Connected) {
-                SendPackageCounter++;
-                if (SendPackageCounter >= 10) {
-                    Message(0,"Serial is currently connected");
-                    SendPackageCounter = 0;
-                    Message(0,"Sending Package...");
-                    if(sendPackage(controlSystem.getSerialBytes())){
-                        Message(0,"Package Sent!");
-                    }else{
-                        Message(0,"Package Not Sent! Scroll up for Exception Stack Trace");
+                if(WaitSend < 70 && WaitSend > -1){
+                    WaitSend++;
+                }else if(WaitSend == 70){
+                    WaitSend = -1;
+                }else {
+                    SendPackageCounter++;
+                    if (SendPackageCounter >= 10) {
+                        Message(0, "Serial is currently connected");
+                        SendPackageCounter = 0;
+                        Message(0, "Sending Package...");
+                        if (sendPackage(controlSystem.getSerialBytes())) {
+                            Message(0, "Package Sent!");
+                        } else {
+                            Message(0, "Package Not Sent! Scroll up for Exception Stack Trace");
+                        }
                     }
                 }
                 NotReceivedCounter++;
@@ -50,7 +57,7 @@ public class SerialCommunication implements SerialPortEventListener {
                     Message(0,"Package Received!");
                     newReceived = false;
                     NotReceivedCounter = 0;
-                } else if (NotReceivedCounter > 70) {
+                } else if (NotReceivedCounter > 70 + 700) {
                     Message(0,"Long Duration without Telemetry, Attempting Disconnect...");
                     if(Disconnect()) {
                         Message(0,"Disconnection Successful");
@@ -80,6 +87,7 @@ public class SerialCommunication implements SerialPortEventListener {
             SendPackageCounter = 0;
             NotConnectedCounter = 0;
             NotReceivedCounter = 0;
+            WaitSend = 0;
             serialPort = null;
             currentPort = "";
             Connected = false;
@@ -154,6 +162,7 @@ public class SerialCommunication implements SerialPortEventListener {
                     SendPackageCounter = 0;
                     NotConnectedCounter = 0;
                     NotReceivedCounter = 0;
+                    WaitSend = 0;
                     Message(0,"Connection has been Successful");
                     return true;
                 }catch(SerialPortException ex){
@@ -200,11 +209,11 @@ public class SerialCommunication implements SerialPortEventListener {
                 for(byte b : a){
                     serialBytes.add(b);
                 }
-                Message(0,"Byte read: " + a[0]+ " Message length: " + event.getEventValue());
+                //Message(0,"Byte read: " + a[0]+ " Message length: " + event.getEventValue());
                 for(int i = 0; i < serialBytes.size() - 8; i++){
                     if(serialBytes.get(i).equals((byte)-1) && i + 8 < serialBytes.size()){
                         byte[] telemetry = new byte[8];
-                        StringBuilder arraylist = new StringBuilder("ArrayList contains: ");
+                        StringBuilder arraylist = new StringBuilder("bytes read: ");
                         for(int j = 0; j < 8; j++){
                             telemetry[j] = (byte) serialBytes.get(i+1+j);
                             arraylist.append(serialBytes.get(i+1+j)).append(' ');

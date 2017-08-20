@@ -50,7 +50,7 @@ public class Gamepad {
                         break;
                     }
                 }
-                Message(0,buffer.toString());
+                //Message(0,buffer.toString());
             }
             return true;
         }else{
@@ -92,7 +92,7 @@ public class Gamepad {
         switch (mode){
             case 0: rovStatus.setThruster(0,getAxis("LY"));
                     rovStatus.setThruster(1,getAxis("LY"));
-                    rovStatus.setThruster(1,getAxis("RY"));
+                    rovStatus.setThruster(2,getAxis("RY"));
                     rovStatus.setThruster(0,rovStatus.getThruster(0)+getAxis("LX"));
                     rovStatus.setThruster(1,rovStatus.getThruster(1)-getAxis("LX"));
                     int nServos = 0;
