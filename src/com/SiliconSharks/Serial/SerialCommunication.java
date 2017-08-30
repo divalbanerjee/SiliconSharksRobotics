@@ -35,9 +35,9 @@ public class SerialCommunication implements SerialPortEventListener {
         if(!timerRunning) {
             timerRunning = true;
             if (Connected) {
-                if(WaitSend < 70 && WaitSend > -1){
+                if(WaitSend < 100 && WaitSend > -1){
                     WaitSend++;
-                }else if(WaitSend == 70){
+                }else if(WaitSend >= 100){
                     WaitSend = -1;
                 }else {
                     SendPackageCounter++;

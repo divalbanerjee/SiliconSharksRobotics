@@ -37,17 +37,17 @@ public class ROVStatus {
     }
     public void calibrate(int nServos){
         //this function is designed for a 25 Amp cap, 23 for safety leeway
-        int AmpCap = 23-nServos;
-        int AmpExp = (int)((Math.abs(thrusters[0])+Math.abs(thrusters[1])+Math.abs(thrusters[2]))*25.0);
+        double AmpCap = 23-nServos;
+        double AmpExp = ((Math.abs(thrusters[0])+Math.abs(thrusters[1])+Math.abs(thrusters[2]))*25.0);
         if(AmpExp > AmpCap) {
-            AmpScale = ((double) AmpCap / AmpExp);
+            AmpScale = (AmpCap / AmpExp);
             thrusters[0] *= AmpScale;
             thrusters[1] *= AmpScale;
             thrusters[2] *= AmpScale;
         }else{
             AmpScale = -1;
         }
-        //Message(0,Integer.toString(AmpExp) + " Amps Expected!");
+        //Message(0,Double.toString(AmpExp) + " Amps Expected, " + Double.toString(AmpCap) + " Amp Cap, " + Double.toString(AmpScale) + " AmpScale, " + Double.toString(thrusters[0]) + " First ");
     }
     public byte[] getStatus(){
         byte[] serialBytes= new byte[7];

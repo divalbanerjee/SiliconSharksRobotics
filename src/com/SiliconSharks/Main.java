@@ -15,12 +15,13 @@ public class Main {
     private static ControlSystem controlSystem = new ControlSystem();
     private static SerialCommunication serialCommunication;
     private static Timer timer = new Timer();
-    //private static CustomPanel frame = new CustomPanel(rovInfo);
+    private static CustomFrame frame = new CustomFrame(rovInfo);
     private static TimerTask timerTask = new TimerTask() {
         @Override
         public void run() {
-
+            frame.Refresh();
             controlSystem.timerRefresh();
+
             serialCommunication.timerRefresh();
             if(serialCommunication.getNewReceived()){
                 rovInfo.enqueueCurrentROVTelemetry(serialCommunication.getNewROVStatus());
@@ -30,7 +31,7 @@ public class Main {
     };
     public static void main(String[]args){
         serialCommunication = new SerialCommunication(controlSystem);
-        timer.scheduleAtFixedRate(timerTask, 1015, 30);
+        timer.scheduleAtFixedRate(timerTask, 1015, 10);
     }
     public static void Message(int classification, String object){
         if(DebugPrintEnabled[classification]){
