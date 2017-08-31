@@ -25,8 +25,6 @@ public class ROVInfo{
         if(ROVTelemetry.size() > numItems)
             ROVTelemetry.dequeue();
     }
-    public ROVStatus getCurrentROVStatus(){return ROVCurrent.peekLast();}
-    public ROVStatus getCurrentROVTelemetry(){return ROVTelemetry.peekLast();}
     public ArrayList<ROVStatus> getStatusArrayList(){return ROVCurrent.getAllArrayList();}
     public ArrayList<ROVStatus> getTelemetryArrayList(){return ROVCurrent.getAllArrayList();}
 }

@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 import static com.SiliconSharks.Main.Message;
 
 class CustomKeyboard {
+    private final int maxtaps = 10;
     private static int[] time = {0,0,0,0,0,0};
     private static int[] taps = {0,0,0,0,0,0};
     private static volatile boolean[] keyPressed = {false,false,false,false,false,false};
@@ -43,13 +44,13 @@ class CustomKeyboard {
                     taps[i] = 1;
                 }
             } else {
-                if (time[i] > 10) {
+                if (time[i] > 30) {
                     taps[i] = 0;
                     time[i] = -1;
                 } else if (!keyPressed[i]) {
                     time[i]++;
                 } else if (time[i] > 0) {
-                    taps[i]++;
+                    if(maxtaps > taps[i]) taps[i]++;
                     time[i] = 0;
                 }
             }
@@ -76,11 +77,11 @@ class CustomKeyboard {
             });
     }
     void update(ROVStatus rovStatus){
-        rovStatus.setThruster(0,((double)(getKeyTaps('W')-getKeyTaps('S')))/5);
-        rovStatus.setThruster(1,((double)(getKeyTaps('W')-getKeyTaps('S')))/5);
-        rovStatus.setThruster(0,rovStatus.getThruster(0)+((double)(getKeyTaps('A')-getKeyTaps('D')))/5);
-        rovStatus.setThruster(1,rovStatus.getThruster(1)+((double)(getKeyTaps('A')-getKeyTaps('D')))/5);
-        rovStatus.setThruster(2,((double)(getKeyTaps('Q')-getKeyTaps('E')))/5);
+        rovStatus.setThruster(0,((double)(getKeyTaps('W')-getKeyTaps('S')))/maxtaps);
+        rovStatus.setThruster(1,((double)(getKeyTaps('W')-getKeyTaps('S')))/maxtaps);
+        rovStatus.setThruster(0,rovStatus.getThruster(0)+((double)(getKeyTaps('A')-getKeyTaps('D')))/maxtaps);
+        rovStatus.setThruster(1,rovStatus.getThruster(1)-((double)(getKeyTaps('A')-getKeyTaps('D')))/maxtaps);
+        rovStatus.setThruster(2,((double)(getKeyTaps('Q')-getKeyTaps('E')))/maxtaps);
         rovStatus.calibrate(0);
     }
 }
