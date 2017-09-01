@@ -19,11 +19,22 @@ public class Gamepad {
                                                   Component.Identifier.Axis.RX,
                                                   Component.Identifier.Axis.RY};
     private double[] values = new double[9];
+    private int type, ConnectionCounter;
     private Controller controller;
-    Gamepad(){
+    Gamepad(int type) {
+        this.type = type;
+        ConnectionCounter = 0;
         for(int i = 0; i < NumComponents; i++) values[i] = 0;
     }
-    void setController(Controller controller){this.controller=controller;}
+    Controller getController(){return controller;}
+    int getConnectionCounter(){
+        ConnectionCounter++;
+        return ConnectionCounter;
+    }
+    void setController(Controller controller){
+        this.controller=controller;
+        ConnectionCounter = 0;
+    }
     boolean pollController(){
         if(isConnected()){
             try {

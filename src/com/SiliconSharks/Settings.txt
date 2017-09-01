@@ -1,0 +1,11 @@
+KeyboardEnabled 1
+KeyboardEnabledWhileGamepadConnected 1
+KeyboardUpdateRate 50
+NumGamepad 1
+NumGamepadConnectionAttempts 4
+GamepadConnectionPauseDuration 6
+GamepadUpdateRate 50
+SerialConnectionPauseDuration 1
+SerialBlackoutDuration 5
+SerialUpdateRate 5
+NumROVStatusSaved 30

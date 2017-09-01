@@ -10,6 +10,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class Main {
+
     private final static boolean[] DebugPrintEnabled = {true, true, true, true}; // 0 is Unnecessary and Unimportant, 1 is Non-Critical, 2 is Error and Redundancy handling, 3 is critical messages
     private static ROVInfo rovInfo = new ROVInfo(30);
     private static ControlSystem controlSystem = new ControlSystem();
@@ -21,7 +22,6 @@ public class Main {
         public void run() {
             frame.Refresh();
             controlSystem.timerRefresh();
-
             serialCommunication.timerRefresh();
             if(serialCommunication.getNewReceived()){
                 rovInfo.enqueueCurrentROVTelemetry(serialCommunication.getNewROVStatus());

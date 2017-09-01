@@ -10,38 +10,52 @@ import static com.SiliconSharks.Main.getStackTrace;
 @SuppressWarnings("unchecked")
 
 public class ControlSystem {
-    private Gamepad gamepad = new Gamepad();
+    private Gamepad[] gamepads;
     private boolean TimerTaskRunning = false;
-    private int AttemptCommunicationsCounter = 0;
-    public ControlSystem(){   }
+    public ControlSystem(int SetupNum){
+        switch (SetupNum){
+            case 0:{
+                // GUI and Keyboard testing only, no gamepads expected;
+                gamepads = new Gamepad[0];
+            }case 1:{
+                // One controller expected, testing purposes
+                gamepads = new Gamepad[]{new Gamepad(0)};
+            }case 2:{
+                // Practice and Competition use, 2 controllers
+                gamepads = new Gamepad[]{new Gamepad(1), new Gamepad(2)};
+            }
+        }
+    }
+    public ControlSystem(){this(1);}
     private CustomKeyboard customKeyboard = new CustomKeyboard();
     private ROVStatus currentROVStatus = new ROVStatus();
-    public Gamepad getGamepad() {return gamepad;}
+    public Gamepad getGamepad(int index) {return gamepads[index];}
     public void timerRefresh(){
         customKeyboard.TimerRefresh();
         if(!TimerTaskRunning) {
             TimerTaskRunning = true;
-            if (gamepad.isConnected()) {
-                if(!gamepad.pollController()){
-                    gamepad.setController(null);
-                    Message(0,"Error polling controller, disconnecting...");
-                }else{
-                    gamepad.update(currentROVStatus);
-                }
-            } else {
-                if(AttemptCommunicationsCounter < 45){
-                    AttemptCommunicationsCounter++;
-                    if(AttemptCommunicationsCounter % 10 == 0) {
-                        AttemptConnection();
+            for(Gamepad gamepad: gamepads) {
+                if (gamepad.isConnected()) {
+                    if (!gamepad.pollController()) {
+                        gamepad.setController(null);
+                        Message(0, "Error polling controller, disconnecting...");
+                    } else {
+                        gamepad.update(currentROVStatus);
                     }
-                }else{
-                    customKeyboard.update(currentROVStatus);
+                } else {
+                    int ConnectionCounter = gamepad.getConnectionCounter();
+                    if (ConnectionCounter < 45) {
+                        ConnectionCounter++;
+                        if (ConnectionCounter % 10 == 0) {
+                            AttemptConnection(gamepad);
+                        }
+                    }
                 }
             }
             TimerTaskRunning = false;
         }
     }
-    private void AttemptConnection(){
+    private void AttemptConnection(Gamepad gamepad){
         try{
             Message(0,"Attempting connection...");
             ControllerEnvironment controllerEnvironment = createDefaultEnvironment();
@@ -49,6 +63,12 @@ public class ControlSystem {
             Message(0,"Found " + controllers.length + " controllers, scanning...");
             for(Controller controller : controllers){
                 if(controller.getType() == Controller.Type.GAMEPAD){
+                    for(Gamepad gamepad1 : gamepads){
+                        if(gamepad.getController().getName().equals(gamepad1.getController().getName()) &&
+                                gamepad.getController().getPortNumber()==gamepad1.getController().getPortNumber()){
+                            return;
+                        }
+                    }
                     Message(0,"Found gamepad: "+ controller.getName());
                     gamepad.setController(controller);
                     break;
