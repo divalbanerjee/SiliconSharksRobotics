@@ -15,9 +15,11 @@ public class MButton extends JPanel {
     private int myVerticalShift = 0;
     private int myButtonHeight = 60;
     private int myHorizontalShift = 20;
-    private boolean centered = false;
+    private boolean centered = true;
     private Color myPaddingColor = Color.darkGray;
     private Color myBackColor = Color.gray;
+    private Color myBackGround = Color.white;
+    private boolean BackGroundEnabled = true;
     int myPush = 0;
 
     public MButton() {
@@ -32,6 +34,20 @@ public class MButton extends JPanel {
         this.myBackColor = backColor;
         this.myPaddingColor = paddingColor;
         this.myButtonText = buttonText;
+
+        if(BackGroundEnabled = true){
+            this.setBackground(myBackGround);
+        }
+
+
+    }
+
+    public void setBackGroundColor(Color backColor){
+        this.myBackGround = backColor;
+    }
+
+    public MButton(String buttonText){
+        this.myButtonText = buttonText;
     }
 
     public void paintComponent(Graphics g) {
@@ -44,7 +60,7 @@ public class MButton extends JPanel {
         g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
-        g2.setColor(new Color(100,100,100,0));
+        g2.setColor(myBackGround);
         g2.fillRect(0,0,getWidth(),getHeight());
         System.out.println(getWidth());
         System.out.println(getHeight());
