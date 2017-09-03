@@ -16,11 +16,11 @@ public class Main {
     private static ControlSystem controlSystem = new ControlSystem();
     private static SerialCommunication serialCommunication;
     private static Timer timer = new Timer();
-    private static CustomFrame frame = new CustomFrame(rovInfo);
+    //private static CustomFrame frame = new CustomFrame(rovInfo);
     private static TimerTask timerTask = new TimerTask() {
         @Override
         public void run() {
-            frame.Refresh();
+            //frame.Refresh();
             controlSystem.timerRefresh();
             serialCommunication.timerRefresh();
             if(serialCommunication.getNewReceived()){
@@ -31,6 +31,7 @@ public class Main {
     };
     public static void main(String[]args){
         serialCommunication = new SerialCommunication(controlSystem);
+        Settings.start();
         timer.scheduleAtFixedRate(timerTask, 1015, 10);
     }
     public static void Message(int classification, String object){

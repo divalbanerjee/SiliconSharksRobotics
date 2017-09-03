@@ -13,12 +13,13 @@ import java.io.IOException;
 @SuppressWarnings("unchecked")
 
 public class Settings {
-    private Pair<String, Integer>[] settings = new Pair[]{
+    private static Pair<String, Integer>[] settings = new Pair[]{
             new Pair("KeyboardEnabled", 1),
             new Pair("KeyboardEnabledWhileGamepadConnected", 1),
             new Pair("KeyboardUpdateRate", 50),
             new Pair("NumGamepad", 1),
             new Pair("NumGamepadConnectionAttempts", 4),
+            new Pair("GamepadConnectionAttemptRate", 100),
             new Pair("GamepadConnectionPauseDuration", 6),
             new Pair("GamepadUpdateRate", 50),
             new Pair("SerialConnectionPauseDuration", 1),
@@ -26,7 +27,7 @@ public class Settings {
             new Pair("SerialUpdateRate", 5),
             new Pair("NumROVStatusSaved", 30),
     };
-    Settings(){
+    static void start(){
         try {
             BufferedReader br = new BufferedReader(new FileReader("file.txt"));
             String line;
@@ -42,7 +43,7 @@ public class Settings {
             Message(0,getStackTrace(ex));
         }
     }
-    private boolean getSettingB(String name){
+    public static boolean getSettingB(String name){
         for(Pair pair : settings){
             if(pair.getKey() == name){
                 return (pair.getValue() == Integer.valueOf(1));
@@ -50,7 +51,7 @@ public class Settings {
         }
         return false;
     }
-    private int getSetting(String name){
+    public static int getSetting(String name){
         for(Pair pair : settings){
             if(pair.getKey() == name){
                 return (int) pair.getValue();

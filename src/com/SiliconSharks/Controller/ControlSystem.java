@@ -1,6 +1,7 @@
 package com.SiliconSharks.Controller;
 
 import com.SiliconSharks.ROVComponents.ROVStatus;
+import com.SiliconSharks.Settings;
 import net.java.games.input.*;
 
 import java.lang.reflect.Constructor;
@@ -33,6 +34,7 @@ public class ControlSystem {
     public void timerRefresh(){
         customKeyboard.TimerRefresh();
         if(!TimerTaskRunning) {
+            boolean GamepadConnection = false;
             TimerTaskRunning = true;
             for(Gamepad gamepad: gamepads) {
                 if (gamepad.isConnected()) {
@@ -41,16 +43,21 @@ public class ControlSystem {
                         Message(0, "Error polling controller, disconnecting...");
                     } else {
                         gamepad.update(currentROVStatus);
+                        GamepadConnection = true;
                     }
                 } else {
                     int ConnectionCounter = gamepad.getConnectionCounter();
-                    if (ConnectionCounter < 45) {
-                        ConnectionCounter++;
+                    if (ConnectionCounter <= Settings.getSetting("")) {
                         if (ConnectionCounter % 10 == 0) {
                             AttemptConnection(gamepad);
                         }
                     }
                 }
+            }
+            if(GamepadConnection){
+                if(Settings.getSettingB("KeyboardEnabled") && Settings.getSettingB("KeyboardEnabledWhileGamepadConnected")) customKeyboard.update(currentROVStatus);
+            }else{
+                if(Settings.getSettingB("KeyboardEnabled")) customKeyboard.update(currentROVStatus);
             }
             TimerTaskRunning = false;
         }
