@@ -1,6 +1,7 @@
 package com.SiliconSharks.Controller;
 
 import com.SiliconSharks.ROVComponents.ROVStatus;
+import com.SiliconSharks.Settings;
 
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
@@ -8,7 +9,6 @@ import java.awt.event.KeyEvent;
 import static com.SiliconSharks.Main.Message;
 
 class CustomKeyboard {
-    private final int maxtaps = 10;
     private static int[] time = {0,0,0,0,0,0};
     private static int[] taps = {0,0,0,0,0,0};
     private static volatile boolean[] keyPressed = {false,false,false,false,false,false};
@@ -40,17 +40,25 @@ class CustomKeyboard {
         for(int i = 0; i < 6; i++) {
             if (time[i] == -1) {
                 if (keyPressed[i]) {
-                    time[i] = 0;
-                    taps[i] = 1;
+                    if(i==1 && taps[0]>0) taps[0] = 0;
+                    else if(i==0 && taps[1]>0) taps[1] = 0;
+                    else if(i==2 && taps[3]>0) taps[3] = 0;
+                    else if(i==3 && taps[2]>0) taps[2] = 0;
+                    else if(i==4 && taps[5]>0) taps[5] = 0;
+                    else if(i==5 && taps[4]>0) taps[4] = 0;
+                    else {
+                        time[i] = 0;
+                        taps[i] = 1;
+                    }
                 }
             } else {
-                if (time[i] > 30) {
+                if (time[i] > Settings.getSetting("KeyboardCounterResetRate")) {
                     taps[i] = 0;
                     time[i] = -1;
                 } else if (!keyPressed[i]) {
                     time[i]++;
                 } else if (time[i] > 0) {
-                    if(maxtaps > taps[i]) taps[i]++;
+                    if(Settings.getSetting("KeyboardMaxTaps") > taps[i]) taps[i]++;
                     time[i] = 0;
                 }
             }
@@ -77,6 +85,7 @@ class CustomKeyboard {
             });
     }
     void update(ROVStatus rovStatus){
+        int maxtaps = Settings.getSetting("KeyboardMaxTaps");
         rovStatus.setThruster(0,((double)(getKeyTaps('W')-getKeyTaps('S')))/maxtaps);
         rovStatus.setThruster(1,((double)(getKeyTaps('W')-getKeyTaps('S')))/maxtaps);
         rovStatus.setThruster(0,rovStatus.getThruster(0)+((double)(getKeyTaps('A')-getKeyTaps('D')))/maxtaps);

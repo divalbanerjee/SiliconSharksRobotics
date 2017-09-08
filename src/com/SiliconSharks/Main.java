@@ -12,15 +12,14 @@ import java.util.TimerTask;
 public class Main {
 
     private final static boolean[] DebugPrintEnabled = {true, true, true, true}; // 0 is Unnecessary and Unimportant, 1 is Non-Critical, 2 is Error and Redundancy handling, 3 is critical messages
-    private static ROVInfo rovInfo = new ROVInfo(30);
-    private static ControlSystem controlSystem = new ControlSystem();
+    private static ROVInfo rovInfo;
+    private static ControlSystem controlSystem;
     private static SerialCommunication serialCommunication;
-    private static Timer timer = new Timer();
-    //private static CustomFrame frame = new CustomFrame(rovInfo);
+    private static Timer timer;
+    private static CustomFrame frame;
     private static TimerTask timerTask = new TimerTask() {
         @Override
         public void run() {
-            //frame.Refresh();
             controlSystem.timerRefresh();
             serialCommunication.timerRefresh();
             if(serialCommunication.getNewReceived()){
@@ -29,10 +28,17 @@ public class Main {
             }
         }
     };
-    public static void main(String[]args){
-        serialCommunication = new SerialCommunication(controlSystem);
+    public static void start(){
         Settings.start();
+        controlSystem = new ControlSystem();
+        serialCommunication = new SerialCommunication(controlSystem);
+        rovInfo = new ROVInfo(Settings.getSetting("NumROVStatusSaved"));
+        frame = new CustomFrame(rovInfo);
+        timer = new Timer();
         timer.scheduleAtFixedRate(timerTask, 1015, 10);
+    }
+    public static void main(String[]args){
+        start();
     }
     public static void Message(int classification, String object){
         if(DebugPrintEnabled[classification]){

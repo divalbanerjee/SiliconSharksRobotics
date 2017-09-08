@@ -11,10 +11,10 @@ import static com.SiliconSharks.Main.getStackTrace;
 @SuppressWarnings("unchecked")
 
 public class ControlSystem {
+    private int KeyboardRefreshCounter = 0;
     private Gamepad[] gamepads;
-    private boolean TimerTaskRunning = false;
-    public ControlSystem(int SetupNum){
-        switch (SetupNum){
+    public ControlSystem(){
+        switch (Settings.getSetting("NumGamepad")){
             case 0:{
                 // GUI and Keyboard testing only, no gamepads expected;
                 gamepads = new Gamepad[0];
@@ -27,39 +27,38 @@ public class ControlSystem {
             }
         }
     }
-    public ControlSystem(){this(1);}
     private CustomKeyboard customKeyboard = new CustomKeyboard();
     private ROVStatus currentROVStatus = new ROVStatus();
     public Gamepad getGamepad(int index) {return gamepads[index];}
     public void timerRefresh(){
-        customKeyboard.TimerRefresh();
-        if(!TimerTaskRunning) {
-            boolean GamepadConnection = false;
-            TimerTaskRunning = true;
-            for(Gamepad gamepad: gamepads) {
-                if (gamepad.isConnected()) {
-                    if (!gamepad.pollController()) {
-                        gamepad.setController(null);
-                        Message(0, "Error polling controller, disconnecting...");
-                    } else {
-                        gamepad.update(currentROVStatus);
-                        GamepadConnection = true;
-                    }
+        KeyboardRefreshCounter++;
+        if(KeyboardRefreshCounter >= Settings.getSetting("KeyboardUpdateRate")){
+            customKeyboard.TimerRefresh();
+            KeyboardRefreshCounter = 0;
+        }
+        boolean GamepadConnection = false;
+        for(Gamepad gamepad: gamepads) {
+            if (gamepad.isConnected()) {
+                if (!gamepad.pollController()) {
+                    gamepad.setController(null);
+                    Message(0, "Error polling controller, disconnecting...");
                 } else {
-                    int ConnectionCounter = gamepad.getConnectionCounter();
-                    if (ConnectionCounter <= Settings.getSetting("")) {
-                        if (ConnectionCounter % 10 == 0) {
-                            AttemptConnection(gamepad);
-                        }
+                    gamepad.update(currentROVStatus);
+                    GamepadConnection = true;
+                }
+            } else {
+                int ConnectionCounter = gamepad.getConnectionCounter();
+                if (ConnectionCounter <= Settings.getSetting("GamepadConnectionAttemptRate")*Settings.getSetting("NumGamepadConnectionAttempts")) {
+                    if (ConnectionCounter % Settings.getSetting("GamepadConnectionAttemptRate") == 0) {
+                        AttemptConnection(gamepad);
                     }
                 }
             }
-            if(GamepadConnection){
-                if(Settings.getSettingB("KeyboardEnabled") && Settings.getSettingB("KeyboardEnabledWhileGamepadConnected")) customKeyboard.update(currentROVStatus);
-            }else{
-                if(Settings.getSettingB("KeyboardEnabled")) customKeyboard.update(currentROVStatus);
-            }
-            TimerTaskRunning = false;
+        }
+        if(GamepadConnection){
+            if(Settings.getSettingB("KeyboardEnabled") && Settings.getSettingB("KeyboardEnabledWhileGamepadConnected")) customKeyboard.update(currentROVStatus);
+        }else{
+            if(Settings.getSettingB("KeyboardEnabled")) customKeyboard.update(currentROVStatus);
         }
     }
     private void AttemptConnection(Gamepad gamepad){

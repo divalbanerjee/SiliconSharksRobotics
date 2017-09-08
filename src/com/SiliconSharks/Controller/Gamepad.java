@@ -22,17 +22,24 @@ public class Gamepad {
     private int type, ConnectionCounter;
     private Controller controller;
     Gamepad(int type) {
+        // type is used to differentiate between different controller input in update()
         this.type = type;
         ConnectionCounter = 0;
         for(int i = 0; i < NumComponents; i++) values[i] = 0;
     }
     Controller getController(){return controller;}
     int getConnectionCounter(){
+        // used in ControlSystem class to allow constant connection attempts
         ConnectionCounter++;
         return ConnectionCounter;
     }
     void setController(Controller controller){
+        // sets controller
         this.controller=controller;
+        ConnectionCounter = 0;
+    }
+    public void resetConnectionCounter(){
+        // Resets Connection Counter (based on user input)
         ConnectionCounter = 0;
     }
     boolean pollController(){
@@ -99,8 +106,7 @@ public class Gamepad {
         return s;
     }
     void update(ROVStatus rovStatus){
-        final int mode = 0;
-        switch (mode){
+        switch (type){
             case 0: rovStatus.setThruster(0,getAxis("LY"));
                     rovStatus.setThruster(1,getAxis("LY"));
                     rovStatus.setThruster(2,getAxis("RY"));

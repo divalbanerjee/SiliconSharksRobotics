@@ -3,6 +3,7 @@ package com.SiliconSharks.Serial;
 import com.SiliconSharks.Controller.ControlSystem;
 import com.SiliconSharks.Queue;
 import com.SiliconSharks.ROVComponents.ROVStatus;
+import com.SiliconSharks.Settings;
 import jssc.*;
 
 import java.util.ArrayList;
@@ -21,7 +22,6 @@ public class SerialCommunication implements SerialPortEventListener {
     private int NotConnectedCounter= 0;
     private int NotReceivedCounter = 0;
     private int WaitSend = 0;
-    private boolean timerRunning = false;
     private ROVStatus currentROVStatus = new ROVStatus();
     private ControlSystem controlSystem;
     private ArrayList<Object> serialBytes = new ArrayList<>(0);
@@ -32,24 +32,21 @@ public class SerialCommunication implements SerialPortEventListener {
         this.controlSystem = controlSystem;
     }
     public void timerRefresh(){
-        if(!timerRunning) {
-            timerRunning = true;
-            if (Connected) {
-                if(WaitSend < 100 && WaitSend > -1){
-                    WaitSend++;
-                }else if(WaitSend >= 100){
-                    WaitSend = -1;
-                }else {
-                    SendPackageCounter++;
-                    if (SendPackageCounter >= 10) {
-                        Message(0, "Serial is currently connected");
-                        SendPackageCounter = 0;
-                        Message(0, "Sending Package...");
-                        if (sendPackage(controlSystem.getSerialBytes())) {
-                            Message(0, "Package Sent!");
-                        } else {
-                            Message(0, "Package Not Sent! Scroll up for Exception Stack Trace");
-                        }
+        if (Connected) {
+            if(WaitSend < Settings.getSetting("SerialConnectionPauseDuration") && WaitSend > -1){
+                WaitSend++;
+            }else if(WaitSend >= Settings.getSetting("SerialConnectionPauseDuration")){
+                WaitSend = -1;
+            }else {
+                SendPackageCounter++;
+                if (SendPackageCounter >= Settings.getSetting("SerialUpdateRate")) {
+                    Message(0, "Serial is currently connected");
+                    SendPackageCounter = 0;
+                    Message(0, "Sending Package...");
+                    if (sendPackage(controlSystem.getSerialBytes())) {
+                        Message(0, "Package Sent!");
+                    } else {
+                        Message(0, "Package Not Sent! Scroll up for Exception Stack Trace");
                     }
                 }
                 NotReceivedCounter++;
@@ -57,7 +54,7 @@ public class SerialCommunication implements SerialPortEventListener {
                     Message(0,"Package Received!");
                     newReceived = false;
                     NotReceivedCounter = 0;
-                } else if (NotReceivedCounter > 70 + 700) {
+                } else if (NotReceivedCounter > Settings.getSetting("SerialDurationBeforeDisconnect")) {
                     Message(0,"Long Duration without Telemetry, Attempting Disconnect...");
                     if(Disconnect()) {
                         Message(0,"Disconnection Successful");
@@ -65,20 +62,18 @@ public class SerialCommunication implements SerialPortEventListener {
                         Message(0,"Disconnection Unsuccessful");
                     }
                 }
-            } else {
-                if(NotConnectedCounter%10 ==0)Message(0,"Serial is not currently connected");
-                NotConnectedCounter++;
-                if (NotConnectedCounter >= 30) {
-                    Message(0,"Attempting connection...");
-                    NotConnectedCounter = 0;
-                    if(AttemptConnection()){
-                        Message(0,"Connection Successful");
-                    }else{
-                        Message(0,"Connection Unsuccessful");
-                    }
+            }
+        } else {
+            NotConnectedCounter++;
+            if (NotConnectedCounter >= Settings.getSetting("SerialConnectionAttemptRate")) {
+                Message(0,"Attempting connection...");
+                NotConnectedCounter = 0;
+                if(AttemptConnection()){
+                    Message(0,"Connection Successful");
+                }else{
+                    Message(0,"Connection Unsuccessful");
                 }
             }
-            timerRunning = false;
         }
     }
     private boolean Disconnect(){
@@ -151,11 +146,13 @@ public class SerialCommunication implements SerialPortEventListener {
                 try {
                     prevPorts.add(currentPort);
                     serialPort.openPort();
-                    serialPort.setParams(SerialPort.BAUDRATE_19200,
+                    serialPort.setParams(
+                            Settings.getSetting("SerialBaudRate"),
                             SerialPort.DATABITS_8,
                             SerialPort.STOPBITS_1,
                             SerialPort.PARITY_NONE);
-                    serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN |
+                    serialPort.setFlowControlMode(
+                            SerialPort.FLOWCONTROL_RTSCTS_IN |
                             SerialPort.FLOWCONTROL_RTSCTS_OUT);
                     serialPort.addEventListener(this, SerialPort.MASK_RXCHAR);
                     Connected = true;
