@@ -3,7 +3,7 @@ package com.SiliconSharks.Graphics;
 import javax.swing.*;
 import java.awt.*;
 
-/**
+/**i
  * Created by bandi on 6/1/2017.
  */
 public class Compass extends JPanel{
@@ -39,13 +39,15 @@ public class Compass extends JPanel{
 
         g2.setColor(new Color(207, 216, 220));
 
-        //FIXME: This should be autocentering...I'll do it later
-        g2.drawOval(0,1,150,150);
-        g2.drawLine(75,1,75,151);
-        g2.drawLine(0,76,150,76);
+        //Fixed scaling issues
+        g2.drawOval(this.getWidth()/2-75,this.getHeight()/2-85,150,150);
+        //g2.drawOval(0,1,150,150);
+        g2.drawLine(this.getWidth()/2,this.getHeight()/2 -85,this.getWidth()/2,
+                this.getHeight()/2 +65);
+        g2.drawLine(this.getWidth()/2 -75,this.getHeight()/2-10,
+                this.getWidth()/2 + 75,this.getHeight()/2-10);
 
         g2.setFont(font20Pt);
-        g2.drawString(this.compassLabel,10,170);
+        g2.drawString(this.compassLabel,this.getWidth()/2 - 70,this.getHeight()/2+90);
     }
-
 }
