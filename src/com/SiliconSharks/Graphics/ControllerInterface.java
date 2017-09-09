@@ -64,6 +64,7 @@ public class ControllerInterface extends JPanel{
 
         BufferedImage imgController = getControllerImage(); //TODO:Super inefficient fix later
         g2.drawImage(imgController,0,0,null);
+        this.setPreferredSize(new Dimension(imgController.getWidth(), imgController.getHeight()+90));
         g2.setFont(font30Pt);
         g2.setColor(new Color(236, 239, 241));
         g2.drawString("Pilot " + this.myPilotNumber +"'s Controller",

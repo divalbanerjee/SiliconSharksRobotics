@@ -18,8 +18,8 @@ public class ROVGUI extends JFrame {
     ControllerInterface controller1 = new ControllerInterface(1);
     ControllerInterface controlller2 = new ControllerInterface(2);
     Compass xAxis = new Compass("X Axis Rotation");
-    Compass yAxis  = new Compass("Y Axis Rotation");
-    Compass zAxis = new Compass("Z Axis Rotation");
+    Compass zAxis  = new Compass("Z Axis Rotation");
+    Compass yAxis = new Compass("Y Axis Rotation");
     MButton btnShutDown = new MButton("Shut Down");
     StatusBar rovStatusBar = new StatusBar();
 
@@ -43,20 +43,30 @@ public class ROVGUI extends JFrame {
 
         c.gridx = 0;
         c.gridy = 0;
-        c.weightx  = .7;
+        c.weightx  = 1;
 
         c.weighty = .2;
 
-        c.anchor = GridBagConstraints.FIRST_LINE_START;
+       // c.anchor = GridBagConstraints.FIRST_LINE_START;
         c.fill = GridBagConstraints.BOTH;
-
+        c.ipady = 50;
         layoutManager.add(rovStatusBar,c);
-
-        c.weighty = .4;
-        c.gridy = 1;
-        c.weightx = 1;
-        layoutManager.add(controller1,c);
+        c.weightx = 0;
+        c.weighty = 0;
         c.gridx = 1;
+        //layoutManager.add(new JPanel(),c);
+        c.ipady = 50;
+        c.ipadx = 20;
+        c.gridy = 1;
+        c.weightx = .35;
+        c.gridx = 0;
+        c.weighty = .4;
+        layoutManager.add(controller1,c);
+
+        c.gridx = 0;
+        c.gridy = 2;
+        c.weightx = 0;
+        c.weighty = .4;
         layoutManager.add(controlller2,c);
 /*
         c.gridx = 2;
@@ -71,7 +81,7 @@ public class ROVGUI extends JFrame {
        // dataPanel.add(yAxis);
        // dataPanel.add(zAxis);
 
-        c.gridx = 2;
+        c.gridx = 4;
         c.gridy = 0;
         c.weightx = .3;
         c.weighty = .2;
