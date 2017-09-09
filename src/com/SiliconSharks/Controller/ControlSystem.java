@@ -11,9 +11,11 @@ import static com.SiliconSharks.MainUpdateLoop.getStackTrace;
 @SuppressWarnings("unchecked")
 
 public class ControlSystem {
-    private int KeyboardRefreshCounter = 0;
-    private Gamepad[] gamepads;
-    public ControlSystem(){
+    private static int KeyboardRefreshCounter = 0;
+    private static Gamepad[] gamepads;
+    public ControlSystem(){}
+    public static void start(){
+        CustomKeyboard.start();
         switch (Settings.getSetting("NumGamepad")){
             case 0:{
                 // GUI and Keyboard testing only, no gamepads expected;
@@ -27,13 +29,12 @@ public class ControlSystem {
             }
         }
     }
-    private CustomKeyboard customKeyboard = new CustomKeyboard();
-    private ROVStatus currentROVStatus = new ROVStatus();
-    public Gamepad getGamepad(int index) {return gamepads[index];}
-    public void timerRefresh(){
+    private static ROVStatus currentROVStatus = new ROVStatus();
+    public static Gamepad getGamepad(int index) {return gamepads[index];}
+    public static void timerRefresh(){
         KeyboardRefreshCounter++;
         if(KeyboardRefreshCounter >= Settings.getSetting("KeyboardUpdateRate")){
-            customKeyboard.TimerRefresh();
+            CustomKeyboard.TimerRefresh();
             KeyboardRefreshCounter = 0;
         }
         boolean GamepadConnection = false;
@@ -56,12 +57,12 @@ public class ControlSystem {
             }
         }
         if(GamepadConnection){
-            if(Settings.getSettingB("KeyboardEnabled") && Settings.getSettingB("KeyboardEnabledWhileGamepadConnected")) customKeyboard.update(currentROVStatus);
+            if(Settings.getSettingB("KeyboardEnabled") && Settings.getSettingB("KeyboardEnabledWhileGamepadConnected")) CustomKeyboard.update(currentROVStatus);
         }else{
-            if(Settings.getSettingB("KeyboardEnabled")) customKeyboard.update(currentROVStatus);
+            if(Settings.getSettingB("KeyboardEnabled")) CustomKeyboard.update(currentROVStatus);
         }
     }
-    private void AttemptConnection(Gamepad gamepad){
+    private static void AttemptConnection(Gamepad gamepad){
         try{
             Message(0,"Attempting connection...");
             ControllerEnvironment controllerEnvironment = createDefaultEnvironment();
@@ -96,10 +97,10 @@ public class ControlSystem {
         // Create object with default constructor
         return constructor.newInstance();
     }
-    public byte[] getSerialBytes(){
+    public static byte[] getSerialBytes(){
         return currentROVStatus.getStatus();
     }
-    public ROVStatus getCurrentROVStatus() {
+    public static ROVStatus getCurrentROVStatus() {
         return currentROVStatus;
     }
 }

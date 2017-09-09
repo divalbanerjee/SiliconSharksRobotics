@@ -25,7 +25,7 @@ class CustomKeyboard {
             return 0;
         }
     }
-    private int KeyCodeToIndex(int KeyCode){
+    private static int KeyCodeToIndex(int KeyCode){
         switch (KeyCode){
             case KeyEvent.VK_W: return 0;
             case KeyEvent.VK_A: return 1;
@@ -36,7 +36,7 @@ class CustomKeyboard {
             default: return -1;
         }
     }
-    void TimerRefresh(){
+    static void TimerRefresh(){
         for(int i = 0; i < 6; i++) {
             if (time[i] == -1) {
                 if (keyPressed[i]) {
@@ -64,7 +64,8 @@ class CustomKeyboard {
             }
         }
     }
-    CustomKeyboard() {
+    CustomKeyboard() {}
+    static void start(){
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
             (KeyEvent ke) -> {
                 synchronized (CustomKeyboard.class) {
@@ -84,7 +85,7 @@ class CustomKeyboard {
                 }
             });
     }
-    void update(ROVStatus rovStatus){
+    static void update(ROVStatus rovStatus){
         int maxtaps = Settings.getSetting("KeyboardMaxTaps");
         rovStatus.setThruster(0,((double)(getKeyTaps('W')-getKeyTaps('S')))/maxtaps);
         rovStatus.setThruster(1,((double)(getKeyTaps('W')-getKeyTaps('S')))/maxtaps);

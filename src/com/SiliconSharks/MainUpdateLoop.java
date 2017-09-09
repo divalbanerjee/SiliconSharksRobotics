@@ -13,33 +13,27 @@ public class MainUpdateLoop {
 
     private final static boolean[] DebugPrintEnabled = {false, true, true, true}; // 0 is Unnecessary and Unimportant, 1 is Non-Critical, 2 is Error and Redundancy handling, 3 is critical messages
     private static ROVInfo rovInfo;
-    private static ControlSystem controlSystem;
-    private static SerialCommunication serialCommunication;
-    private static Timer timer;
-    private static CustomFrame frame;
     private static TimerTask timerTask = new TimerTask() {
         @Override
         public void run() {
-            controlSystem.timerRefresh();
-            serialCommunication.timerRefresh();
-            if(serialCommunication.getNewReceived()){
-                rovInfo.enqueueCurrentROVTelemetry(serialCommunication.getNewROVStatus());
-                rovInfo.enqueueCurrentROVStatus(controlSystem.getCurrentROVStatus());
+            ControlSystem.timerRefresh();
+            SerialCommunication.timerRefresh();
+            if(SerialCommunication.getNewReceived()){
+                rovInfo.enqueueCurrentROVTelemetry(SerialCommunication.getNewROVStatus());
+                rovInfo.enqueueCurrentROVStatus(ControlSystem.getCurrentROVStatus());
             }
         }
     };
     public static void start(){
         Settings.start();
-        controlSystem = new ControlSystem();
-        serialCommunication = new SerialCommunication(controlSystem);
+        ControlSystem.start();
+        SerialCommunication.start();
         rovInfo = new ROVInfo(Settings.getSetting("NumROVStatusSaved"));
-        frame = new CustomFrame(rovInfo);
-        timer = new Timer();
+        CustomFrame frame = new CustomFrame(rovInfo);
+        Timer timer = new Timer();
         timer.scheduleAtFixedRate(timerTask, 1015, 10);
     }
-    public static void main(String[]args){
-        start();
-    }
+    public static void main(String[]args){start();}
     public static void Message(int classification, String object){
         if(DebugPrintEnabled[classification]){
             System.out.println(object);
@@ -51,4 +45,5 @@ public class MainUpdateLoop {
         throwable.printStackTrace(pw);
         return sw.getBuffer().toString();
     }
+    public static ROVInfo GetROVInfo(){return rovInfo;}
 }
