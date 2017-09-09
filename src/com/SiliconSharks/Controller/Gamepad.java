@@ -3,8 +3,8 @@ package com.SiliconSharks.Controller;
 import com.SiliconSharks.ROVComponents.ROVStatus;
 import net.java.games.input.*;
 
-import static com.SiliconSharks.Main.Message;
-import static com.SiliconSharks.Main.getStackTrace;
+import static com.SiliconSharks.MainUpdateLoop.Message;
+import static com.SiliconSharks.MainUpdateLoop.getStackTrace;
 
 public class Gamepad {
     //This is a Logitech F310 implementation, edit the # of specific components and their identifiers when you plug them in for other controllers

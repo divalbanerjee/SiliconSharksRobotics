@@ -6,8 +6,8 @@ import net.java.games.input.*;
 
 import java.lang.reflect.Constructor;
 
-import static com.SiliconSharks.Main.Message;
-import static com.SiliconSharks.Main.getStackTrace;
+import static com.SiliconSharks.MainUpdateLoop.Message;
+import static com.SiliconSharks.MainUpdateLoop.getStackTrace;
 @SuppressWarnings("unchecked")
 
 public class ControlSystem {

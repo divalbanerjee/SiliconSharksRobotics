@@ -8,7 +8,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.ArrayList;
 
-import static com.SiliconSharks.Main.Message;
+import static com.SiliconSharks.MainUpdateLoop.Message;
 
 class CustomFrame extends JFrame{
     private class CustomPanel extends JPanel{

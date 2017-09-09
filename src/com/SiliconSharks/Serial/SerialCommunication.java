@@ -8,8 +8,8 @@ import jssc.*;
 
 import java.util.ArrayList;
 
-import static com.SiliconSharks.Main.Message;
-import static com.SiliconSharks.Main.getStackTrace;
+import static com.SiliconSharks.MainUpdateLoop.Message;
+import static com.SiliconSharks.MainUpdateLoop.getStackTrace;
 
 public class SerialCommunication implements SerialPortEventListener {
     private boolean newReceived, Connected;

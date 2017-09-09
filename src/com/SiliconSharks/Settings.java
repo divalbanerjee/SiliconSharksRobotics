@@ -2,8 +2,8 @@ package com.SiliconSharks;
 
 import javafx.util.Pair;
 
-import static com.SiliconSharks.Main.Message;
-import static com.SiliconSharks.Main.getStackTrace;
+import static com.SiliconSharks.MainUpdateLoop.Message;
+import static com.SiliconSharks.MainUpdateLoop.getStackTrace;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

@@ -6,7 +6,7 @@ import com.SiliconSharks.Settings;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
 
-import static com.SiliconSharks.Main.Message;
+import static com.SiliconSharks.MainUpdateLoop.Message;
 
 class CustomKeyboard {
     private static int[] time = {0,0,0,0,0,0};
