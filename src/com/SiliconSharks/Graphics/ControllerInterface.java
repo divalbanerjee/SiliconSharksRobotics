@@ -1,11 +1,14 @@
 package com.SiliconSharks.Graphics;
 
 import com.SiliconSharks.Controller.ControlSystem;
+import com.SiliconSharks.Controller.Gamepad;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Arc2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -17,13 +20,14 @@ import java.nio.Buffer;
  */
 public class ControllerInterface extends JPanel{
 
-    private ControlSystem controlSystem = new ControlSystem();
+    private Gamepad gamepad;
     private int myPilotNumber;
     private Font font30Pt = new Font("Helvetica" , Font.PLAIN, 30);
 
     public ControllerInterface(int pilotNumber){
         setBackground(new Color(44, 62, 80));
         myPilotNumber = pilotNumber;
+        gamepad = ControlSystem.getGamepad(myPilotNumber-1);
     }
 
     public BufferedImage getControllerImage() {
@@ -69,5 +73,23 @@ public class ControllerInterface extends JPanel{
         g2.setColor(new Color(236, 239, 241));
         g2.drawString("Pilot " + this.myPilotNumber +"'s Controller",
                 (imgController.getWidth())/2-320 ,(imgController.getHeight()/2)+30);
+
+        //Okay I just added this so you didn't have to but here's the code
+        if(gamepad.getButton('A')) g2.setColor(new Color(163,50,20));
+        else g2.setColor(new Color(63,143,40));
+        g2.fillOval(305,88,30,30);
+        if(gamepad.getButton('A')) g2.setColor(new Color(163,50,20));
+        else g2.setColor(new Color(63,143,40));
+        g2.fillOval(371,88,30,30);
+        if(gamepad.getButton('A')) g2.setColor(new Color(163,50,20));
+        else g2.setColor(new Color(63,143,40));
+        g2.fillOval(338,55,30,30);
+        if(gamepad.getButton('A')) g2.setColor(new Color(163,50,20));
+        else g2.setColor(new Color(63,143,40));
+        g2.fillOval(338,121,30,30);
+        g2.setColor(new Color(150,150,40));
+        g2.fillOval(148+(int)(20*gamepad.getAxis("LX")),164+(int)(20*gamepad.getAxis("LY")),20,20);
+        g2.fillOval(278+(int)(20*gamepad.getAxis("LX")),164+(int)(20*gamepad.getAxis("LY")),20,20);
+
     }
 }

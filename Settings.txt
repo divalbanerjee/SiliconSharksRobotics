@@ -3,7 +3,7 @@ KeyboardEnabledWhileGamepadConnected 1
 KeyboardUpdateRate 1
 KeyboardMaxTaps 10
 KeyboardCounterResetRate 30
-NumGamepad 1
+NumGamepad 2
 NumGamepadConnectionAttempts 1
 GamepadConnectionAttemptRate 100
 SerialConnectionPauseDuration 100

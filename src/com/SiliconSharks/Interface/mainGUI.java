@@ -1,5 +1,7 @@
 package com.SiliconSharks.Interface;
 
+import com.SiliconSharks.MainUpdateLoop;
+
 import javax.swing.*;
 
 /**
@@ -7,6 +9,7 @@ import javax.swing.*;
  */
 public class mainGUI {
     public static void main(String[]args){
+        MainUpdateLoop.start();
         JFrame rovGUI = new ROVGUI();
     }
 }

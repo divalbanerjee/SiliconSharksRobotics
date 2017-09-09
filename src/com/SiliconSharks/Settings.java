@@ -34,9 +34,9 @@ public class Settings {
             String line;
             while ((line = br.readLine()) != null){
                 for (int i = 0; i < settings.length; i++) {
-                    if(line.startsWith(settings[i].getKey())){
+                    if(line.startsWith(settings[i].getKey()+" ")){
                         settings[i]= new Pair<>(settings[i].getKey(),Integer.valueOf(line.split(" ")[1]));
-                        Message(0,"Output: "+(line.split(" ")[1]));
+                        Message(1,settings[i].getKey()+" Output: "+(line.split(" ")[1]));
                         break;
                     }
                 }

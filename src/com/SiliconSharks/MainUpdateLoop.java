@@ -24,7 +24,7 @@ public class MainUpdateLoop {
         ControlSystem.start();
         SerialCommunication.start();
         ROVInfo.start();
-        CustomFrame frame = new CustomFrame();
+        //CustomFrame frame = new CustomFrame();
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(timerTask, 1015, 10);
     }
