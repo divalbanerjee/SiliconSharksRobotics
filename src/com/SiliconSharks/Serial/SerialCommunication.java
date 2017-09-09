@@ -1,6 +1,7 @@
 package com.SiliconSharks.Serial;
 
 import com.SiliconSharks.Controller.ControlSystem;
+import com.SiliconSharks.ROVComponents.ROVInfo;
 import com.SiliconSharks.ROVComponents.ROVStatus;
 import com.SiliconSharks.Settings;
 import jssc.*;
@@ -68,6 +69,7 @@ public class SerialCommunication {
                 }
             }
         }
+        ROVInfo.enqueueCurrentROVTelemetry(currentROVStatus);
     }
     private static boolean Disconnect(){
         try{

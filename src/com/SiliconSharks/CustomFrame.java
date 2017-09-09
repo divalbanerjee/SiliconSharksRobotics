@@ -12,19 +12,17 @@ import static com.SiliconSharks.MainUpdateLoop.Message;
 
 class CustomFrame extends JFrame{
     private class CustomPanel extends JPanel{
-        private ROVInfo rovInfo;
-        CustomPanel(ROVInfo rovInfo){
+        CustomPanel(){
             JPanel contentPanel = new JPanel();
             contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
             contentPanel.setLayout(new BorderLayout(0, 0));
-            this.rovInfo = rovInfo;
         }
 
         @Override
         public void paintComponent(Graphics g) {
             super.paintComponent(g);
             g.drawRect(10,110,300,310);
-            ArrayList<ROVStatus> rovStatuses= rovInfo.getStatusArrayList();
+            ArrayList<ROVStatus> rovStatuses= ROVInfo.getStatusArrayList();
             for (int i = 1; i < rovStatuses.size(); i++) {
                 g.drawLine(10 + (i-1)*300/rovStatuses.size(),260-(int)(rovStatuses.get(i-1).getThruster(0)*150),10 + i*300/rovStatuses.size(),260-(int)(rovStatuses.get(i).getThruster(0)*150));
             }
@@ -49,8 +47,8 @@ class CustomFrame extends JFrame{
         return new JButton();
     }
     private CustomPanel customPanel;
-    CustomFrame(ROVInfo rovInfo){
-        customPanel = new CustomPanel(rovInfo);
+    CustomFrame(){
+        customPanel = new CustomPanel();
         customPanel.setBounds(0,0,640,480);
         customPanel.setVisible(true);
         customPanel.setLayout(null);

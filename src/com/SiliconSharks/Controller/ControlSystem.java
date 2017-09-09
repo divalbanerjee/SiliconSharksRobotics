@@ -1,5 +1,6 @@
 package com.SiliconSharks.Controller;
 
+import com.SiliconSharks.ROVComponents.ROVInfo;
 import com.SiliconSharks.ROVComponents.ROVStatus;
 import com.SiliconSharks.Settings;
 import net.java.games.input.*;
@@ -65,6 +66,7 @@ public class ControlSystem {
         }else{
             if(Settings.getSettingB("KeyboardEnabled")) CustomKeyboard.update(currentROVStatus);
         }
+        ROVInfo.enqueueCurrentROVStatus(currentROVStatus);
     }
     private static void AttemptConnection(Gamepad gamepad){
         try{
