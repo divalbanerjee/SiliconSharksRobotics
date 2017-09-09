@@ -21,9 +21,9 @@ public class Settings {
             new Pair("NumGamepad", 1),
             new Pair("NumGamepadConnectionAttempts", 1),
             new Pair("GamepadConnectionAttemptRate", 100),
-            new Pair("SerialConnectionPauseDuration", 1),
-            new Pair("SerialConnectionAttemptRate",20),
-            new Pair("SerialUpdateRate", 5),
+            new Pair("SerialConnectionPauseDuration", 100),
+            new Pair("SerialConnectionAttemptRate",30),
+            new Pair("SerialUpdateRate", 2),
             new Pair("SerialDurationBeforeDisconnect", 300),
             new Pair("SerialBaudRate", 19200),
             new Pair("NumROVStatusSaved", 30),
@@ -43,8 +43,8 @@ public class Settings {
             }
             br.close();
         } catch (IOException ex){
-            Message(0, "Error retrieving/reading file: ");
-            Message(0,getStackTrace(ex));
+            Message(1, "Error retrieving/reading file: ");
+            Message(1,getStackTrace(ex));
         }
     }
     public static boolean getSettingB(String name){
@@ -53,7 +53,7 @@ public class Settings {
                 return (pair.getValue() == Integer.valueOf(1));
             }
         }
-        Message(0,"Error: Setting " + name + " not found!");
+        Message(1,"Error: Setting " + name + " not found!");
         return false;
     }
     public static int getSetting(String name){
@@ -62,7 +62,7 @@ public class Settings {
                 return (int) pair.getValue();
             }
         }
-        Message(0,"Error: Setting " + name + " not found!");
+        Message(1,"Error: Setting " + name + " not found!");
         return 0;
     }
 }

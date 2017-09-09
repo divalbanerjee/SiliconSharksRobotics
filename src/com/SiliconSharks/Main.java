@@ -11,7 +11,7 @@ import java.util.TimerTask;
 
 public class Main {
 
-    private final static boolean[] DebugPrintEnabled = {true, true, true, true}; // 0 is Unnecessary and Unimportant, 1 is Non-Critical, 2 is Error and Redundancy handling, 3 is critical messages
+    private final static boolean[] DebugPrintEnabled = {false, true, true, true}; // 0 is Unnecessary and Unimportant, 1 is Non-Critical, 2 is Error and Redundancy handling, 3 is critical messages
     private static ROVInfo rovInfo;
     private static ControlSystem controlSystem;
     private static SerialCommunication serialCommunication;

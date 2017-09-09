@@ -23,7 +23,7 @@ public class ControlSystem {
                 gamepads = new Gamepad[]{new Gamepad(0)};
             }case 2:{
                 // Practice and Competition use, 2 controllers
-                gamepads = new Gamepad[]{new Gamepad(1), new Gamepad(2)};
+                gamepads = new Gamepad[]{new Gamepad(0), new Gamepad(0)};
             }
         }
     }
@@ -41,7 +41,7 @@ public class ControlSystem {
             if (gamepad.isConnected()) {
                 if (!gamepad.pollController()) {
                     gamepad.setController(null);
-                    Message(0, "Error polling controller, disconnecting...");
+                    Message(1, "Error polling controller, disconnecting...");
                 } else {
                     gamepad.update(currentROVStatus);
                     GamepadConnection = true;
@@ -75,7 +75,7 @@ public class ControlSystem {
                             return;
                         }
                     }
-                    Message(0,"Found gamepad: "+ controller.getName());
+                    Message(1,"Found gamepad: "+ controller.getName());
                     gamepad.setController(controller);
                     break;
                 }

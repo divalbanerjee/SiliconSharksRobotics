@@ -39,7 +39,7 @@ public class Gamepad {
         ConnectionCounter = 0;
     }
     public void resetConnectionCounter(){
-        // Resets Connection Counter (based on user input)
+        // Resets Connection Counter to continue trying to get a connection (based on user input)
         ConnectionCounter = 0;
     }
     boolean pollController(){
@@ -47,8 +47,8 @@ public class Gamepad {
             try {
                 controller.poll();
             } catch (Exception ex) {
-                Message(0,"Trouble Polling Controller: Possible Disconnection");
-                Message(0,getStackTrace(ex));
+                Message(1,"Trouble Polling Controller: Possible Disconnection");
+                Message(1,getStackTrace(ex));
                 return false;
             }
             Component.Identifier eventIdentifier;
@@ -82,7 +82,7 @@ public class Gamepad {
             case 'X': return values[2] > 0.5;
             case 'Y': return values[3] > 0.5;
         }
-        Message(0,"Error: Unhandled getButton() call in Gamepad.java");
+        Message(1,"Error: Unhandled getButton() call in Gamepad.java");
         return false;
     }
     public double getAxis(String s){
@@ -92,7 +92,7 @@ public class Gamepad {
             case "RX": return values[7];
             case "RY": return values[8];
         }
-        Message(0,"Error: Unhandled getAxis() call in Gamepad.java");
+        Message(1,"Error: Unhandled getAxis() call in Gamepad.java");
         return 0;
     }
     public String getDPad(){
@@ -131,6 +131,7 @@ public class Gamepad {
                     }
                     rovStatus.calibrate(nServos);
                     break;
+            case 1:
         }
     }
     public boolean isConnected(){return (controller != null);}

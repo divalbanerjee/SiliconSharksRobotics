@@ -46,7 +46,7 @@ public class SerialCommunication implements SerialPortEventListener {
                     if (sendPackage(controlSystem.getSerialBytes())) {
                         Message(0, "Package Sent!");
                     } else {
-                        Message(0, "Package Not Sent! Scroll up for Exception Stack Trace");
+                        Message(1, "Package Not Sent! Scroll up for Exception Stack Trace");
                     }
                 }
                 NotReceivedCounter++;
@@ -55,7 +55,7 @@ public class SerialCommunication implements SerialPortEventListener {
                     newReceived = false;
                     NotReceivedCounter = 0;
                 } else if (NotReceivedCounter > Settings.getSetting("SerialDurationBeforeDisconnect")) {
-                    Message(0,"Long Duration without Telemetry, Attempting Disconnect...");
+                    Message(1,"Long Duration without Telemetry, Attempting Disconnect...");
                     if(Disconnect()) {
                         Message(0,"Disconnection Successful");
                     }else{
@@ -88,7 +88,7 @@ public class SerialCommunication implements SerialPortEventListener {
             Connected = false;
             return true;
         }catch(SerialPortException ex){
-            Message(0,getStackTrace(ex));
+            Message(1,getStackTrace(ex));
             return false;
         }
     }
@@ -163,8 +163,8 @@ public class SerialCommunication implements SerialPortEventListener {
                     Message(0,"Connection has been Successful");
                     return true;
                 }catch(SerialPortException ex){
-                    Message(0,getStackTrace(ex));
-                    Message(0,"Connection failed! Read Stack Trace for details");
+                    Message(1,getStackTrace(ex));
+                    Message(1,"Connection failed! Read Stack Trace for details");
                     return false;
                 }
             }else{
@@ -191,7 +191,8 @@ public class SerialCommunication implements SerialPortEventListener {
                 serialPort.writeBytes(serialBytes);
                 SentPackages.enqueue(serialBytes);
             }catch(SerialPortException ex){
-                Message(0,getStackTrace(ex));
+                Message(0,"Error: Package Send Failed!");
+                Message(1,getStackTrace(ex));
                 return false;
             }
         }else{
@@ -224,8 +225,8 @@ public class SerialCommunication implements SerialPortEventListener {
                 }
 
             } catch (SerialPortException ex) {
-                Message(0,"Error in receiving string from COM-port");
-                Message(0,getStackTrace(ex));
+                Message(1,"Error in receiving string from COM-port");
+                Message(1,getStackTrace(ex));
             }
         }
     }
