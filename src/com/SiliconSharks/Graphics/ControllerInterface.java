@@ -75,13 +75,13 @@ public class ControllerInterface extends JPanel{
                 (imgController.getWidth())/2-320 ,(imgController.getHeight()/2)+30);
 
         //Okay I just added this so you didn't have to but here's the code
-        if(gamepad.getButton('A')) g2.setColor(new Color(163,50,20));
+        if(gamepad.getButton('X')) g2.setColor(new Color(163,50,20));
         else g2.setColor(new Color(63,143,40));
         g2.fillOval(305,88,30,30);
-        if(gamepad.getButton('A')) g2.setColor(new Color(163,50,20));
+        if(gamepad.getButton('B')) g2.setColor(new Color(163,50,20));
         else g2.setColor(new Color(63,143,40));
         g2.fillOval(371,88,30,30);
-        if(gamepad.getButton('A')) g2.setColor(new Color(163,50,20));
+        if(gamepad.getButton('Y')) g2.setColor(new Color(163,50,20));
         else g2.setColor(new Color(63,143,40));
         g2.fillOval(338,55,30,30);
         if(gamepad.getButton('A')) g2.setColor(new Color(163,50,20));
@@ -89,7 +89,7 @@ public class ControllerInterface extends JPanel{
         g2.fillOval(338,121,30,30);
         g2.setColor(new Color(150,150,40));
         g2.fillOval(148+(int)(20*gamepad.getAxis("LX")),164+(int)(20*gamepad.getAxis("LY")),20,20);
-        g2.fillOval(278+(int)(20*gamepad.getAxis("LX")),164+(int)(20*gamepad.getAxis("LY")),20,20);
+        g2.fillOval(278+(int)(20*gamepad.getAxis("RX")),164+(int)(20*gamepad.getAxis("RY")),20,20);
 
     }
 }
