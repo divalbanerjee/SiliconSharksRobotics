@@ -20,12 +20,15 @@ public class ControlSystem {
             case 0:{
                 // GUI and Keyboard testing only, no gamepads expected;
                 gamepads = new Gamepad[0];
+                break;
             }case 1:{
                 // One controller expected, testing purposes
                 gamepads = new Gamepad[]{new Gamepad(0)};
+                break;
             }case 2:{
                 // Practice and Competition use, 2 controllers
                 gamepads = new Gamepad[]{new Gamepad(0), new Gamepad(0)};
+                break;
             }
         }
     }
@@ -51,6 +54,7 @@ public class ControlSystem {
                 int ConnectionCounter = gamepad.getConnectionCounter();
                 if (ConnectionCounter <= Settings.getSetting("GamepadConnectionAttemptRate")*Settings.getSetting("NumGamepadConnectionAttempts")) {
                     if (ConnectionCounter % Settings.getSetting("GamepadConnectionAttemptRate") == 0) {
+                        Message(1,Integer.toString(ConnectionCounter) + Integer.toString(gamepads.length));
                         AttemptConnection(gamepad);
                     }
                 }
