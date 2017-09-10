@@ -63,11 +63,11 @@ public class ControllerInterface extends JPanel{
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
         BufferedImage imgController = getControllerImage(); //TODO:Super inefficient fix later
-        g2.drawImage(imgController,0,0,null);
-        this.setPreferredSize(new Dimension(imgController.getWidth(), imgController.getHeight()+90));
+        g2.drawImage(imgController,30,30,null);
+        this.setPreferredSize(new Dimension(imgController.getWidth(), imgController.getHeight()+120));
         g2.setFont(font30Pt);
         g2.setColor(new Color(236, 239, 241));
         g2.drawString("Pilot " + this.myPilotNumber +"'s Controller",
-                (imgController.getWidth())/2-320 ,(imgController.getHeight()/2)+30);
+                (imgController.getWidth())/2-320 ,(imgController.getHeight()/2)+70);
     }
 }
