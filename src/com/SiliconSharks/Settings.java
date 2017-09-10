@@ -33,15 +33,21 @@ public class Settings {
             BufferedReader br = new BufferedReader(new FileReader("Settings.txt"));
             String line;
             while ((line = br.readLine()) != null){
+                boolean hasMatch =false;
                 for (int i = 0; i < settings.length; i++) {
                     if(line.startsWith(settings[i].getKey()+" ")){
                         settings[i]= new Pair<>(settings[i].getKey(),Integer.valueOf(line.split(" ")[1]));
-                        Message(1,settings[i].getKey()+" Output: "+(line.split(" ")[1]));
+                        Message(0,settings[i].getKey()+" Output: "+(line.split(" ")[1]));
+                        hasMatch = true;
                         break;
                     }
                 }
+                if(!hasMatch){
+                    Message(1,"Encountered erroneous line: " + line);
+                }
             }
             br.close();
+            Message(1, "Successful Settings Startup!");
         } catch (IOException ex){
             Message(1, "Error retrieving/reading file: ");
             Message(1,getStackTrace(ex));

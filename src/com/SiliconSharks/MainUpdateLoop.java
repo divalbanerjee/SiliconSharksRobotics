@@ -11,12 +11,17 @@ import java.util.TimerTask;
 
 public class MainUpdateLoop {
 
-    private final static boolean[] DebugPrintEnabled = {false, true, true, true}; // 0 is Unnecessary and Unimportant, 1 is Non-Critical, 2 is Error and Redundancy handling, 3 is critical messages
+    private final static boolean[] DebugPrintEnabled = {false, true, true, true}; // 0 is Repetitive Output from Timers, 1 is Non-Critical, 2 is Error and Redundancy handling, 3 is critical messages
+    private static boolean TimerTaskRunning = false;
     private static TimerTask timerTask = new TimerTask() {
         @Override
         public void run() {
-            ControlSystem.timerRefresh();
-            SerialCommunication.timerRefresh();
+            if(!TimerTaskRunning) {
+                TimerTaskRunning = true;
+                ControlSystem.timerRefresh();
+                SerialCommunication.timerRefresh();
+                TimerTaskRunning = false;
+            }
         }
     };
     public static void start(){
