@@ -1,6 +1,5 @@
 package com.SiliconSharks.ROVComponents;
 
-import static com.SiliconSharks.Main.Message;
 public class ROVStatus {
     private final int numThrusters = 3, numServos = 3;
     private final double[] multipliers = {1,1,1,1,1,1};

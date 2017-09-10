@@ -1,30 +1,29 @@
 package com.SiliconSharks.ROVComponents;
 
 import com.SiliconSharks.Queue;
+import com.SiliconSharks.Settings;
 
 import java.util.ArrayList;
 
 public class ROVInfo{
-    private int numItems = 30;
-    private Queue<ROVStatus> ROVTelemetry = new Queue<>();
-    private Queue<ROVStatus> ROVCurrent = new Queue<>();
-    public ROVInfo(int numItems){
-        this.numItems = numItems;
+    private static Queue<ROVStatus> ROVTelemetry = new Queue<>();
+    private static Queue<ROVStatus> ROVCurrent = new Queue<>();
+    public ROVInfo(){}
+    public static void start(){
+        int numItems = Settings.getSetting("NumROVStatusSaved");
         for(int i = 0; i < numItems; i++){
             enqueueCurrentROVStatus(new ROVStatus());
             enqueueCurrentROVTelemetry(new ROVStatus());
         }
     }
-    public void enqueueCurrentROVStatus(ROVStatus status){
+    public static void enqueueCurrentROVStatus(ROVStatus status){
         ROVCurrent.enqueue(status);
-        if(ROVCurrent.size() > numItems)
-            ROVCurrent.dequeue();
+        ROVCurrent.dequeue();
     }
-    public void enqueueCurrentROVTelemetry(ROVStatus status){
+    public static void enqueueCurrentROVTelemetry(ROVStatus status){
         ROVTelemetry.enqueue(status);
-        if(ROVTelemetry.size() > numItems)
-            ROVTelemetry.dequeue();
+        ROVTelemetry.dequeue();
     }
-    public ArrayList<ROVStatus> getStatusArrayList(){return ROVCurrent.getAllArrayList();}
-    public ArrayList<ROVStatus> getTelemetryArrayList(){return ROVCurrent.getAllArrayList();}
+    public static ArrayList<ROVStatus> getStatusArrayList(){return ROVCurrent.getAllArrayList();}
+    public static ArrayList<ROVStatus> getTelemetryArrayList(){return ROVCurrent.getAllArrayList();}
 }

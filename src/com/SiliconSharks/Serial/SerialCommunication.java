@@ -1,37 +1,31 @@
 package com.SiliconSharks.Serial;
 
 import com.SiliconSharks.Controller.ControlSystem;
-import com.SiliconSharks.Queue;
+import com.SiliconSharks.ROVComponents.ROVInfo;
 import com.SiliconSharks.ROVComponents.ROVStatus;
 import com.SiliconSharks.Settings;
 import jssc.*;
 
 import java.util.ArrayList;
 
-import static com.SiliconSharks.Main.Message;
-import static com.SiliconSharks.Main.getStackTrace;
+import static com.SiliconSharks.MainUpdateLoop.Message;
+import static com.SiliconSharks.MainUpdateLoop.getStackTrace;
 
-public class SerialCommunication implements SerialPortEventListener {
-    private boolean newReceived, Connected;
-    private Queue<byte[]> SentPackages = new Queue<>();
-    private Queue<byte[]> ReceivedPackages = new Queue<>();
-    private SerialPort serialPort = null;
-    private ArrayList<String> prevPorts = new ArrayList<>();
-    private String currentPort, successfulPort;
-    private int SendPackageCounter = 0;
-    private int NotConnectedCounter= 0;
-    private int NotReceivedCounter = 0;
-    private int WaitSend = 0;
-    private ROVStatus currentROVStatus = new ROVStatus();
-    private ControlSystem controlSystem;
-    private ArrayList<Object> serialBytes = new ArrayList<>(0);
-    public SerialCommunication(ControlSystem controlSystem){
+public class SerialCommunication {
+    private static boolean newReceived, Connected;
+    private static SerialPort serialPort = null;
+    private static ArrayList<String> prevPorts = new ArrayList<>();
+    private static String currentPort, successfulPort;
+    private static int SendPackageCounter = 0, NotConnectedCounter= 0, NotReceivedCounter = 0, WaitSend = 0;
+    private static ROVStatus currentROVStatus = new ROVStatus();
+    private static ArrayList<Object> serialBytes = new ArrayList<>(0);
+    public SerialCommunication(){}
+    public static void start(){
         newReceived = false;
         Connected = false;
         successfulPort =" ";
-        this.controlSystem = controlSystem;
     }
-    public void timerRefresh(){
+    public static void timerRefresh(){
         if (Connected) {
             if(WaitSend < Settings.getSetting("SerialConnectionPauseDuration") && WaitSend > -1){
                 WaitSend++;
@@ -43,10 +37,10 @@ public class SerialCommunication implements SerialPortEventListener {
                     Message(0, "Serial is currently connected");
                     SendPackageCounter = 0;
                     Message(0, "Sending Package...");
-                    if (sendPackage(controlSystem.getSerialBytes())) {
+                    if (sendPackage(ControlSystem.getSerialBytes())) {
                         Message(0, "Package Sent!");
                     } else {
-                        Message(0, "Package Not Sent! Scroll up for Exception Stack Trace");
+                        Message(1, "Package Not Sent! Scroll up for Exception Stack Trace");
                     }
                 }
                 NotReceivedCounter++;
@@ -55,7 +49,7 @@ public class SerialCommunication implements SerialPortEventListener {
                     newReceived = false;
                     NotReceivedCounter = 0;
                 } else if (NotReceivedCounter > Settings.getSetting("SerialDurationBeforeDisconnect")) {
-                    Message(0,"Long Duration without Telemetry, Attempting Disconnect...");
+                    Message(1,"Long Duration without Telemetry, Attempting Disconnect...");
                     if(Disconnect()) {
                         Message(0,"Disconnection Successful");
                     }else{
@@ -75,8 +69,9 @@ public class SerialCommunication implements SerialPortEventListener {
                 }
             }
         }
+        ROVInfo.enqueueCurrentROVTelemetry(currentROVStatus);
     }
-    private boolean Disconnect(){
+    private static boolean Disconnect(){
         try{
             serialPort.closePort();
             SendPackageCounter = 0;
@@ -88,11 +83,11 @@ public class SerialCommunication implements SerialPortEventListener {
             Connected = false;
             return true;
         }catch(SerialPortException ex){
-            Message(0,getStackTrace(ex));
+            Message(1,getStackTrace(ex));
             return false;
         }
     }
-    private boolean AttemptConnection(){
+    private static boolean AttemptConnection(){
         if(!Connected){
             String[] portNames = SerialPortList.getPortNames();
             if (portNames.length >= 1) {
@@ -154,7 +149,35 @@ public class SerialCommunication implements SerialPortEventListener {
                     serialPort.setFlowControlMode(
                             SerialPort.FLOWCONTROL_RTSCTS_IN |
                             SerialPort.FLOWCONTROL_RTSCTS_OUT);
-                    serialPort.addEventListener(this, SerialPort.MASK_RXCHAR);
+                    serialPort.addEventListener((SerialPortEvent serialPortEvent) -> {
+                        if (serialPortEvent.isRXCHAR() && serialPortEvent.getEventValue() >= 1) {
+                            try {
+                                byte a[] = serialPort.readBytes(serialPortEvent.getEventValue());
+                                for(byte b : a){
+                                    serialBytes.add(b);
+                                }
+                                //Message(0,"Byte read: " + a[0]+ " Message length: " + event.getEventValue());
+                                for(int i = 0; i < serialBytes.size() - 8; i++){
+                                    if(serialBytes.get(i).equals((byte)-1) && i + 8 < serialBytes.size()){
+                                        byte[] telemetry = new byte[8];
+                                        StringBuilder arraylist = new StringBuilder("bytes read: ");
+                                        for(int j = 0; j < 8; j++){
+                                            telemetry[j] = (byte) serialBytes.get(i+1+j);
+                                            arraylist.append(serialBytes.get(i+1+j)).append(' ');
+                                        }
+                                        Message(0,arraylist.toString());
+                                        currentROVStatus.setStatus(telemetry);
+                                        newReceived = true;
+                                        serialBytes = new ArrayList<>(serialBytes.subList(i+4, serialBytes.size()-1));
+                                    }
+                                }
+
+                            } catch (SerialPortException ex) {
+                                Message(1,"Error in receiving string from COM-port");
+                                Message(1,getStackTrace(ex));
+                            }
+                        }
+                    }, SerialPort.MASK_RXCHAR);
                     Connected = true;
                     SendPackageCounter = 0;
                     NotConnectedCounter = 0;
@@ -163,8 +186,8 @@ public class SerialCommunication implements SerialPortEventListener {
                     Message(0,"Connection has been Successful");
                     return true;
                 }catch(SerialPortException ex){
-                    Message(0,getStackTrace(ex));
-                    Message(0,"Connection failed! Read Stack Trace for details");
+                    Message(1,getStackTrace(ex));
+                    Message(1,"Connection failed! Read Stack Trace for details");
                     return false;
                 }
             }else{
@@ -176,11 +199,11 @@ public class SerialCommunication implements SerialPortEventListener {
             return false;
         }
     }
-    public ROVStatus getNewROVStatus(){
+    public static ROVStatus getNewROVStatus(){
         return currentROVStatus;
     }
-    public boolean getNewReceived(){return newReceived;}
-    private boolean sendPackage(byte[] serialBytes){
+    public static boolean getNewReceived(){return newReceived;}
+    private static boolean sendPackage(byte[] serialBytes){
         if(Connected) {
             try{
                 StringBuilder telemetry = new StringBuilder();
@@ -189,44 +212,14 @@ public class SerialCommunication implements SerialPortEventListener {
                 }
                 Message(0,telemetry.toString());
                 serialPort.writeBytes(serialBytes);
-                SentPackages.enqueue(serialBytes);
             }catch(SerialPortException ex){
-                Message(0,getStackTrace(ex));
+                Message(0,"Error: Package Send Failed!");
+                Message(1,getStackTrace(ex));
                 return false;
             }
         }else{
             return false;
         }
         return true;
-    }
-    public void serialEvent(SerialPortEvent event) {
-        if (event.isRXCHAR() && event.getEventValue() >= 1) {
-            try {
-                byte a[] = serialPort.readBytes(event.getEventValue());
-                for(byte b : a){
-                    serialBytes.add(b);
-                }
-                //Message(0,"Byte read: " + a[0]+ " Message length: " + event.getEventValue());
-                for(int i = 0; i < serialBytes.size() - 8; i++){
-                    if(serialBytes.get(i).equals((byte)-1) && i + 8 < serialBytes.size()){
-                        byte[] telemetry = new byte[8];
-                        StringBuilder arraylist = new StringBuilder("bytes read: ");
-                        for(int j = 0; j < 8; j++){
-                            telemetry[j] = (byte) serialBytes.get(i+1+j);
-                            arraylist.append(serialBytes.get(i+1+j)).append(' ');
-                        }
-                        Message(0,arraylist.toString());
-                        currentROVStatus.setStatus(telemetry);
-                        ReceivedPackages.enqueue(telemetry);
-                        newReceived = true;
-                        serialBytes = new ArrayList<>(serialBytes.subList(i+4, serialBytes.size()-1));
-                    }
-                }
-
-            } catch (SerialPortException ex) {
-                Message(0,"Error in receiving string from COM-port");
-                Message(0,getStackTrace(ex));
-            }
-        }
     }
 }

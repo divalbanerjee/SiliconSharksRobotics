@@ -2,8 +2,8 @@ package com.SiliconSharks;
 
 import javafx.util.Pair;
 
-import static com.SiliconSharks.Main.Message;
-import static com.SiliconSharks.Main.getStackTrace;
+import static com.SiliconSharks.MainUpdateLoop.Message;
+import static com.SiliconSharks.MainUpdateLoop.getStackTrace;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -21,9 +21,9 @@ public class Settings {
             new Pair("NumGamepad", 1),
             new Pair("NumGamepadConnectionAttempts", 1),
             new Pair("GamepadConnectionAttemptRate", 100),
-            new Pair("SerialConnectionPauseDuration", 1),
-            new Pair("SerialConnectionAttemptRate",20),
-            new Pair("SerialUpdateRate", 5),
+            new Pair("SerialConnectionPauseDuration", 100),
+            new Pair("SerialConnectionAttemptRate",30),
+            new Pair("SerialUpdateRate", 2),
             new Pair("SerialDurationBeforeDisconnect", 300),
             new Pair("SerialBaudRate", 19200),
             new Pair("NumROVStatusSaved", 30),
@@ -34,17 +34,17 @@ public class Settings {
             String line;
             while ((line = br.readLine()) != null){
                 for (int i = 0; i < settings.length; i++) {
-                    if(line.startsWith(settings[i].getKey())){
+                    if(line.startsWith(settings[i].getKey()+" ")){
                         settings[i]= new Pair<>(settings[i].getKey(),Integer.valueOf(line.split(" ")[1]));
-                        Message(0,"Output: "+(line.split(" ")[1]));
+                        Message(1,settings[i].getKey()+" Output: "+(line.split(" ")[1]));
                         break;
                     }
                 }
             }
             br.close();
         } catch (IOException ex){
-            Message(0, "Error retrieving/reading file: ");
-            Message(0,getStackTrace(ex));
+            Message(1, "Error retrieving/reading file: ");
+            Message(1,getStackTrace(ex));
         }
     }
     public static boolean getSettingB(String name){
@@ -53,7 +53,7 @@ public class Settings {
                 return (pair.getValue() == Integer.valueOf(1));
             }
         }
-        Message(0,"Error: Setting " + name + " not found!");
+        Message(1,"Error: Setting " + name + " not found!");
         return false;
     }
     public static int getSetting(String name){
@@ -62,7 +62,7 @@ public class Settings {
                 return (int) pair.getValue();
             }
         }
-        Message(0,"Error: Setting " + name + " not found!");
+        Message(1,"Error: Setting " + name + " not found!");
         return 0;
     }
 }

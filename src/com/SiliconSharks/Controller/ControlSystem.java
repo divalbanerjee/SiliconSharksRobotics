@@ -1,39 +1,44 @@
 package com.SiliconSharks.Controller;
 
+import com.SiliconSharks.ROVComponents.ROVInfo;
 import com.SiliconSharks.ROVComponents.ROVStatus;
 import com.SiliconSharks.Settings;
 import net.java.games.input.*;
 
 import java.lang.reflect.Constructor;
 
-import static com.SiliconSharks.Main.Message;
-import static com.SiliconSharks.Main.getStackTrace;
+import static com.SiliconSharks.MainUpdateLoop.Message;
+import static com.SiliconSharks.MainUpdateLoop.getStackTrace;
 @SuppressWarnings("unchecked")
 
 public class ControlSystem {
-    private int KeyboardRefreshCounter = 0;
-    private Gamepad[] gamepads;
-    public ControlSystem(){
+    private static int KeyboardRefreshCounter = 0;
+    private static Gamepad[] gamepads;
+    public ControlSystem(){}
+    public static void start(){
+        CustomKeyboard.start();
         switch (Settings.getSetting("NumGamepad")){
             case 0:{
                 // GUI and Keyboard testing only, no gamepads expected;
                 gamepads = new Gamepad[0];
+                break;
             }case 1:{
                 // One controller expected, testing purposes
                 gamepads = new Gamepad[]{new Gamepad(0)};
+                break;
             }case 2:{
                 // Practice and Competition use, 2 controllers
-                gamepads = new Gamepad[]{new Gamepad(1), new Gamepad(2)};
+                gamepads = new Gamepad[]{new Gamepad(0), new Gamepad(0)};
+                break;
             }
         }
     }
-    private CustomKeyboard customKeyboard = new CustomKeyboard();
-    private ROVStatus currentROVStatus = new ROVStatus();
-    public Gamepad getGamepad(int index) {return gamepads[index];}
-    public void timerRefresh(){
+    private static ROVStatus currentROVStatus = new ROVStatus();
+    public static Gamepad getGamepad(int index) {return gamepads[index];}
+    public static void timerRefresh(){
         KeyboardRefreshCounter++;
         if(KeyboardRefreshCounter >= Settings.getSetting("KeyboardUpdateRate")){
-            customKeyboard.TimerRefresh();
+            CustomKeyboard.TimerRefresh();
             KeyboardRefreshCounter = 0;
         }
         boolean GamepadConnection = false;
@@ -41,7 +46,7 @@ public class ControlSystem {
             if (gamepad.isConnected()) {
                 if (!gamepad.pollController()) {
                     gamepad.setController(null);
-                    Message(0, "Error polling controller, disconnecting...");
+                    Message(1, "Error polling controller, disconnecting...");
                 } else {
                     gamepad.update(currentROVStatus);
                     GamepadConnection = true;
@@ -50,18 +55,20 @@ public class ControlSystem {
                 int ConnectionCounter = gamepad.getConnectionCounter();
                 if (ConnectionCounter <= Settings.getSetting("GamepadConnectionAttemptRate")*Settings.getSetting("NumGamepadConnectionAttempts")) {
                     if (ConnectionCounter % Settings.getSetting("GamepadConnectionAttemptRate") == 0) {
+                        Message(1,Integer.toString(ConnectionCounter) + Integer.toString(gamepads.length));
                         AttemptConnection(gamepad);
                     }
                 }
             }
         }
         if(GamepadConnection){
-            if(Settings.getSettingB("KeyboardEnabled") && Settings.getSettingB("KeyboardEnabledWhileGamepadConnected")) customKeyboard.update(currentROVStatus);
+            if(Settings.getSettingB("KeyboardEnabled") && Settings.getSettingB("KeyboardEnabledWhileGamepadConnected")) CustomKeyboard.update(currentROVStatus);
         }else{
-            if(Settings.getSettingB("KeyboardEnabled")) customKeyboard.update(currentROVStatus);
+            if(Settings.getSettingB("KeyboardEnabled")) CustomKeyboard.update(currentROVStatus);
         }
+        ROVInfo.enqueueCurrentROVStatus(currentROVStatus);
     }
-    private void AttemptConnection(Gamepad gamepad){
+    private static void AttemptConnection(Gamepad gamepad){
         try{
             Message(0,"Attempting connection...");
             ControllerEnvironment controllerEnvironment = createDefaultEnvironment();
@@ -75,7 +82,7 @@ public class ControlSystem {
                             return;
                         }
                     }
-                    Message(0,"Found gamepad: "+ controller.getName());
+                    Message(1,"Found gamepad: "+ controller.getName());
                     gamepad.setController(controller);
                     break;
                 }
@@ -96,10 +103,10 @@ public class ControlSystem {
         // Create object with default constructor
         return constructor.newInstance();
     }
-    public byte[] getSerialBytes(){
+    public static byte[] getSerialBytes(){
         return currentROVStatus.getStatus();
     }
-    public ROVStatus getCurrentROVStatus() {
+    public static ROVStatus getCurrentROVStatus() {
         return currentROVStatus;
     }
 }
