@@ -24,6 +24,7 @@ public class SerialCommunication {
         newReceived = false;
         Connected = false;
         successfulPort =" ";
+        Message(1,"Successful SerialCommunication Startup!");
     }
     public static void timerRefresh(){
         if (Connected) {

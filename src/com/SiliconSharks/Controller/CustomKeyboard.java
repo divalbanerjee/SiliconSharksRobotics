@@ -3,10 +3,10 @@ package com.SiliconSharks.Controller;
 import com.SiliconSharks.ROVComponents.ROVStatus;
 import com.SiliconSharks.Settings;
 
+import static com.SiliconSharks.MainUpdateLoop.Message;
+
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
-
-import static com.SiliconSharks.MainUpdateLoop.Message;
 
 class CustomKeyboard {
     private static int[] time = {0,0,0,0,0,0};
@@ -70,7 +70,6 @@ class CustomKeyboard {
             (KeyEvent ke) -> {
                 synchronized (CustomKeyboard.class) {
                     int index = KeyCodeToIndex(ke.getKeyCode());
-                    Message(0, Integer.toString(index));
                     if(index < 0){return false;}
                     switch (ke.getID()) {
                         case KeyEvent.KEY_PRESSED:
@@ -84,6 +83,7 @@ class CustomKeyboard {
                     return false;
                 }
             });
+        Message(1, "Successful CustomKeyboard Startup!");
     }
     static void update(ROVStatus rovStatus){
         int maxtaps = Settings.getSetting("KeyboardMaxTaps");

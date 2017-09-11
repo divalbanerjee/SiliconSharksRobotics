@@ -31,7 +31,11 @@ public class ControlSystem {
                 gamepads = new Gamepad[]{new Gamepad(0), new Gamepad(0)};
                 break;
             }
+            default:{
+                Message(1,"Unrecognized NumGamepad Setting: " + Integer.toString(Settings.getSetting("NumGamepad")));
+            }
         }
+        Message(1,"Successful ControlSystem Startup!");
     }
     private static ROVStatus currentROVStatus = new ROVStatus();
     public static Gamepad getGamepad(int index) {return gamepads[index];}
@@ -55,7 +59,6 @@ public class ControlSystem {
                 int ConnectionCounter = gamepad.getConnectionCounter();
                 if (ConnectionCounter <= Settings.getSetting("GamepadConnectionAttemptRate")*Settings.getSetting("NumGamepadConnectionAttempts")) {
                     if (ConnectionCounter % Settings.getSetting("GamepadConnectionAttemptRate") == 0) {
-                        Message(1,Integer.toString(ConnectionCounter) + Integer.toString(gamepads.length));
                         AttemptConnection(gamepad);
                     }
                 }
@@ -88,7 +91,7 @@ public class ControlSystem {
                 }
             }
         }catch(ReflectiveOperationException ex){
-            Message(0,getStackTrace(ex));
+            Message(2,getStackTrace(ex));
         }
     }
     private static ControllerEnvironment createDefaultEnvironment() throws ReflectiveOperationException {
