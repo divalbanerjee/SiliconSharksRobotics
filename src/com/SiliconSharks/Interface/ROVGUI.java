@@ -1,19 +1,24 @@
 package com.SiliconSharks.Interface;
 
+import com.SiliconSharks.Controller.ControlSystem;
 import com.SiliconSharks.Graphics.Compass;
 import com.SiliconSharks.Graphics.ControllerInterface;
 import com.SiliconSharks.Graphics.MButton;
 import com.SiliconSharks.Graphics.StatusBar;
+import com.SiliconSharks.Serial.SerialCommunication;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.*;
 
 /**
  * Created by bandi on 8/27/2017.
  */
 public class ROVGUI extends JFrame {
+    private static boolean TimerTaskRunning = false;
     private Font font20Pt = new Font("Helvetica" , Font.PLAIN, 20);
     Container container;
     Color textColor = new Color(149, 165, 166);
@@ -95,6 +100,8 @@ public class ROVGUI extends JFrame {
 
         //layoutManager.add(dataPanel, c);
         container.add(layoutManager);
+        java.util.Timer timer = new java.util.Timer();
+        timer.scheduleAtFixedRate(rovLoop, 1015, 10);
     }
     public class controller1MouseListener extends MouseAdapter {
         public void mousePressed(MouseEvent e) {
@@ -121,5 +128,14 @@ public class ROVGUI extends JFrame {
             System.exit(0);
         }
     }
-    
+
+    private TimerTask rovLoop = new TimerTask() {
+        @Override
+        public void run() {
+                //ControlSystem.timerRefresh();
+                controller1.repaint();
+                controller2.repaint();
+                //SerialCommunication.timerRefresh();
+        }
+    };
 }

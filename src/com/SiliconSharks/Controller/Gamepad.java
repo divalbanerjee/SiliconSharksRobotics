@@ -1,6 +1,7 @@
 package com.SiliconSharks.Controller;
 
 import com.SiliconSharks.ROVComponents.ROVStatus;
+import com.SiliconSharks.Settings;
 import net.java.games.input.*;
 
 import static com.SiliconSharks.MainUpdateLoop.Message;
