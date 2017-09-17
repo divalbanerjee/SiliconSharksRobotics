@@ -25,6 +25,7 @@ public class ControllerInterface extends JPanel{
     public ControllerInterface(int pilotNumber){
         setBackground(new Color(44, 62, 80));
         myPilotNumber = pilotNumber;
+        gamePad  = ControlSystem.getGamepad(myPilotNumber-1);
     }
 
     public BufferedImage getControllerImage() {
@@ -71,9 +72,8 @@ public class ControllerInterface extends JPanel{
         g2.drawString("Pilot " + this.myPilotNumber +"'s Controller",
                 (imgController.getWidth())/2-320 ,(imgController.getHeight()/2)+70);
         try {
-
-
             if (gamePad.isConnected()) {
+                //TODO:I'll clean this up in a bit
                 if (gamePad.getButton('X')) g2.setColor(new Color(163, 50, 20));
                 else g2.setColor(new Color(63, 143, 40));
                 g2.fillOval(305, 88, 30, 30);
@@ -89,10 +89,17 @@ public class ControllerInterface extends JPanel{
                 g2.setColor(new Color(150, 150, 40));
                 g2.fillOval(148 + (int) (20 * gamePad.getAxis("LX")), 164 + (int) (20 * gamePad.getAxis("LY")), 20, 20);
                 g2.fillOval(278 + (int) (20 * gamePad.getAxis("RX")), 164 + (int) (20 * gamePad.getAxis("RY")), 20, 20);
+                g2.setFont(new Font("Helvetica",Font.PLAIN,15));
+                g2.drawString("Connected", imgController.getWidth()/4 - 40,
+                        (int) (imgController.getHeight() / 2) + 40);
+                g2.setColor(new Color(50, 90, 50));
+                g2.fillOval(imgController.getWidth()/4+60, (imgController.getHeight() / 2) + 30, 10, 10);
             } else {
-                g2.drawString("Connected", 0, (int) (imgController.getHeight() / 2) + 90);
+                g2.setFont(new Font("Helvetica",Font.PLAIN,15));
+                g2.drawString("Disconnected", imgController.getWidth()/4 - 40,
+                        (int) (imgController.getHeight() / 2) + 40);
                 g2.setColor(new Color(200, 70, 50));
-                g2.drawOval(0, (imgController.getHeight() / 4) + 90, 10, 10);
+                g2.fillOval(imgController.getWidth()/4+60, (imgController.getHeight() / 2) + 30, 10, 10);
             }
         }catch(NullPointerException e){
             System.out.println(e);

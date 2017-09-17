@@ -80,8 +80,8 @@ public class ControlSystem {
             for(Controller controller : controllers){
                 if(controller.getType() == Controller.Type.GAMEPAD){
                     for(Gamepad gamepad1 : gamepads){
-                        if(gamepad.getController().getName().equals(gamepad1.getController().getName()) &&
-                                gamepad.getController().getPortNumber()==gamepad1.getController().getPortNumber()){
+                        if(gamepad1.isConnected() && controller.getName().equals(gamepad1.getController().getName()) &&
+                                controller.getPortNumber()==gamepad1.getController().getPortNumber()){
                             return;
                         }
                     }

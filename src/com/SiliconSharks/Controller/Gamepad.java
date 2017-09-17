@@ -63,6 +63,7 @@ public class Gamepad {
                 buffer.append(comp.getName()).append(" changed to ").append(value);
                 eventIdentifier = event.getComponent().getIdentifier();
                 for(int i = 0; i < NumComponents; i++){
+                    Message(1,eventIdentifier.getName());
                     if(identifiers[i] == eventIdentifier){
                         values[i] = value;
                         break;
