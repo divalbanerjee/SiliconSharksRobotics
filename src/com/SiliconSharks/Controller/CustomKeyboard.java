@@ -87,11 +87,11 @@ class CustomKeyboard {
     }
     static void update(ROVStatus rovStatus){
         int maxtaps = Settings.getSetting("KeyboardMaxTaps");
-        rovStatus.setThruster(0,((double)(getKeyTaps('W')-getKeyTaps('S')))/maxtaps);
-        rovStatus.setThruster(1,((double)(getKeyTaps('W')-getKeyTaps('S')))/maxtaps);
+        rovStatus.setThruster(0,rovStatus.getThruster(0)+((double)(getKeyTaps('W')-getKeyTaps('S')))/maxtaps);
+        rovStatus.setThruster(1,rovStatus.getThruster(1)+((double)(getKeyTaps('W')-getKeyTaps('S')))/maxtaps);
         rovStatus.setThruster(0,rovStatus.getThruster(0)+((double)(getKeyTaps('A')-getKeyTaps('D')))/maxtaps);
         rovStatus.setThruster(1,rovStatus.getThruster(1)-((double)(getKeyTaps('A')-getKeyTaps('D')))/maxtaps);
-        rovStatus.setThruster(2,((double)(getKeyTaps('Q')-getKeyTaps('E')))/maxtaps);
+        rovStatus.setThruster(2,rovStatus.getThruster(2)+((double)(getKeyTaps('Q')-getKeyTaps('E')))/maxtaps);
         rovStatus.calibrate(0);
     }
 }
