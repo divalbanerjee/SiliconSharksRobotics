@@ -27,12 +27,15 @@ public class Settings {
             new Pair("SerialDurationBeforeDisconnect", 300),
             new Pair("SerialBaudRate", 19200),
             new Pair("NumROVStatusSaved", 30),
+            new Pair("NumThrusters",3),
+            new Pair("NumServos",3)
     };
     static void start(){
         try {
             BufferedReader br = new BufferedReader(new FileReader("Settings.txt"));
             String line;
             while ((line = br.readLine()) != null){
+                if(line.startsWith("//") || line.length() <= 3)continue;
                 boolean hasMatch =false;
                 for (int i = 0; i < settings.length; i++) {
                     if(line.startsWith(settings[i].getKey()+" ")){
