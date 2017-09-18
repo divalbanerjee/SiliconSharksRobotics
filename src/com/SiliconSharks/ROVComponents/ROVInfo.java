@@ -2,6 +2,8 @@ package com.SiliconSharks.ROVComponents;
 
 import com.SiliconSharks.Settings;
 
+import static com.SiliconSharks.MainUpdateLoop.Message;
+
 public class ROVInfo{
     private static ROVStatus[] rovStatuses;
     private static int numItems;
@@ -14,16 +16,23 @@ public class ROVInfo{
         }
     }
     public static void insert(ROVStatus rovStatus){
-        System.arraycopy(rovStatuses, 1, rovStatuses, 0, numItems);
+        for (int i = 0; i < numItems-1; i++) {
+            rovStatuses[i] = rovStatuses[i+1];
+        }
         rovStatuses[numItems-1] = rovStatus;
     }
     public static ROVStatus[] getRovStatuses() {
         return rovStatuses;
     }
     public static ROVStatus update(int TimeStamp){
+        StringBuilder s = new StringBuilder();
         for(ROVStatus rovStatus:rovStatuses){
-            if(rovStatus.getTimeStamp()==TimeStamp) return rovStatus;
+            s.append(rovStatus.getTimeStamp()).append(' ');
+            if(rovStatus.getTimeStamp()==TimeStamp){
+                return rovStatus;
+            }
         }
+        Message(2,s.toString());
         return null;
     }
 }

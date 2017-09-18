@@ -71,11 +71,18 @@ public class SerialCommunication {
         if(Connected) {
             try{
                 ROVStatus rovStatus = ControlSystem.getCurrentROVStatus();
+                //StringBuilder s  =  new StringBuilder();
+                //s.append("Writing: ").append(rovStatus.getTimeStamp());
                 writeInt(rovStatus.getTimeStamp());
-                for(int i = 0; i < Settings.getSetting("NumThrusters"); i++)
-                    writeFloat((float)rovStatus.getThruster(i));
-                for(int i = 0; i < Settings.getSetting("NumServos"); i++)
-                    writeFloat((float)rovStatus.getServo(i));
+                for(int i = 0; i < Settings.getSetting("NumThrusters"); i++) {
+                    writeFloat((float) rovStatus.getThruster(i));
+                    //s.append("  ").append(rovStatus.getThruster(i));
+                }
+                for(int i = 0; i < Settings.getSetting("NumServos"); i++) {
+                    writeFloat((float) rovStatus.getServo(i));
+                    //s.append("  ").append(rovStatus.getServo(i));
+                }
+                //Message(2,s.toString());
             }catch(SerialPortException ex){
                 Message(0,"Error: Package Send Failed!");
                 Message(1,getStackTrace(ex));
@@ -246,6 +253,8 @@ public class SerialCommunication {
                     setupSensor(rovStatus.getAccel());
                     setupSensor(rovStatus.getGyro());
                     rovStatus.setTemperature(getfloat());
+                    NotReceivedCounter = 0;
+                    successfulPort = currentPort;
                 }
             } catch (SerialPortException ex) {
                 Message(1,"Error in receiving string from COM-port");

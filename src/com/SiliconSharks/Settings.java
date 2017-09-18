@@ -25,7 +25,7 @@ public class Settings {
             new Pair("SerialConnectionAttemptRate",30),
             new Pair("SerialUpdateRate", 2),
             new Pair("SerialDurationBeforeDisconnect", 300),
-            new Pair("SerialBaudRate", 19200),
+            new Pair("SerialBaudRate", 57600),
             new Pair("NumROVStatusSaved", 30),
             new Pair("NumThrusters",3),
             new Pair("NumServos",3)
