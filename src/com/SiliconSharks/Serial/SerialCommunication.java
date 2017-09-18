@@ -17,8 +17,6 @@ public class SerialCommunication {
     private static ArrayList<String> prevPorts = new ArrayList<>();
     private static String currentPort, successfulPort;
     private static int SendPackageCounter = 0, NotConnectedCounter= 0, NotReceivedCounter = 0, WaitSend = 0;
-    private static ROVStatus currentROVStatus = new ROVStatus();
-    private static ArrayList<Object> serialBytes = new ArrayList<>(0);
     private static String[] portNames = new String[]{};
     public SerialCommunication(){}
     public static void start(){
@@ -35,7 +33,6 @@ public class SerialCommunication {
         } else {
             tryConnect();
         }
-        ROVInfo.enqueueCurrentROVTelemetry(currentROVStatus);
     }
     private static boolean WaitOver(){
         if(WaitSend < Settings.getSetting("SerialConnectionPauseDuration") && WaitSend > -1){
@@ -53,22 +50,32 @@ public class SerialCommunication {
             Message(0, "Serial is currently connected");
             SendPackageCounter = 0;
             Message(0, "Sending Package...");
-            if (sendPackage(ControlSystem.getSerialBytes())) {
+            if (sendPackage()) {
                 Message(0, "Package Sent!");
             } else {
                 Message(1, "Package Not Sent! Scroll up for Exception Stack Trace");
             }
         }
     }
-    private static boolean sendPackage(byte[] serialBytes){
+    private static String hex(int n) {
+        // call toUpperCase() if that's required
+        return String.format("0x%8s", Integer.toHexString(n)).replace(' ', '0').substring(2);
+    }
+    private static void writeInt(int n)throws SerialPortException{
+        serialPort.writeString(hex(n));
+    }
+    private static void writeFloat(float f) throws SerialPortException{
+        serialPort.writeString(hex(Float.floatToRawIntBits(f)));
+    }
+    private static boolean sendPackage(){
         if(Connected) {
             try{
-                StringBuilder telemetry = new StringBuilder();
-                for(byte b : serialBytes){
-                    telemetry.append(b).append(' ');
-                }
-                Message(0,telemetry.toString());
-                serialPort.writeBytes(serialBytes);
+                ROVStatus rovStatus = ControlSystem.getCurrentROVStatus();
+                writeInt(rovStatus.getTimeStamp());
+                for(int i = 0; i < Settings.getSetting("NumThrusters"); i++)
+                    writeFloat((float)rovStatus.getThruster(i));
+                for(int i = 0; i < Settings.getSetting("NumServos"); i++)
+                    writeFloat((float)rovStatus.getServo(i));
             }catch(SerialPortException ex){
                 Message(0,"Error: Package Send Failed!");
                 Message(1,getStackTrace(ex));
@@ -209,30 +216,37 @@ public class SerialCommunication {
             return false;
         }
     }
+    private static int getint()throws SerialPortException{
+        String s = serialPort.readHexString(4);
+        Long l = Long.valueOf(String.valueOf(s.charAt(9)) + s.charAt(10) + s.charAt(6) + s.charAt(7) + s.charAt(3) + s.charAt(4) + s.charAt(0) + s.charAt(1),16);
+        return l.intValue();
+    }
+    private static float getfloat()throws SerialPortException{
+        return Float.intBitsToFloat(getint());
+    }
+    private static void setupSensor(ROVStatus.Sensor s)throws SerialPortException{
+        s.setX(getfloat());
+        s.setY(getfloat());
+        s.setZ(getfloat());
+    }
     private static void handleSerialEvent(SerialPortEvent serialPortEvent){
         if (serialPortEvent.isRXCHAR() && serialPortEvent.getEventValue() >= 1) {
             try {
-                byte a[] = serialPort.readBytes(serialPortEvent.getEventValue());
-                for(byte b : a){
-                    serialBytes.add(b);
+                if(serialPort.getInputBufferBytesCount() >= 80){
+                    ROVStatus rovStatus = ROVInfo.update(getint());
+                    if(rovStatus == null) return;
+                    rovStatus.setAmperage((double)getint());
+                    rovStatus.setVoltage((double)getint());
+                    rovStatus.getSystem().setCalibration(getint());
+                    rovStatus.getGyro().setCalibration(getint());
+                    rovStatus.getAccel().setCalibration(getint());
+                    rovStatus.getMagnet().setCalibration(getint());
+                    setupSensor(rovStatus.getSystem());
+                    setupSensor(rovStatus.getMagnet());
+                    setupSensor(rovStatus.getAccel());
+                    setupSensor(rovStatus.getGyro());
+                    rovStatus.setTemperature(getfloat());
                 }
-                //Message(0,"Byte read: " + a[0]+ " Message length: " + event.getEventValue());
-                for(int i = 0; i < serialBytes.size() - 8; i++){
-                    if(serialBytes.get(i).equals((byte)-1) && i + 8 < serialBytes.size()){
-                        byte[] telemetry = new byte[8];
-                        StringBuilder arraylist = new StringBuilder("bytes read: ");
-                        for(int j = 0; j < 8; j++){
-                            telemetry[j] = (byte) serialBytes.get(i+1+j);
-                            arraylist.append(serialBytes.get(i+1+j)).append(' ');
-                        }
-                        Message(0,arraylist.toString());
-                        currentROVStatus.setStatus(telemetry);
-                        NotReceivedCounter = 0;
-                        successfulPort = currentPort;
-                        serialBytes = new ArrayList<>(serialBytes.subList(i+4, serialBytes.size()-1));
-                    }
-                }
-
             } catch (SerialPortException ex) {
                 Message(1,"Error in receiving string from COM-port");
                 Message(1,getStackTrace(ex));
