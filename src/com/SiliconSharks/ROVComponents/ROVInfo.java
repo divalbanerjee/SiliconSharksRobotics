@@ -26,13 +26,26 @@ public class ROVInfo{
     }
     public static ROVStatus update(int TimeStamp){
         StringBuilder s = new StringBuilder();
-        for(ROVStatus rovStatus:rovStatuses){
+        for (int i = rovStatuses.length-1; i >= 0; i--) {
+            ROVStatus rovStatus = rovStatuses[i];
             s.append(rovStatus.getTimeStamp()).append(' ');
-            if(rovStatus.getTimeStamp()==TimeStamp){
+            if (!rovStatus.isTelemetryUpdated() && rovStatus.getTimeStamp() == TimeStamp) {
                 return rovStatus;
             }
         }
         Message(2,s.toString());
+        return null;
+    }
+    public static ROVStatus getMostRecentSentStatus(){
+        return rovStatuses[numItems-1];
+    }
+    public static ROVStatus getMostRecentTelemetry(){
+        for (int i = rovStatuses.length-1; i >= 0; i--) {
+            ROVStatus rovStatus = rovStatuses[i];
+            if (rovStatus.isTelemetryUpdated()) {
+                return rovStatus;
+            }
+        }
         return null;
     }
 }

@@ -23,6 +23,7 @@ public class ROVStatus {
     private double Amperage = 0, Voltage = 0, Temperature =0;
     private Sensor System = new Sensor(), Magnet = new Sensor(), Accel = new Sensor(), Gyro = new Sensor(); // System sensor includes system calibration and orientation
     private int TimeStamp;
+    private boolean TelemetryUpdated = false;
     public ROVStatus(int TimeStamp){
         this.TimeStamp = TimeStamp;
         numThrusters = Settings.getSetting("NumThrusters");
@@ -30,6 +31,9 @@ public class ROVStatus {
         for (int i = 0; i < numThrusters; i++) thrusters[i] = 0;
         for (int i = 0; i < numServos; i++) servos[i] = 0;
     }
+
+    public boolean isTelemetryUpdated() {return TelemetryUpdated; }
+    public void setTelemetryUpdated(boolean telemetryUpdated) { TelemetryUpdated = telemetryUpdated; }
     public int getTimeStamp(){return TimeStamp;}
     public Sensor getAccel() {return Accel;}
     public Sensor getGyro() { return Gyro; }

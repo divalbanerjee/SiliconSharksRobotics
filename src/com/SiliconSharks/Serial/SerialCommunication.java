@@ -255,6 +255,7 @@ public class SerialCommunication {
                     rovStatus.setTemperature(getfloat());
                     NotReceivedCounter = 0;
                     successfulPort = currentPort;
+                    rovStatus.setTelemetryUpdated(true);
                 }
             } catch (SerialPortException ex) {
                 Message(1,"Error in receiving string from COM-port");
