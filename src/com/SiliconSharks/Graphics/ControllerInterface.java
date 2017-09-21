@@ -21,6 +21,8 @@ public class ControllerInterface extends JPanel{
     private Gamepad  gamePad;
     private int myPilotNumber;
     private Font font30Pt = new Font("Helvetica" , Font.PLAIN, 30);
+    private BufferedImage imgController = null;
+    private Boolean drawStatus = false;
 
     public ControllerInterface(int pilotNumber){
         setBackground(new Color(44, 62, 80));
@@ -40,7 +42,7 @@ public class ControllerInterface extends JPanel{
             int h = before.getHeight();
             //Scale the image
             AffineTransform at = new AffineTransform();
-            at.scale(.5, .5);
+            at.scale(.35, .35);
 
             BufferedImage after = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 
@@ -64,14 +66,18 @@ public class ControllerInterface extends JPanel{
         g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
-        BufferedImage imgController = getControllerImage(); //TODO:Super inefficient fix later
+        if(!drawStatus){
+            imgController = this.getControllerImage();
+            drawStatus = true;
+        }
         g2.drawImage(imgController,30,30,null);
         this.setPreferredSize(new Dimension(imgController.getWidth(), imgController.getHeight()+120));
         g2.setFont(font30Pt);
         g2.setColor(new Color(236, 239, 241));
         g2.drawString("Pilot " + this.myPilotNumber +"'s Controller",
-                (imgController.getWidth())/2-320 ,(imgController.getHeight()/2)+70);
+                (imgController.getWidth())/2-380 ,(imgController.getHeight()/2)+70);
         try {
+
             if (gamePad.isConnected()) {
                 //TODO:I'll clean this up in a bit
                 if (gamePad.getButton('X')) g2.setColor(new Color(163, 50, 20));
@@ -104,10 +110,10 @@ public class ControllerInterface extends JPanel{
         }catch(NullPointerException e){
             System.out.println(e);
             g2.setFont(new Font("Helvetica",Font.PLAIN,15));
-            g2.drawString("Disconnected", imgController.getWidth()/4 - 40,
+            g2.drawString("Disconnected", imgController.getWidth()/4 - 150,
                     (int) (imgController.getHeight() / 2) + 40);
             g2.setColor(new Color(200, 70, 50));
-            g2.fillOval(imgController.getWidth()/4+60, (imgController.getHeight() / 2) + 30, 10, 10);
+            g2.fillOval(imgController.getWidth()/4+30, (imgController.getHeight() / 2) + 30, 10, 10);
         }
     }
 }
