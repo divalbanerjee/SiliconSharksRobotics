@@ -8,6 +8,7 @@ import net.java.games.input.*;
 import java.lang.reflect.Constructor;
 
 import static com.SiliconSharks.MainUpdateLoop.Message;
+import static com.SiliconSharks.MainUpdateLoop.getGlobalTimeStamp;
 import static com.SiliconSharks.MainUpdateLoop.getStackTrace;
 @SuppressWarnings("unchecked")
 
@@ -37,9 +38,10 @@ public class ControlSystem {
         }
         Message(1,"Successful ControlSystem Startup!");
     }
-    private static ROVStatus currentROVStatus = new ROVStatus();
+    private static ROVStatus currentROVStatus;
     public static Gamepad getGamepad(int index) {return gamepads[index];}
     public static void timerRefresh(){
+        currentROVStatus = new ROVStatus(getGlobalTimeStamp());
         KeyboardRefreshCounter++;
         if(KeyboardRefreshCounter >= Settings.getSetting("KeyboardUpdateRate")){
             CustomKeyboard.TimerRefresh();
@@ -69,7 +71,6 @@ public class ControlSystem {
         }else{
             if(Settings.getSettingB("KeyboardEnabled")) CustomKeyboard.update(currentROVStatus);
         }
-        ROVInfo.enqueueCurrentROVStatus(currentROVStatus);
     }
     private static void AttemptConnection(Gamepad gamepad){
         try{
@@ -106,10 +107,9 @@ public class ControlSystem {
         // Create object with default constructor
         return constructor.newInstance();
     }
-    public static byte[] getSerialBytes(){
-        return currentROVStatus.getStatus();
-    }
     public static ROVStatus getCurrentROVStatus() {
+        //DO NOT CALL THIS METHOD OUTSIDE OF SERIALCOMMUNICATION
+        ROVInfo.insert(currentROVStatus);
         return currentROVStatus;
     }
 }

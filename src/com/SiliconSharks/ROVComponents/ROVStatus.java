@@ -1,34 +1,44 @@
 package com.SiliconSharks.ROVComponents;
 
+import com.SiliconSharks.Settings;
+
 public class ROVStatus {
-    private final int numThrusters = 3, numServos = 3;
-    private final double[] multipliers = {1,1,1,1,1,1};
+    public class Sensor{
+        private int calibration;
+        private double X, Y ,Z;
+        private Sensor(){}
+        public void setX(double x) {X = x; }
+        public double getX() {return X;}
+        public void setY(double y) {Y = y; }
+        public double getY() {return Y;}
+        public void setZ(double z) {Z = z; }
+        public double getZ() {return Z;}
+        public void setCalibration(int calibration) { this.calibration = calibration; }
+        public int getCalibration() {return calibration;}
+    }
+    private int numThrusters = 3, numServos = 3;
     private double thrusters[] = new double[numThrusters];
     private double servos[] = new double[numServos];
     private double AmpScale = -1;
-    private double Amperage = 0;
-    public ROVStatus(){
+    private double Amperage = 0, Voltage = 0, Temperature =0;
+    private Sensor System = new Sensor(), Magnet = new Sensor(), Accel = new Sensor(), Gyro = new Sensor(); // System sensor includes system calibration and orientation
+    private int TimeStamp;
+    private boolean TelemetryUpdated = false;
+    public ROVStatus(int TimeStamp){
+        this.TimeStamp = TimeStamp;
+        numThrusters = Settings.getSetting("NumThrusters");
+        numServos = Settings.getSetting("NumServos");
         for (int i = 0; i < numThrusters; i++) thrusters[i] = 0;
         for (int i = 0; i < numServos; i++) servos[i] = 0;
     }
-    public void setStatus(byte[] serialBytes){
-        int index, tempInt, tempInt2 = 0;
-        index = 0;
-        for(byte b : serialBytes){
-            tempInt = (int) b;
-            if(tempInt < 0) tempInt += 256;
-            if(index == 6){
-                tempInt2 = tempInt;
-            }else if(index == 7){
-                Amperage = ((double)tempInt2 * 255 + tempInt)*50.15/1024; // The Arduino measures voltage from a 0.1 Ohm
-            }else if(index >= 3){                                        // Shunt and finds the amperage
-                servos[index-numThrusters] = ((tempInt-90)*multipliers[index]/90);
-            }else{
-                thrusters[index] = ((tempInt-125)*multipliers[index]/125);
-            }
-            index++;
-        }
-    }
+
+    public boolean isTelemetryUpdated() {return TelemetryUpdated; }
+    public void setTelemetryUpdated(boolean telemetryUpdated) { TelemetryUpdated = telemetryUpdated; }
+    public int getTimeStamp(){return TimeStamp;}
+    public Sensor getAccel() {return Accel;}
+    public Sensor getGyro() { return Gyro; }
+    public Sensor getMagnet() {return Magnet;}
+    public Sensor getSystem() {return System;}
     private double trim(double a){
         a = (a > 1) ? 1: a;
         a = (a < -1) ? -1: a;
@@ -46,24 +56,16 @@ public class ROVStatus {
         }else{
             AmpScale = -1;
         }
-        //Message(0,Double.toString(AmpExp) + " Amps Expected, " + Double.toString(AmpCap) + " Amp Cap, " + Double.toString(AmpScale) + " AmpScale, " + Double.toString(thrusters[0]) + " First ");
-    }
-    public byte[] getStatus(){
-        byte[] serialBytes= new byte[7];
-        serialBytes[0] = -1;
-        for(int i = 0; i < numThrusters + numServos; i++){
-            if(i < numThrusters) {
-                serialBytes[i + 1] = (byte)(thrusters[i]*125*multipliers[i]+125);
-            }else{
-                serialBytes[i + 1] = (byte)(servos[i-numThrusters]*90*multipliers[i]+90);
-            }
-        }
-        return serialBytes;
     }
     public void setThruster(int index, double value){thrusters[index] = trim(value);}
     public void setServo(int index, double value){servos[index] = trim(value);}
     public double getThruster(int index){return thrusters[index];}
     public double getServo(int index){return servos[index];}
+    public void setAmperage(double amperage) { Amperage = amperage; }
+    public void setTemperature(double temperature) { Temperature = temperature; }
+    public void setVoltage(double voltage) { Voltage = voltage; }
     public double getAmperage(){return Amperage;}
+    public double getTemperature() { return Temperature;}
+    public double getVoltage() { return Voltage; }
     public double getAmpScale(){return AmpScale;}
 }

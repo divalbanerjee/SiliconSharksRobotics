@@ -1,29 +1,51 @@
 package com.SiliconSharks.ROVComponents;
 
-import com.SiliconSharks.Queue;
 import com.SiliconSharks.Settings;
 
-import java.util.ArrayList;
+import static com.SiliconSharks.MainUpdateLoop.Message;
 
 public class ROVInfo{
-    private static Queue<ROVStatus> ROVTelemetry = new Queue<>();
-    private static Queue<ROVStatus> ROVCurrent = new Queue<>();
+    private static ROVStatus[] rovStatuses;
+    private static int numItems;
     public ROVInfo(){}
     public static void start(){
-        int numItems = Settings.getSetting("NumROVStatusSaved");
+        numItems = Settings.getSetting("NumROVStatusSaved");
+        rovStatuses = new ROVStatus[numItems];
         for(int i = 0; i < numItems; i++){
-            enqueueCurrentROVStatus(new ROVStatus());
-            enqueueCurrentROVTelemetry(new ROVStatus());
+            rovStatuses[i] = new ROVStatus(-1);
         }
     }
-    public static void enqueueCurrentROVStatus(ROVStatus status){
-        ROVCurrent.enqueue(status);
-        ROVCurrent.dequeue();
+    public static void insert(ROVStatus rovStatus){
+        for (int i = 0; i < numItems-1; i++) {
+            rovStatuses[i] = rovStatuses[i+1];
+        }
+        rovStatuses[numItems-1] = rovStatus;
     }
-    public static void enqueueCurrentROVTelemetry(ROVStatus status){
-        ROVTelemetry.enqueue(status);
-        ROVTelemetry.dequeue();
+    public static ROVStatus[] getRovStatuses() {
+        return rovStatuses;
     }
-    public static ArrayList<ROVStatus> getStatusArrayList(){return ROVCurrent.getAllArrayList();}
-    public static ArrayList<ROVStatus> getTelemetryArrayList(){return ROVCurrent.getAllArrayList();}
+    public static ROVStatus update(int TimeStamp){
+        StringBuilder s = new StringBuilder();
+        for (int i = rovStatuses.length-1; i >= 0; i--) {
+            ROVStatus rovStatus = rovStatuses[i];
+            s.append(rovStatus.getTimeStamp()).append(' ');
+            if (!rovStatus.isTelemetryUpdated() && rovStatus.getTimeStamp() == TimeStamp) {
+                return rovStatus;
+            }
+        }
+        Message(2,s.toString());
+        return null;
+    }
+    public static ROVStatus getMostRecentSentStatus(){
+        return rovStatuses[numItems-1];
+    }
+    public static ROVStatus getMostRecentTelemetry(){
+        for (int i = rovStatuses.length-1; i >= 0; i--) {
+            ROVStatus rovStatus = rovStatuses[i];
+            if (rovStatus.isTelemetryUpdated()) {
+                return rovStatus;
+            }
+        }
+        return null;
+    }
 }

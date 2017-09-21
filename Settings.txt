@@ -4,11 +4,13 @@ KeyboardUpdateRate 1
 KeyboardMaxTaps 10
 KeyboardCounterResetRate 30
 NumGamepad 2
-NumGamepadConnectionAttempts 1
+NumGamepadConnectionAttempts 0
 GamepadConnectionAttemptRate 100
-SerialConnectionPauseDuration 100
+SerialConnectionPauseDuration 300
 SerialConnectionAttemptRate 30
 SerialUpdateRate 2
 SerialDurationBeforeDisconnect 300
-SerialBaudRate 19200
-NumROVStatusSaved 30
+SerialBaudRate 57600
+NumROVStatusSaved 300
+NumThrusters 3
+NumServos 3

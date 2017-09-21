@@ -13,6 +13,7 @@ public class MainUpdateLoop {
 
     private final static boolean[] DebugPrintEnabled = {false, true, true, true}; // 0 is Repetitive Output from Timers, 1 is Non-Critical, 2 is Error and Redundancy handling, 3 is critical messages
     private static boolean TimerTaskRunning = false;
+    private static int GlobalTimeStamp = 0;
     private static TimerTask timerTask = new TimerTask() {
         @Override
         public void run() {
@@ -21,15 +22,16 @@ public class MainUpdateLoop {
                 ControlSystem.timerRefresh();
                 SerialCommunication.timerRefresh();
                 TimerTaskRunning = false;
+                GlobalTimeStamp++;
             }
         }
     };
+    public static int getGlobalTimeStamp(){return GlobalTimeStamp;}
     public static void start(){
         Settings.start();
         ControlSystem.start();
         SerialCommunication.start();
         ROVInfo.start();
-        //CustomFrame frame = new CustomFrame();
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(timerTask, 1015, 10);
     }
