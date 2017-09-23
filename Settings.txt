@@ -1,7 +1,7 @@
 KeyboardEnabled 1
 KeyboardEnabledWhileGamepadConnected 1
 KeyboardUpdateRate 1
-KeyboardMaxTaps 10
+KeyboardMaxTaps 7
 KeyboardCounterResetRate 30
 NumGamepad 2
 NumGamepadConnectionAttempts 0

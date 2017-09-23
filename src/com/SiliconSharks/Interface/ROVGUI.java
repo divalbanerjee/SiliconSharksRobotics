@@ -135,6 +135,7 @@ public class ROVGUI extends JFrame {
                 //ControlSystem.timerRefresh();
                 controller1.repaint();
                 controller2.repaint();
+                rovStatusBar.repaint();
                 //SerialCommunication.timerRefresh();
         }
     };

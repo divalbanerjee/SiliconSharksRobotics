@@ -242,8 +242,8 @@ public class SerialCommunication {
                 if(serialPort.getInputBufferBytesCount() >= 80){
                     ROVStatus rovStatus = ROVInfo.update(getint());
                     if(rovStatus == null) return;
-                    rovStatus.setAmperage((double)getint());
-                    rovStatus.setVoltage((double)getint());
+                    rovStatus.setAmperage(getint());
+                    rovStatus.setVoltage(getint());
                     rovStatus.getSystem().setCalibration(getint());
                     rovStatus.getGyro().setCalibration(getint());
                     rovStatus.getAccel().setCalibration(getint());
