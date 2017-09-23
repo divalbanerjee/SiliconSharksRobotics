@@ -115,17 +115,16 @@ public class StatusBar extends JPanel {
         g2.setFont(font20Pt);
         g2.setColor(new Color(236,239,241));
         if (isNominal) {
-            g2.drawString("ROV is nominal", (int)(this.getWidth()-this.getWidth()/3), this.getHeight() / 2 - 30);
+            g2.drawString("ROV is nominal", (int) (this.getWidth() - this.getWidth() / 3), this.getHeight() / 2 - 30);
             g2.setFont(font10Pt);
-            g2.drawString("Voltage: "+df.format(rovStatus.getVoltage()) + "V, Amperage: " + df.format(rovStatus.getAmperage()) + "A",(int)(this.getWidth()/3.8),this.getHeight()/10);
-            g2.drawString("Calibrations-- System: "+rovStatus.getSystem().getCalibration() +", Accel: "+ rovStatus.getAccel().getCalibration() + ", Magnet: "+ rovStatus.getMagnet().getCalibration() + ", Gyro: "+ rovStatus.getGyro().getCalibration(),(int)(this.getWidth()/3.8),this.getHeight()*2/10);
-            g2.drawString("Thruster 1: " + df.format(rovStatus.getThruster(0)) + ", Thruster 2: " + df.format(rovStatus.getThruster(1)) + ", Thruster 3: " + df.format(rovStatus.getThruster(2)),(int)(this.getWidth()/3.8),this.getHeight()*3/10);
-            g2.drawString("Orientation- X: "+ df.format(rovStatus.getSystem().getX())+", Y: " + df.format(rovStatus.getSystem().getY()) + ", Z: " + df.format(rovStatus.getSystem().getZ()),(int)(this.getWidth()/3.8),this.getHeight()*4/10);
-            g2.drawString("Accelerometer- X: "+ df.format(rovStatus.getAccel().getX())+", Y: " + df.format(rovStatus.getAccel().getY()) + ", Z: " + df.format(rovStatus.getAccel().getZ()),(int)(this.getWidth()/3.8),this.getHeight()*5/10);
-            g2.drawString("Gyroscope- X: "+ df.format(rovStatus.getGyro().getX())+", Y: " + df.format(rovStatus.getGyro().getY()) + ", Z: " + df.format(rovStatus.getGyro().getZ()),(int)(this.getWidth()/3.8),this.getHeight()*6/10);
-            g2.drawString("Magnetic- X: "+ df.format(rovStatus.getMagnet().getX())+", Y: " + df.format(rovStatus.getMagnet().getY()) + ", Z: " + df.format(rovStatus.getMagnet().getZ()),(int)(this.getWidth()/3.8),this.getHeight()*7/10);
-        }
-        else{
+            g2.drawString("Voltage: " + df.format(rovStatus.getVoltage()) + "V, Amperage: " + df.format(rovStatus.getAmperage()) + "A, AmpScale Factor: " + df.format(rovStatus.getAmpScale()) + ", Temperature: " + df.format(rovStatus.getTemperature()), (int) (this.getWidth() / 3.8), this.getHeight() / 10);
+            g2.drawString("Calibrations-- System: " + rovStatus.getSystem().getCalibration() + ", Accel: " + rovStatus.getAccel().getCalibration() + ", Magnet: " + rovStatus.getMagnet().getCalibration() + ", Gyro: " + rovStatus.getGyro().getCalibration(), (int) (this.getWidth() / 3.8), this.getHeight() * 2 / 10);
+            g2.drawString("Thruster 1: " + df.format(rovStatus.getThruster(0)) + ", Thruster 2: " + df.format(rovStatus.getThruster(1)) + ", Thruster 3: " + df.format(rovStatus.getThruster(2)), (int) (this.getWidth() / 3.8), this.getHeight() * 3 / 10);
+            g2.drawString("Orientation     - X: " + df.format(rovStatus.getSystem().getX()) + ", Y: " + df.format(rovStatus.getSystem().getY()) + ", Z: " + df.format(rovStatus.getSystem().getZ()), (int) (this.getWidth() / 3.8), this.getHeight() * 4 / 10);
+            g2.drawString("Accelerometer- X: " + df.format(rovStatus.getAccel().getX()) + ", Y: " + df.format(rovStatus.getAccel().getY()) + ", Z: " + df.format(rovStatus.getAccel().getZ()), (int) (this.getWidth() / 3.8), this.getHeight() * 5 / 10);
+            g2.drawString("Gyroscope      - X: " + df.format(rovStatus.getGyro().getX()) + ", Y: " + df.format(rovStatus.getGyro().getY()) + ", Z: " + df.format(rovStatus.getGyro().getZ()), (int) (this.getWidth() / 3.8), this.getHeight() * 6 / 10);
+            g2.drawString("Magnetic        - X: " + df.format(rovStatus.getMagnet().getX()) + ", Y: " + df.format(rovStatus.getMagnet().getY()) + ", Z: " + df.format(rovStatus.getMagnet().getZ()), (int) (this.getWidth() / 3.8), this.getHeight() * 7 / 10);
+        }else{
             g2.drawString("Error", this.getWidth()-this.getWidth()/6,this.getHeight()/2-30);
         }
     }

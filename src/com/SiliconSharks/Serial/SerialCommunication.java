@@ -58,7 +58,6 @@ public class SerialCommunication {
         }
     }
     private static String hex(int n) {
-        // call toUpperCase() if that's required
         return String.format("0x%8s", Integer.toHexString(n)).replace(' ', '0').substring(2);
     }
     private static void writeInt(int n)throws SerialPortException{
@@ -71,21 +70,16 @@ public class SerialCommunication {
         if(Connected) {
             try{
                 ROVStatus rovStatus = ControlSystem.getCurrentROVStatus();
-                //StringBuilder s  =  new StringBuilder();
-                //s.append("Writing: ").append(rovStatus.getTimeStamp());
                 writeInt(rovStatus.getTimeStamp());
                 for(int i = 0; i < Settings.getSetting("NumThrusters"); i++) {
                     writeFloat((float) rovStatus.getThruster(i));
-                    //s.append("  ").append(rovStatus.getThruster(i));
                 }
                 for(int i = 0; i < Settings.getSetting("NumServos"); i++) {
                     writeFloat((float) rovStatus.getServo(i));
-                    //s.append("  ").append(rovStatus.getServo(i));
                 }
-                //Message(2,s.toString());
             }catch(SerialPortException ex){
                 Message(0,"Error: Package Send Failed!");
-                Message(1,getStackTrace(ex));
+                Message(2,getStackTrace(ex));
                 return false;
             }
         }else{

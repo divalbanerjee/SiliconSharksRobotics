@@ -31,8 +31,7 @@ public class ROVStatus {
         for (int i = 0; i < numThrusters; i++) thrusters[i] = 0;
         for (int i = 0; i < numServos; i++) servos[i] = 0;
     }
-
-    public boolean isTelemetryUpdated() {return TelemetryUpdated; }
+    boolean isTelemetryUpdated() {return TelemetryUpdated; }
     public void setTelemetryUpdated(boolean telemetryUpdated) { TelemetryUpdated = telemetryUpdated; }
     public int getTimeStamp(){return TimeStamp;}
     public Sensor getAccel() {return Accel;}

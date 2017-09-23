@@ -11,6 +11,6 @@ SerialConnectionAttemptRate 30
 SerialUpdateRate 2
 SerialDurationBeforeDisconnect 300
 SerialBaudRate 57600
-NumROVStatusSaved 300
+NumROVStatusSaved 4000
 NumThrusters 3
 NumServos 3
