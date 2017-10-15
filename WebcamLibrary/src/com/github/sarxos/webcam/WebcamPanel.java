@@ -49,6 +49,8 @@ import org.slf4j.LoggerFactory;
  */
 public class WebcamPanel extends JPanel implements WebcamListener, PropertyChangeListener {
 
+	public WebcamPanel(){};
+
 	/**
 	 * This enum is to control of how image will be drawn in the panel bounds.
 	 *
@@ -626,12 +628,12 @@ public class WebcamPanel extends JPanel implements WebcamListener, PropertyChang
 	/**
 	 * Webcam object used to fetch images.
 	 */
-	private final Webcam webcam;
+	private Webcam webcam;
 
 	/**
 	 * Repainter is used to fetch images from camera and force panel repaint when image is ready.
 	 */
-	private final ImageUpdater updater;
+	private ImageUpdater updater;
 
 	/**
 	 * Image currently being displayed.
