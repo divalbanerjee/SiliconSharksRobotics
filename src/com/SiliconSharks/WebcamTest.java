@@ -5,19 +5,25 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.awt.image.BufferedImage;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.Map;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+import com.SiliconSharks.ROVComponents.ROVStatus;
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamDiscoveryEvent;
 import com.github.sarxos.webcam.WebcamDiscoveryListener;
 import com.github.sarxos.webcam.WebcamEvent;
 import com.github.sarxos.webcam.WebcamListener;
 import com.github.sarxos.webcam.WebcamPanel;
+import com.github.sarxos.webcam.WebcamPanel.*;
 import com.github.sarxos.webcam.WebcamPicker;
 import com.github.sarxos.webcam.WebcamResolution;
+
+import static java.awt.RenderingHints.*;
 
 
 /**
@@ -32,7 +38,6 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
     private Webcam webcam = null;
     private WebcamPanel panel = null;
     private WebcamPicker picker = null;
-
     @Override
     public void run() {
 

@@ -301,7 +301,7 @@ public class WebcamPanel extends JPanel implements WebcamListener, PropertyChang
 
 			if (isFPSDisplayed()) {
 
-				String str = String.format("FPS: %.1f", webcam.getFPS());
+				String str = String.format("FPS: %.1f wtfisthis", webcam.getFPS());
 
 				int sx = 5;
 				int sy = ph - 5;
