@@ -15,7 +15,7 @@ public class Compass extends JPanel{
         compassLabel = label;
         myAngle  = 0;
         this.setSize(new Dimension(150,170));
-        setBackground(new Color(84, 110, 122));
+        setBackground(new Color(44, 62, 80));
     }
 
     public void setCompassLabel(String lbl){
@@ -46,8 +46,10 @@ public class Compass extends JPanel{
                 this.getHeight()/2 +65);
         g2.drawLine(this.getWidth()/2 -75,this.getHeight()/2-10,
                 this.getWidth()/2 + 75,this.getHeight()/2-10);
-
+        g2.setColor(Color.RED);
+        g2.drawLine(this.getWidth()/2,this.getHeight()/2-10,this.getWidth()/2+(int)(75*Math.cos(myAngle)), this.getHeight()/2-10-(int)(75*Math.sin(myAngle)));
+        g2.setColor(new Color(207, 216, 220));
         g2.setFont(font20Pt);
-        g2.drawString(this.compassLabel,this.getWidth()/2 - 70,this.getHeight()/2+90);
+        g2.drawString(this.compassLabel,this.getWidth()/2 - 50,this.getHeight()/2+90);
     }
 }

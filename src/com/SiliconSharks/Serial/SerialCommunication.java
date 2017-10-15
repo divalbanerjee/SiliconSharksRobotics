@@ -257,4 +257,7 @@ public class SerialCommunication {
             }
         }
     }
+    public static boolean isConnected() {
+        return Connected;
+    }
 }

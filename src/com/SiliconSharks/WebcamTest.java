@@ -8,11 +8,16 @@ import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Map;
+import java.util.TimerTask;
 
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
+import com.SiliconSharks.Graphics.Compass;
+import com.SiliconSharks.Graphics.ControllerInterface;
+import com.SiliconSharks.Graphics.StatusIndicator;
+import com.SiliconSharks.ROVComponents.ROVInfo;
 import com.SiliconSharks.ROVComponents.ROVStatus;
+import com.SiliconSharks.Serial.SerialCommunication;
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamDiscoveryEvent;
 import com.github.sarxos.webcam.WebcamDiscoveryListener;
@@ -39,13 +44,15 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
 
     @Override
     public void run() {
+        MainUpdateLoop.start();
 
         Webcam.addDiscoveryListener(this);
 
         setTitle("Java Webcam Capture POC");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new BorderLayout());
-
+        setLayout(null);
+        setBackground(new Color(44,62,80));
+        getContentPane().setBackground(new Color(44,62,80));
         addWindowListener(this);
 
         picker = new WebcamPicker();
@@ -70,11 +77,43 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
         panel.setFPSLimit(10);
         panel.setFPSLimited(true);
 
-        add(picker, BorderLayout.NORTH);
-        add(panel, BorderLayout.CENTER);
+        ControllerInterface controllerInterface1 = new ControllerInterface(1);
+        ControllerInterface controllerInterface2 = new ControllerInterface(2);
 
-        pack();
+        Compass compass = new Compass("Compass");
+
+        StatusIndicator serialStatusIndicator = new StatusIndicator("Serial Connection");
+
+        picker.setBounds(0,0,1280,30);
+        panel.setBounds(0,30,1280,720);
+        controllerInterface1.setBounds(1280,0,400,250);
+        controllerInterface2.setBounds(1280,250,400,250);
+        compass.setBounds(1280,500,200,200);
+        serialStatusIndicator.setBounds(1480,500,300,40);
+
+        add(picker);
+        add(panel);
+        add(controllerInterface1);
+        add(controllerInterface2);
+        add(compass);
+        add(serialStatusIndicator);
+
+        setSize(1900,790);
         setVisible(true);
+
+        java.util.Timer timer = new java.util.Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                compass.setMyAngle(ROVInfo.getMostRecentTelemetry().getSystem().getX()*Math.PI/180);
+                if(SerialCommunication.isConnected()) {
+                    serialStatusIndicator.setStatus(3);
+                }else{
+                    serialStatusIndicator.setStatus(0);
+                }
+            }
+        },1000,30);
+
 
         Thread t = new Thread() {
 
@@ -173,9 +212,12 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
 
                 panel = new WebcamPanel(webcam, false);
                 panel.setFPSDisplayed(true);
+                panel.setDisplayDebugInfo(true);
+                panel.setImageSizeDisplayed(true);
+                panel.setFPSLimit(10);
+                panel.setFPSLimited(true);
 
-                add(panel, BorderLayout.CENTER);
-                pack();
+                add(panel);
 
                 Thread t = new Thread() {
 
