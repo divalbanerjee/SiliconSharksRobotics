@@ -8,16 +8,8 @@ import static java.awt.RenderingHints.VALUE_ANTIALIAS_ON;
 import static java.awt.RenderingHints.VALUE_INTERPOLATION_BILINEAR;
 import static java.awt.RenderingHints.VALUE_RENDER_SPEED;
 
-import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsEnvironment;
-import java.awt.RenderingHints;
+import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -48,8 +40,6 @@ import org.slf4j.LoggerFactory;
  * @author Bartosz Firyn (SarXos)
  */
 public class WebcamPanel extends JPanel implements WebcamListener, PropertyChangeListener {
-
-	public WebcamPanel(){};
 
 	/**
 	 * This enum is to control of how image will be drawn in the panel bounds.
@@ -303,7 +293,7 @@ public class WebcamPanel extends JPanel implements WebcamListener, PropertyChang
 
 			if (isFPSDisplayed()) {
 
-				String str = String.format("FPS: %.1f wtfisthis", webcam.getFPS());
+				String str = String.format("FPS: %.1f", webcam.getFPS());
 
 				int sx = 5;
 				int sy = ph - 5;
@@ -348,6 +338,103 @@ public class WebcamPanel extends JPanel implements WebcamListener, PropertyChang
 				}
 			}
 
+			FontMetrics fontMetrics = g2.getFontMetrics(getFont());
+            g2.setColor(Color.YELLOW);
+			rovStatus = ROVInfo.getMostRecentTelemetry();
+            //get sensor readouts
+			double pitch = rovStatus.getSystem().getY();
+			double roll = rovStatus.getSystem().getZ();
+			//pitch = -8;
+			//roll = -16;
+			double heading = rovStatus.getSystem().getX();
+            double rollr = roll*Math.PI/180.0;
+			//draw all rotated objects first
+            AffineTransform original = g2.getTransform();
+            g2.translate(w/2,h/2);
+            g2.rotate(-rollr);
+			//draw the horizon
+            g2.drawLine(-w,(int)pitch*18,w,(int)pitch*18);
+            int xshift = (int)(pitch*18*Math.tan(rollr));
+            for(int i = (int)heading-40; i <= heading+40; i+= 10){
+                int cheading =(int)heading - (i/10)*10;
+                g2.drawLine(cheading*18-xshift,(int)pitch*18+6,cheading*18-xshift,(int)pitch*18-6);
+                String string = String.valueOf((cheading-(int)heading+360)%360);
+                g2.drawString(string,cheading*18-(fontMetrics.stringWidth(string))/2-xshift,(int)pitch*18-14);
+            }
+            //draw 10 degree increments
+            for(int i = (int)pitch-25; i <= pitch+25; i+=10){
+                int cpitch = (int)pitch-((i/10)*10);
+                if(cpitch != pitch) {
+                    g2.drawLine(-300, cpitch * 18, -50, cpitch * 18);
+                    g2.drawLine(50, cpitch * 18, 300, cpitch * 18);
+                    String string = String.valueOf(pitch-cpitch);
+                    g2.drawString(string, -(fontMetrics.stringWidth(string))/2, cpitch * 18+5);
+                }
+            }
+            //draw predicted heading
+            int px=0;
+            int py=0;
+            double ax = rovStatus.getAccel().getX();//ax =0.1;
+            double ay = rovStatus.getAccel().getY();//ay = -0.1;
+            double az = rovStatus.getAccel().getZ();//az = 1;
+            if(az != 0){
+                px = (int)(18*90*Math.atan2(ax,az));
+                py = (int)(18*90*Math.atan2(ay,az));
+            }
+            g2.drawOval(px-7,py-7,14,14);
+            g2.drawLine(px-17,py,px-7,py);
+            g2.drawLine(px+7,py,px+17,py);
+            g2.drawLine(px,py-17,px,py-7);
+            //now, draw all aligned objects
+            g2.setTransform(original);
+            //draw the pitch and altitude
+            g2.drawRect(w/7,h/2-10,50,20);
+            g2.drawRect(6*w/7-50,h/2-10,50,20);
+            g2.drawLine(w/7+50,h/2,w/7+100,h/2);
+            g2.drawLine(6*w/7-100,h/2,6*w/7-50,h/2);
+            String pitchstring = String.valueOf((int)(pitch*10)/10.0);
+            String rollstring = String.valueOf((int)(roll*10)/10.0);
+            g2.drawString(pitchstring,w/7+25-fontMetrics.stringWidth(pitchstring)/2,h/2+4);
+            g2.drawString(rollstring,6*w/7-25-fontMetrics.stringWidth(rollstring)/2,h/2+4);
+            //draw the center
+            g2.drawLine(w/2-8,h/2-8,w/2+8,h/2+8);
+            g2.drawLine(w/2+8,h/2-8,w/2-8,h/2+8);
+
+            double gx = rovStatus.getGyro().getX();//gx = Math.PI/14;
+            double gy = rovStatus.getGyro().getY();//gy = -Math.PI/19;
+            double gz = rovStatus.getGyro().getZ();//gz = -2.5*Math.PI/32;
+
+            if(Math.abs(gx) > Math.PI/8){
+                gx *= ((Math.PI/8)/Math.abs(gx));
+            }
+            g2.drawLine(w/2, h/2,w/2+(int)(gx*8*60),h/2);
+            double ratio = gx/(Math.PI/8);
+            g2.drawLine(w/2+(int)(gx*8*60),h/2,w/2+(int)(gx*8*60)-(int)(ratio*40),h/2+(int)(ratio*40));
+            g2.drawLine(w/2+(int)(gx*8*60),h/2,w/2+(int)(gx*8*60)-(int)(ratio*40),h/2-(int)(ratio*40));
+
+            if(Math.abs(gy) > Math.PI/8){
+                gy *= ((Math.PI/8)/Math.abs(gy));
+            }
+            g2.drawLine(w/2, h/2,w/2,h/2-(int)(gy*8*60));
+            ratio = gy/(Math.PI/8);
+            g2.drawLine(w/2,h/2-(int)(gy*8*60),w/2-(int)(ratio*40),h/2-(int)(gy*8*60)+(int)(ratio*40));
+            g2.drawLine(w/2,h/2-(int)(gy*8*60),w/2+(int)(ratio*40),h/2-(int)(gy*8*60)+(int)(ratio*40));
+
+            if(Math.abs(gz) > Math.PI/8){
+                gz *= ((Math.PI/8)/Math.abs(gz));
+            }
+            ratio = gz/(Math.PI/8);
+            g2.setColor(Color.GREEN);
+            g2.drawArc(w/2-50,h/2-50,100,100,0,(int)(180*ratio));
+            int endx = w/2 + (int)(Math.cos(Math.PI*ratio)*50);
+            int endy = h/2 - (int)(Math.sin(Math.PI*ratio)*50);
+            if(ratio > 0) {
+                g2.drawLine(endx, endy, endx + (int) (Math.cos(Math.PI * ratio - 3 * Math.PI / 4) * 25 * ratio), endy - (int) (Math.sin(Math.PI * ratio - 3 * Math.PI / 4) * 25*ratio));
+                g2.drawLine(endx, endy, endx + (int) (Math.cos(Math.PI * ratio - Math.PI / 4) * 25 * ratio), endy - (int) (Math.sin(Math.PI * ratio - Math.PI / 4) * 25*ratio));
+            }else{
+                g2.drawLine(endx, endy, endx + (int) (Math.cos(Math.PI * ratio + 3 * Math.PI / 4) * 25 * (-ratio)), endy - (int) (Math.sin(Math.PI * ratio + 3 * Math.PI / 4) * 25*(-ratio)));
+                g2.drawLine(endx, endy, endx + (int) (Math.cos(Math.PI * ratio + Math.PI / 4) * 25*(-ratio)), endy - (int) (Math.sin(Math.PI * ratio + Math.PI / 4) * 25*(-ratio)));
+            }
 			g2.setRenderingHint(KEY_ANTIALIASING, antialiasing);
 			g2.setRenderingHint(KEY_RENDERING, rendering);
 		}
@@ -572,9 +659,9 @@ public class WebcamPanel extends JPanel implements WebcamListener, PropertyChang
 			if (tmp != null) {
 
 				// ignore repaint if image is the same as before
-				//if (image == tmp) {
-				//	repaint = false;
-				//}
+				if (image == tmp) {
+					repaint = false;
+				}
 
 				errored = false;
 				image = tmp;
@@ -628,12 +715,12 @@ public class WebcamPanel extends JPanel implements WebcamListener, PropertyChang
 	/**
 	 * Webcam object used to fetch images.
 	 */
-	private Webcam webcam;
+	private final Webcam webcam;
 
 	/**
 	 * Repainter is used to fetch images from camera and force panel repaint when image is ready.
 	 */
-	private ImageUpdater updater;
+	private final ImageUpdater updater;
 
 	/**
 	 * Image currently being displayed.

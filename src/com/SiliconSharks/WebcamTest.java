@@ -19,11 +19,9 @@ import com.github.sarxos.webcam.WebcamDiscoveryListener;
 import com.github.sarxos.webcam.WebcamEvent;
 import com.github.sarxos.webcam.WebcamListener;
 import com.github.sarxos.webcam.WebcamPanel;
-import com.github.sarxos.webcam.WebcamPanel.*;
 import com.github.sarxos.webcam.WebcamPicker;
 import com.github.sarxos.webcam.WebcamResolution;
 
-import static java.awt.RenderingHints.*;
 
 
 /**
@@ -38,6 +36,7 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
     private Webcam webcam = null;
     private WebcamPanel panel = null;
     private WebcamPicker picker = null;
+
     @Override
     public void run() {
 

@@ -40,7 +40,6 @@ public class WebcamLogConfigurator {
 			for (String name : names) {
 				Class.forName(name, false, cl);
 			}
-
 			ch.qos.logback.classic.LoggerContext context = (ch.qos.logback.classic.LoggerContext) LoggerFactory.getILoggerFactory();
 			ch.qos.logback.classic.joran.JoranConfigurator configurator = new ch.qos.logback.classic.joran.JoranConfigurator();
 			configurator.setContext(context);

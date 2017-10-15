@@ -41,6 +41,7 @@ public class ROVInfo{
         return rovStatuses[numItems-1];
     }
     public static ROVStatus getMostRecentTelemetry(){
+        if(rovStatuses == null) return new ROVStatus(-2);
         for (int i = rovStatuses.length-1; i >= 0; i--) {
             ROVStatus rovStatus = rovStatuses[i];
             if (rovStatus.isTelemetryUpdated()) {
