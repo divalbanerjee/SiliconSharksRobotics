@@ -1,5 +1,6 @@
 package com.SiliconSharks.ROVComponents;
 
+import com.SiliconSharks.MainUpdateLoop;
 import com.SiliconSharks.Settings;
 
 import static com.SiliconSharks.MainUpdateLoop.Message;
@@ -43,9 +44,12 @@ public class ROVInfo{
         for (int i = rovStatuses.length-1; i >= 0; i--) {
             ROVStatus rovStatus = rovStatuses[i];
             if (rovStatus.isTelemetryUpdated()) {
+                if(rovStatus.getTimeStamp() < MainUpdateLoop.getGlobalTimeStamp()-1000){
+                    return new ROVStatus(-2);
+                }
                 return rovStatus;
             }
         }
-        return null;
+        return new ROVStatus(-2);
     }
 }

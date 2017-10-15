@@ -8,23 +8,25 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
-          <library>
-            <CLASSES>
-              <root url="jar://$MODULE_DIR$/jssc-2.8.0.jar!/" />
-            </CLASSES>
-            <JAVADOC />
-            <SOURCES />
-          </library>
-        </orderEntry>
-        <orderEntry type="module-library">
-          <library>
-            <CLASSES>
-              <root url="jar://$MODULE_DIR$/jinput.jar!/" />
-            </CLASSES>
-            <JAVADOC />
-            <SOURCES />
-          </library>
-        </orderEntry>
-        <orderEntry type="library" name="natives" level="project" />
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/jssc-2.8.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/jinput.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="natives" level="project" />
+    <orderEntry type="library" name="WebcamLibrary" level="application" />
+    <orderEntry type="library" name="libs" level="project" />
   </component>
 </module>

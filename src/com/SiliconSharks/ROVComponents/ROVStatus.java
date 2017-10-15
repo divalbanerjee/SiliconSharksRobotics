@@ -6,7 +6,7 @@ public class ROVStatus {
     public class Sensor{
         private int calibration;
         private double X, Y ,Z;
-        private Sensor(){}
+        private Sensor(){calibration=0;X=0;Y=0;Z=0;}
         public void setX(double x) {X = x; }
         public double getX() {return X;}
         public void setY(double y) {Y = y; }
