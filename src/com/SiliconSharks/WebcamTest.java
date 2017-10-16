@@ -5,9 +5,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.awt.image.BufferedImage;
 import java.lang.Thread.UncaughtExceptionHandler;
-import java.util.Map;
 import java.util.TimerTask;
 
 import javax.swing.*;
@@ -28,12 +26,12 @@ import com.github.sarxos.webcam.WebcamPanel;
 import com.github.sarxos.webcam.WebcamPicker;
 import com.github.sarxos.webcam.WebcamResolution;
 
+@SuppressWarnings("unchecked")
 
+/*
+  Proof of concept of how to handle webcam video stream from Java
 
-/**
- * Proof of concept of how to handle webcam video stream from Java
- *
- * @author Bartosz Firyn (SarXos)
+  @author Bartosz Firyn (SarXos)
  */
 public class WebcamTest extends JFrame implements Runnable, WebcamListener, WindowListener, UncaughtExceptionHandler, ItemListener, WebcamDiscoveryListener {
 
@@ -43,6 +41,8 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
     private WebcamPanel panel = null;
     private WebcamPicker picker = null;
 
+    private ROVStatus lastTelemetry = new ROVStatus(-3);
+
     @Override
     public void run() {
         MainUpdateLoop.start();
@@ -50,7 +50,7 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
         Webcam.addDiscoveryListener(this);
 
         setTitle("Java Webcam Capture POC");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLayout(null);
         setBackground(new Color(44,62,80));
         getContentPane().setBackground(new Color(44,62,80));
@@ -82,6 +82,10 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
         ControllerInterface controllerInterface2 = new ControllerInterface(2);
 
         Compass compass = new Compass("Compass");
+        Compass pitch = new Compass("Pitch");
+        Compass roll = new Compass("Roll");
+        Compass[] thrusters = new Compass[]{new Compass("Thruster 1",true),
+                new Compass("Thruster 2", true), new Compass("Thruster 3",true)};
 
         StatusIndicator serialStatusIndicator = new StatusIndicator("Serial Connection      ");
         StatusIndicator telemetryStatusIndicator = new StatusIndicator("Telemetry Status      ");
@@ -97,7 +101,12 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
         panel.setBounds(0,0,1280,720);
         controllerInterface1.setBounds(1280,25,400,230);
         controllerInterface2.setBounds(1280,255,400,230);
-        compass.setBounds(1280,485,200,200);
+        compass.setBounds(1280,485,140,160);
+        pitch.setBounds(1280,645,140,160);
+        roll.setBounds(1280,805,140,160);
+        for(int i = 0; i < thrustergraphs.length; i++){
+            thrusters[i].setBounds(1420,485+160*i,140,160);
+        }
         serialStatusIndicator.setBounds(1690,10,300,30);
         telemetryStatusIndicator.setBounds(1690,40,300,30);
         systemStatusIndicator.setBounds(1690,70,300,30);
@@ -115,6 +124,11 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
         add(controllerInterface1);
         add(controllerInterface2);
         add(compass);
+        add(pitch);
+        add(roll);
+        for(Compass compass1 : thrusters){
+            add(compass1);
+        }
         add(serialStatusIndicator);
         add(telemetryStatusIndicator);
         add(systemStatusIndicator);
@@ -134,23 +148,54 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                compass.setMyAngle(ROVInfo.getMostRecentTelemetry().getSystem().getX()*Math.PI/180);
-                if(SerialCommunication.isConnected()) {
-                    serialStatusIndicator.setStatus(3);
-                }else{
-                    serialStatusIndicator.setStatus(0);
+                //updating componenets with most recent info
+                ROVStatus rovStatus = ROVInfo.getMostRecentTelemetry();
+                if(rovStatus.getTimeStamp() != lastTelemetry.getTimeStamp()){
+                    lastTelemetry = rovStatus;
+                    compass.setMyAngle((90-rovStatus.getSystem().getX())*Math.PI/180);
+                    pitch.setMyAngle((90-rovStatus.getSystem().getY())*Math.PI/180);
+                    roll.setMyAngle((90-rovStatus.getSystem().getZ())*Math.PI/180);
+                    for(int i = 0; i < thrusters.length; i++){
+                        thrusters[i].setMyAngle(rovStatus.getThruster(i)*-Math.PI*2/3+Math.PI/2);
+                    }
+                    if(SerialCommunication.isConnected()) {
+                        serialStatusIndicator.setStatus(3);
+                    }else{
+                        serialStatusIndicator.setStatus(0);
+                    }
+                    if(rovStatus.getTimeStamp() <= -1){
+                        telemetryStatusIndicator.setStatus(0);
+                    }else{
+                        int diff = MainUpdateLoop.getGlobalTimeStamp() - rovStatus.getTimeStamp();
+                        if(diff > 200){
+                            telemetryStatusIndicator.setStatus(0);
+                        }else if(diff > 100){
+                            telemetryStatusIndicator.setStatus(1);
+                        }else if(diff > 40){
+                            telemetryStatusIndicator.setStatus(2);
+                        }else{
+                            telemetryStatusIndicator.setStatus(3);
+                        }
+                    }
+                    systemStatusIndicator.setStatus(rovStatus.getSystem().getCalibration());
+                    gyroStatusIndicator.setStatus(rovStatus.getGyro().getCalibration());
+                    magnetStatusIndicator.setStatus(rovStatus.getMagnet().getCalibration());
+                    accelStatusIndicator.setStatus(rovStatus.getAccel().getCalibration());
+                    voltageGraph.repaint();
+                    amperageGraph.repaint();
+                    for(DataGraph thrusterGraph: thrustergraphs){
+                        thrusterGraph.repaint();
+                    }
                 }
+                controllerInterface1.repaint();
+                controllerInterface2.repaint();
+
+
             }
         },1000,30);
 
 
-        Thread t = new Thread() {
-
-            @Override
-            public void run() {
-                panel.start();
-            }
-        };
+        Thread t = new Thread(() -> panel.start());
         t.setName("example-starter");
         t.setDaemon(true);
         t.setUncaughtExceptionHandler(this);
@@ -249,13 +294,7 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
 
                 add(panel);
 
-                Thread t = new Thread() {
-
-                    @Override
-                    public void run() {
-                        panel.start();
-                    }
-                };
+                Thread t = new Thread(() -> panel.start());
                 t.setName("example-stoper");
                 t.setDaemon(true);
                 t.setUncaughtExceptionHandler(this);

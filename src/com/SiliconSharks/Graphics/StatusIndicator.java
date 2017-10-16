@@ -18,7 +18,10 @@ public class StatusIndicator extends JPanel{
     }
 
     public void setStatus(int status) {
-        this.status = status;
+        if(status != this.status) {
+            this.status = status;
+            this.repaint();
+        }
     }
 
     public void paintComponent(Graphics g){

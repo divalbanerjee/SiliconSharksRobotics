@@ -9,13 +9,19 @@ import java.awt.*;
 public class Compass extends JPanel{
     private String compassLabel;
     private double myAngle;
-    private Font font20Pt = new Font("Helvetica" , Font.PLAIN, 20);
+    private Font font20Pt = new Font("Helvetica" , Font.PLAIN, 16);
+    private boolean isAccelerometer;
 
     public Compass(String label){
+        this(label,false);
+    }
+
+    public Compass(String label, boolean isAccelerometer){
         compassLabel = label;
-        myAngle  = 0;
-        this.setSize(new Dimension(150,170));
+        myAngle  = Math.PI/2;
+        this.setSize(new Dimension(140,160));
         setBackground(new Color(44, 62, 80));
+        this.isAccelerometer = isAccelerometer;
     }
 
     public void setCompassLabel(String lbl){
@@ -23,7 +29,10 @@ public class Compass extends JPanel{
     }
 
     public void setMyAngle(double angle){
-        this.myAngle = angle;
+        if(angle != myAngle) {
+            this.myAngle = angle;
+            this.repaint();
+        }
     }
 
     public void paintComponent(Graphics g){
@@ -40,16 +49,21 @@ public class Compass extends JPanel{
         g2.setColor(new Color(207, 216, 220));
 
         //Fixed scaling issues
-        g2.drawOval(this.getWidth()/2-75,this.getHeight()/2-85,150,150);
+        g2.drawOval(5,5,this.getWidth()-10,this.getWidth()-10);
         //g2.drawOval(0,1,150,150);
-        g2.drawLine(this.getWidth()/2,this.getHeight()/2 -85,this.getWidth()/2,
-                this.getHeight()/2 +65);
-        g2.drawLine(this.getWidth()/2 -75,this.getHeight()/2-10,
-                this.getWidth()/2 + 75,this.getHeight()/2-10);
+        int length = this.getWidth()/2;
+        if(isAccelerometer){
+            g2.drawLine(length,length,length+(int)(Math.cos(Math.PI/3)*(length-5)),length-(int)(Math.sin(Math.PI/3)*(length-5)));
+            g2.drawLine(length,length,length+(int)(Math.cos(Math.PI*2/3)*(length-5)),length-(int)(Math.sin(Math.PI*2/3)*(length-5)));
+            g2.drawLine(length,5,length,length);
+        }else {
+            g2.drawLine(5,length, length*2-5, length);
+            g2.drawLine(length,5, length, length*2-5);
+        }
         g2.setColor(Color.RED);
-        g2.drawLine(this.getWidth()/2,this.getHeight()/2-10,this.getWidth()/2+(int)(75*Math.cos(myAngle)), this.getHeight()/2-10-(int)(75*Math.sin(myAngle)));
+        g2.drawLine(length,length,length+(int)(Math.cos(myAngle)*(length-5)),length-(int)(Math.sin(myAngle)*(length-5)));
         g2.setColor(new Color(207, 216, 220));
         g2.setFont(font20Pt);
-        g2.drawString(this.compassLabel,this.getWidth()/2 - 50,this.getHeight()/2+90);
+        g2.drawString(this.compassLabel,this.getWidth()/2-getFontMetrics(font20Pt).stringWidth(this.compassLabel)/2,this.getHeight()-5);
     }
 }
