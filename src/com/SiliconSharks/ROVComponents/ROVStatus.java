@@ -60,9 +60,9 @@ public class ROVStatus {
     public void setServo(int index, double value){servos[index] = trim(value);}
     public double getThruster(int index){return thrusters[index];}
     public double getServo(int index){return servos[index];}
-    public void setAmperage(int amperage) { Amperage = ((double)amperage); }
+    public void setAmperage(int amperage) { Amperage = ((double)amperage)/67.381855; }
     public void setTemperature(double temperature) { Temperature = temperature; }
-    public void setVoltage(int voltage) { Voltage = ((double)voltage)*5.015*.6/1024; }
+    public void setVoltage(int voltage) { Voltage = ((double)voltage)*5.015*3/5/1024; }
     public double getAmperage(){return Amperage;}
     public double getTemperature() { return Temperature;}
     public double getVoltage() { return Voltage; }

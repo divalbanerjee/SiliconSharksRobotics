@@ -14,6 +14,7 @@ import javax.swing.*;
 
 import com.SiliconSharks.Graphics.Compass;
 import com.SiliconSharks.Graphics.ControllerInterface;
+import com.SiliconSharks.Graphics.DataGraph;
 import com.SiliconSharks.Graphics.StatusIndicator;
 import com.SiliconSharks.ROVComponents.ROVInfo;
 import com.SiliconSharks.ROVComponents.ROVStatus;
@@ -82,14 +83,28 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
 
         Compass compass = new Compass("Compass");
 
-        StatusIndicator serialStatusIndicator = new StatusIndicator("Serial Connection");
+        StatusIndicator serialStatusIndicator = new StatusIndicator("Serial Connection      ");
+        StatusIndicator telemetryStatusIndicator = new StatusIndicator("Telemetry Status      ");
+        StatusIndicator systemStatusIndicator = new StatusIndicator("System Calibration    ");
+        StatusIndicator gyroStatusIndicator = new StatusIndicator("Gyroscope Calibrat... ");
+        StatusIndicator magnetStatusIndicator = new StatusIndicator("Magnetometer Cali... ");
+        StatusIndicator accelStatusIndicator = new StatusIndicator("Accelerometer Cali... ");
+        DataGraph voltageGraph = new DataGraph(0);
+        DataGraph amperageGraph = new DataGraph(1);
 
-        picker.setBounds(0,0,1280,30);
-        panel.setBounds(0,30,1280,720);
-        controllerInterface1.setBounds(1280,0,400,250);
-        controllerInterface2.setBounds(1280,250,400,250);
-        compass.setBounds(1280,500,200,200);
-        serialStatusIndicator.setBounds(1480,500,300,40);
+        picker.setBounds(1280,0,400,20);
+        panel.setBounds(0,0,1280,720);
+        controllerInterface1.setBounds(1280,25,400,230);
+        controllerInterface2.setBounds(1280,255,400,230);
+        compass.setBounds(1280,485,200,200);
+        serialStatusIndicator.setBounds(1690,10,300,30);
+        telemetryStatusIndicator.setBounds(1690,40,300,30);
+        systemStatusIndicator.setBounds(1690,70,300,30);
+        gyroStatusIndicator.setBounds(1690,100,300,30);
+        magnetStatusIndicator.setBounds(1690,130,300,30);
+        accelStatusIndicator.setBounds(1690,160,300,30);
+        voltageGraph.setBounds(0,720,250,250);
+        amperageGraph.setBounds(250,720,250,250);
 
         add(picker);
         add(panel);
@@ -97,8 +112,15 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
         add(controllerInterface2);
         add(compass);
         add(serialStatusIndicator);
+        add(telemetryStatusIndicator);
+        add(systemStatusIndicator);
+        add(gyroStatusIndicator);
+        add(magnetStatusIndicator);
+        add(accelStatusIndicator);
+        add(voltageGraph);
+        add(amperageGraph);
 
-        setSize(1900,790);
+        setSize(1980,1040);
         setVisible(true);
 
         java.util.Timer timer = new java.util.Timer();
@@ -216,6 +238,7 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
                 panel.setImageSizeDisplayed(true);
                 panel.setFPSLimit(10);
                 panel.setFPSLimited(true);
+                panel.setBounds(0,30,1280,720);
 
                 add(panel);
 

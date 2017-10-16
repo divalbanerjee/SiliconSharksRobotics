@@ -347,6 +347,7 @@ public class WebcamPanel extends JPanel implements WebcamListener, PropertyChang
 			//pitch = -8;
 			//roll = -16;
 			double heading = rovStatus.getSystem().getX();
+			//heading = 16;
             double rollr = roll*Math.PI/180.0;
 			//draw all rotated objects first
             AffineTransform original = g2.getTransform();
@@ -404,26 +405,26 @@ public class WebcamPanel extends JPanel implements WebcamListener, PropertyChang
             double gy = rovStatus.getGyro().getY();//gy = -Math.PI/19;
             double gz = rovStatus.getGyro().getZ();//gz = -2.5*Math.PI/32;
 
-            if(Math.abs(gx) > Math.PI/8){
-                gx *= ((Math.PI/8)/Math.abs(gx));
+            if(Math.abs(gx) > Math.PI){
+                gx *= ((Math.PI)/Math.abs(gx));
             }
-            g2.drawLine(w/2, h/2,w/2+(int)(gx*8*60),h/2);
-            double ratio = gx/(Math.PI/8);
-            g2.drawLine(w/2+(int)(gx*8*60),h/2,w/2+(int)(gx*8*60)-(int)(ratio*40),h/2+(int)(ratio*40));
-            g2.drawLine(w/2+(int)(gx*8*60),h/2,w/2+(int)(gx*8*60)-(int)(ratio*40),h/2-(int)(ratio*40));
+            g2.drawLine(w/2, h/2,w/2+(int)(gx*60),h/2);
+            double ratio = gx/(Math.PI);
+            g2.drawLine(w/2+(int)(gx*60),h/2,w/2+(int)(gx*60)-(int)(ratio*40),h/2+(int)(ratio*40));
+            g2.drawLine(w/2+(int)(gx*60),h/2,w/2+(int)(gx*60)-(int)(ratio*40),h/2-(int)(ratio*40));
 
-            if(Math.abs(gy) > Math.PI/8){
-                gy *= ((Math.PI/8)/Math.abs(gy));
+            if(Math.abs(gy) > Math.PI){
+                gy *= ((Math.PI)/Math.abs(gy));
             }
-            g2.drawLine(w/2, h/2,w/2,h/2-(int)(gy*8*60));
-            ratio = gy/(Math.PI/8);
-            g2.drawLine(w/2,h/2-(int)(gy*8*60),w/2-(int)(ratio*40),h/2-(int)(gy*8*60)+(int)(ratio*40));
-            g2.drawLine(w/2,h/2-(int)(gy*8*60),w/2+(int)(ratio*40),h/2-(int)(gy*8*60)+(int)(ratio*40));
+            g2.drawLine(w/2, h/2,w/2,h/2-(int)(gy*60));
+            ratio = gy/(Math.PI);
+            g2.drawLine(w/2,h/2-(int)(gy*60),w/2-(int)(ratio*40),h/2-(int)(gy*60)+(int)(ratio*40));
+            g2.drawLine(w/2,h/2-(int)(gy*60),w/2+(int)(ratio*40),h/2-(int)(gy*60)+(int)(ratio*40));
 
-            if(Math.abs(gz) > Math.PI/8){
-                gz *= ((Math.PI/8)/Math.abs(gz));
+            if(Math.abs(gz) > Math.PI){
+                gz *= ((Math.PI)/Math.abs(gz));
             }
-            ratio = gz/(Math.PI/8);
+            ratio = gz/(Math.PI);
             g2.setColor(Color.GREEN);
             g2.drawArc(w/2-50,h/2-50,100,100,0,(int)(180*ratio));
             int endx = w/2 + (int)(Math.cos(Math.PI*ratio)*50);
