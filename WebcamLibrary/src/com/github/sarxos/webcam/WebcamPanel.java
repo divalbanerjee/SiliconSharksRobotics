@@ -344,10 +344,10 @@ public class WebcamPanel extends JPanel implements WebcamListener, PropertyChang
             //get sensor readouts
 			double pitch = rovStatus.getSystem().getY();
 			double roll = rovStatus.getSystem().getZ();
-			//pitch = -8;
+			//pitch = -8.5;
 			//roll = -16;
 			double heading = rovStatus.getSystem().getX();
-			//heading = 16;
+			//heading = -16;
             double rollr = roll*Math.PI/180.0;
 			//draw all rotated objects first
             AffineTransform original = g2.getTransform();
@@ -363,13 +363,14 @@ public class WebcamPanel extends JPanel implements WebcamListener, PropertyChang
                 g2.drawString(string,cheading*18-(fontMetrics.stringWidth(string))/2-xshift,(int)pitch*18-14);
             }
             //draw 10 degree increments
-            for(int i = (int)pitch-25; i <= pitch+25; i+=10){
-                int cpitch = (int)pitch-((i/10)*10);
-                if(cpitch != pitch) {
-                    g2.drawLine(-300, cpitch * 18, -50, cpitch * 18);
-                    g2.drawLine(50, cpitch * 18, 300, cpitch * 18);
-                    String string = String.valueOf(pitch-cpitch);
-                    g2.drawString(string, -(fontMetrics.stringWidth(string))/2, cpitch * 18+5);
+            for(int i = (int)pitch-35; i <= pitch+35; i+=10){
+                int cpitch = ((i/10)*10);
+                if(cpitch != 0) {
+                	int pitchdif = (int)((pitch-cpitch) * 18);
+                    g2.drawLine(-300, pitchdif, -50, pitchdif);
+                    g2.drawLine(50, pitchdif, 300, pitchdif);
+                    String string = String.valueOf(cpitch);
+                    g2.drawString(string, -(fontMetrics.stringWidth(string))/2, pitchdif+5);
                 }
             }
             //draw predicted heading

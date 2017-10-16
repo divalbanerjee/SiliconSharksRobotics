@@ -53,8 +53,8 @@ public class Compass extends JPanel{
         //g2.drawOval(0,1,150,150);
         int length = this.getWidth()/2;
         if(isAccelerometer){
-            g2.drawLine(length,length,length+(int)(Math.cos(Math.PI/3)*(length-5)),length-(int)(Math.sin(Math.PI/3)*(length-5)));
-            g2.drawLine(length,length,length+(int)(Math.cos(Math.PI*2/3)*(length-5)),length-(int)(Math.sin(Math.PI*2/3)*(length-5)));
+            g2.drawLine(length,length,length+(int)(Math.cos(-Math.PI/6)*(length-5)),length-(int)(Math.sin(-Math.PI/6)*(length-5)));
+            g2.drawLine(length,length,length+(int)(Math.cos(Math.PI*7/6)*(length-5)),length-(int)(Math.sin(Math.PI*7/6)*(length-5)));
             g2.drawLine(length,5,length,length);
         }else {
             g2.drawLine(5,length, length*2-5, length);
