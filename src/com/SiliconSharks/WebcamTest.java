@@ -91,6 +91,7 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
         StatusIndicator accelStatusIndicator = new StatusIndicator("Accelerometer Cali... ");
         DataGraph voltageGraph = new DataGraph(0);
         DataGraph amperageGraph = new DataGraph(1);
+        DataGraph[] thrustergraphs = new DataGraph[]{new DataGraph(2), new DataGraph(3), new DataGraph(4)};
 
         picker.setBounds(1280,0,400,20);
         panel.setBounds(0,0,1280,720);
@@ -105,6 +106,9 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
         accelStatusIndicator.setBounds(1690,160,300,30);
         voltageGraph.setBounds(0,720,250,250);
         amperageGraph.setBounds(250,720,250,250);
+        for(int i = 0; i < thrustergraphs.length; i++){
+            thrustergraphs[i].setBounds(i*250+500,720,250,250);
+        }
 
         add(picker);
         add(panel);
@@ -119,6 +123,9 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
         add(accelStatusIndicator);
         add(voltageGraph);
         add(amperageGraph);
+        for (DataGraph thrustergraph : thrustergraphs) {
+            add(thrustergraph);
+        }
 
         setSize(1980,1040);
         setVisible(true);

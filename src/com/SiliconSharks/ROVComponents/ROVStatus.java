@@ -18,6 +18,7 @@ public class ROVStatus {
     }
     private int numThrusters = 3, numServos = 3;
     private double thrusters[] = new double[numThrusters];
+    private double thrusterAmperage[] = new double[numThrusters];
     private double servos[] = new double[numServos];
     private double AmpScale = -1;
     private double Amperage = 0, Voltage = 0, Temperature =0;
@@ -29,6 +30,7 @@ public class ROVStatus {
         numThrusters = Settings.getSetting("NumThrusters");
         numServos = Settings.getSetting("NumServos");
         for (int i = 0; i < numThrusters; i++) thrusters[i] = 0;
+        for (int i = 0; i < numThrusters; i++) thrusterAmperage[i] = 0;
         for (int i = 0; i < numServos; i++) servos[i] = 0;
     }
     boolean isTelemetryUpdated() {return TelemetryUpdated; }
@@ -61,10 +63,12 @@ public class ROVStatus {
     public double getThruster(int index){return thrusters[index];}
     public double getServo(int index){return servos[index];}
     public void setAmperage(int amperage) { Amperage = ((double)amperage)/67.381855; }
+    public void setThrusterAmperage(int amperage,int index) { thrusterAmperage[index] = ((double)amperage)/67.381855;}
     public void setTemperature(double temperature) { Temperature = temperature; }
     public void setVoltage(int voltage) { Voltage = ((double)voltage)*5.015*3/5/1024; }
     public double getAmperage(){return Amperage;}
     public double getTemperature() { return Temperature;}
+    public double getThrusterAmperage(int index){return thrusterAmperage[index];}
     public double getVoltage() { return Voltage; }
     public double getAmpScale(){return AmpScale;}
 }
