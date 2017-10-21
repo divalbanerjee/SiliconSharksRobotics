@@ -31,10 +31,10 @@ public class DataGraph extends JPanel{
     private int getY2(ROVStatus rovStatus){
         if(rovStatus.getTimeStamp() <= -1) return 0;
         switch(type){
-            case 1: return (int)((Math.abs(rovStatus.getThruster(0))+Math.abs(rovStatus.getThruster(1))+Math.abs(rovStatus.getThruster(2)))*25);
-            case 2: return (int)(Math.abs(rovStatus.getThruster(0))*25);
-            case 3: return (int)(Math.abs(rovStatus.getThruster(1))*25);
-            case 4: return (int)(Math.abs(rovStatus.getThruster(2))*25);
+            case 1: return (int)((Math.abs(rovStatus.getThruster(0))+Math.abs(rovStatus.getThruster(1))+Math.abs(rovStatus.getThruster(2)))*25*230/30);
+            case 2: return (int)(Math.abs(rovStatus.getThruster(0))*25*230/30);
+            case 3: return (int)(Math.abs(rovStatus.getThruster(1))*25*230/30);
+            case 4: return (int)(Math.abs(rovStatus.getThruster(2))*25*230/30);
         }
         return 0;
     }

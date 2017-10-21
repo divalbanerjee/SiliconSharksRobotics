@@ -348,7 +348,7 @@ public class WebcamPanel extends JPanel implements WebcamListener, PropertyChang
 			//roll = -16;
 			double heading = rovStatus.getSystem().getX();
 			//heading = -16;
-            double rollr = roll*Math.PI/180.0;
+            double rollr = -roll*Math.PI/180.0;
 			//draw all rotated objects first
             AffineTransform original = g2.getTransform();
             g2.translate(w/2,h/2);
@@ -402,9 +402,9 @@ public class WebcamPanel extends JPanel implements WebcamListener, PropertyChang
             g2.drawLine(w/2-8,h/2-8,w/2+8,h/2+8);
             g2.drawLine(w/2+8,h/2-8,w/2-8,h/2+8);
 
-            double gx = rovStatus.getGyro().getX();//gx = Math.PI/14;
-            double gy = rovStatus.getGyro().getY();//gy = -Math.PI/19;
-            double gz = rovStatus.getGyro().getZ();//gz = -2.5*Math.PI/32;
+            double gx = rovStatus.getGyro().getX();gx /= 10;//gx = Math.PI/14;
+            double gy = rovStatus.getGyro().getY(); gy /= 10;//gy = -Math.PI/19;
+            double gz = rovStatus.getGyro().getZ(); gz /= 10;//gz = -2.5*Math.PI/32;
 
             if(Math.abs(gx) > Math.PI){
                 gx *= ((Math.PI)/Math.abs(gx));

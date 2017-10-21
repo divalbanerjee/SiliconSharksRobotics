@@ -53,4 +53,22 @@ public class ROVInfo{
         }
         return new ROVStatus(-2);
     }
+    public static String getStatus(){
+        ROVStatus avgStatus = new ROVStatus(-3);
+        int counter = 0;
+        for (int i = numItems-1; i >= 0 ; i++) {
+            if(rovStatuses[i].getTimeStamp() == -1) break;
+            if(rovStatuses[i].isTelemetryUpdated()){
+                counter++;
+                avgStatus.Sum(rovStatuses[i]);
+                if(counter >= 5) break;
+            }
+        }
+        if(counter == 0){
+            ROVStatus rovStatus = new ROVStatus(-1);
+            return rovStatus.getString("Avg0");
+        }
+        avgStatus.Scale(1.0/(double)counter);
+        return avgStatus.getString("Avg" + String.valueOf(counter));
+    }
 }
