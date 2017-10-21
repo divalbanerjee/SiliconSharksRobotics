@@ -10,10 +10,7 @@ import java.util.TimerTask;
 
 import javax.swing.*;
 
-import com.SiliconSharks.Graphics.Compass;
-import com.SiliconSharks.Graphics.ControllerInterface;
-import com.SiliconSharks.Graphics.DataGraph;
-import com.SiliconSharks.Graphics.StatusIndicator;
+import com.SiliconSharks.Graphics.*;
 import com.SiliconSharks.ROVComponents.ROVInfo;
 import com.SiliconSharks.ROVComponents.ROVStatus;
 import com.SiliconSharks.Serial.SerialCommunication;
@@ -103,9 +100,12 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
         StatusIndicator magnetStatusIndicator = new StatusIndicator("Magnetometer Cali... ");
         StatusIndicator accelStatusIndicator = new StatusIndicator("Accelerometer Cali... ");
         StatusIndicator amperageStatusIndicator = new StatusIndicator("Amperage Status      ");
+
         DataGraph voltageGraph = new DataGraph(0);
         DataGraph amperageGraph = new DataGraph(1);
         DataGraph[] thrustergraphs = new DataGraph[]{new DataGraph(2), new DataGraph(3), new DataGraph(4)};
+
+        Switch KeyboardEnabled = new Switch("KeyboardEnabled", true);
 
         rawData.setBounds(1690,210,300,200);
         picker.setBounds(1280,0,400,20);
@@ -133,6 +133,7 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
         for(int i = 0; i < thrustergraphs.length; i++){
             thrustergraphs[i].setBounds(i*250+500,720,250,250);
         }
+        KeyboardEnabled.setBounds(1690,440,300,50);
 
         add(rawData);
         add(picker);
@@ -160,6 +161,7 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
         for (DataGraph thrustergraph : thrustergraphs) {
             add(thrustergraph);
         }
+        add(KeyboardEnabled);
 
         setSize(1980,1040);
         setVisible(true);
@@ -169,6 +171,10 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
             @Override
             public void run() {
                 //updating componenets with most recent info
+                KeyboardEnabled.updateposition();
+                if(KeyboardEnabled.getpositionchanged()){
+                    KeyboardEnabled.repaint();
+                }
                 controllerInterface1.repaint();
                 controllerInterface2.repaint();
                 ROVStatus rovStatus = ROVInfo.getMostRecentTelemetry();
