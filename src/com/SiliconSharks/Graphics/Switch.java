@@ -23,8 +23,8 @@ public class Switch extends JPanel {
         addMouseListener(new MouseEventListener());
     }
     public void updateposition(){
-        double idealposition = 0;
-        if(switchstate) idealposition++;
+        double idealposition = 1;
+        if(switchstate) idealposition--;
         positionchanged = !(position == idealposition);
         double change = (idealposition - position)/5;
         if(Math.abs(change) > 0.05){
@@ -55,8 +55,8 @@ public class Switch extends JPanel {
         g2.setColor(Color.RED);
         g2.fillRect(start+32,2,10,height+4);
         g2.setColor(Color.BLACK);
-        g2.drawString("OFF",start+21-fontMetrics.stringWidth("OFF")/2,height+2);
-        g2.drawString("ON",start+63-fontMetrics.stringWidth("ON")/2,height+2);
+        g2.drawString("OFF",start+21-fontMetrics.stringWidth("OFF")/2,height+1);
+        g2.drawString("ON",start+61-fontMetrics.stringWidth("ON")/2,height+1);
         g2.fillRoundRect(start+(int)(position*42),0,42,height+8,10,10);
         g2.setColor(Color.LIGHT_GRAY);
         g2.fillRoundRect(start+2+(int)(position*42),2,38,height+4,8,8);
