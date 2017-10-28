@@ -168,7 +168,6 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
 
         java.util.Timer timer = new java.util.Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
             public void run() {
                 //updating componenets with most recent info
                 KeyboardEnabled.updateposition();
@@ -178,6 +177,25 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
                 controllerInterface1.repaint();
                 controllerInterface2.repaint();
                 ROVStatus rovStatus = ROVInfo.getMostRecentTelemetry();
+                if(SerialCommunication.isConnected()) {
+                    serialStatusIndicator.setStatus(3);
+                }else{
+                    serialStatusIndicator.setStatus(0);
+                }
+                if(rovStatus.getTimeStamp() <= -1){
+                    telemetryStatusIndicator.setStatus(0);
+                }else{
+                    int diff = MainUpdateLoop.getGlobalTimeStamp() - rovStatus.getTimeStamp();
+                    if(diff > 200){
+                        telemetryStatusIndicator.setStatus(0);
+                    }else if(diff > 100){
+                        telemetryStatusIndicator.setStatus(1);
+                    }else if(diff > 40){
+                        telemetryStatusIndicator.setStatus(2);
+                    }else{
+                        telemetryStatusIndicator.setStatus(3);
+                    }
+                }
                 if(rovStatus.getTimeStamp() != lastTelemetry.getTimeStamp()){
                     rawData.setText(ROVInfo.getStatus());
                     lastTelemetry = rovStatus;
@@ -190,25 +208,6 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
                     gimbal1.setMyAngle((0.5-rovStatus.getServo(0))*Math.PI);
                     gimbal2.setMyAngle((rovStatus.getServo(1)-0.5)*Math.PI);
                     gripper.setMyAngle(rovStatus.getServo(2)*Math.PI*2/3-Math.PI/6);
-                    if(SerialCommunication.isConnected()) {
-                        serialStatusIndicator.setStatus(3);
-                    }else{
-                        serialStatusIndicator.setStatus(0);
-                    }
-                    if(rovStatus.getTimeStamp() <= -1){
-                        telemetryStatusIndicator.setStatus(0);
-                    }else{
-                        int diff = MainUpdateLoop.getGlobalTimeStamp() - rovStatus.getTimeStamp();
-                        if(diff > 200){
-                            telemetryStatusIndicator.setStatus(0);
-                        }else if(diff > 100){
-                            telemetryStatusIndicator.setStatus(1);
-                        }else if(diff > 40){
-                            telemetryStatusIndicator.setStatus(2);
-                        }else{
-                            telemetryStatusIndicator.setStatus(3);
-                        }
-                    }
                     systemStatusIndicator.setStatus(rovStatus.getSystem().getCalibration());
                     gyroStatusIndicator.setStatus(rovStatus.getGyro().getCalibration());
                     magnetStatusIndicator.setStatus(rovStatus.getMagnet().getCalibration());
@@ -308,9 +307,9 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
                 webcam.close();
 
                 webcam = (Webcam) e.getItem();
-                webcam.setViewSize(WebcamResolution.VGA.getSize());
-                System.out.println(WebcamResolution.VGA.getSize().toString());
-                webcam.addWebcamListener(this);
+                webcam.setCustomViewSizes(new Dimension[]{new Dimension(1280,720)});
+                webcam.setViewSize(new Dimension(1280,720));
+                webcam.addWebcamListener(WebcamTest.this);
 
                 System.out.println("selected " + webcam.getName());
 
@@ -320,7 +319,7 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
                 panel.setImageSizeDisplayed(true);
                 panel.setFPSLimit(10);
                 panel.setFPSLimited(true);
-                panel.setBounds(0,30,1280,720);
+                panel.setBounds(0,0,1280,720);
 
                 add(panel);
 
