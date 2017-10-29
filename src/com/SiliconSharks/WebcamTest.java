@@ -45,7 +45,6 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
         MainUpdateLoop.start();
 
         Webcam.addDiscoveryListener(this);
-
         setTitle("Java Webcam Capture POC");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLayout(null);
@@ -77,6 +76,7 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
 
         JLabel rawData = new JLabel("Initializing...");
         rawData.setVisible(true);
+        rawData.setFont(new Font("Helvetica",Font.PLAIN,14));
         rawData.setForeground(Color.WHITE);
 
         ControllerInterface controllerInterface1 = new ControllerInterface(1);
@@ -93,12 +93,12 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
         Compass gimbal2 = new Compass("Right Gimbal");
         Compass gripper = new Compass("Gripper",2);
 
-        StatusIndicator serialStatusIndicator = new StatusIndicator("Serial Connection      ");
-        StatusIndicator telemetryStatusIndicator = new StatusIndicator("Telemetry Status      ");
-        StatusIndicator systemStatusIndicator = new StatusIndicator("System Calibration    ");
-        StatusIndicator gyroStatusIndicator = new StatusIndicator("Gyroscope Calibrat... ");
-        StatusIndicator magnetStatusIndicator = new StatusIndicator("Magnetometer Cali... ");
-        StatusIndicator accelStatusIndicator = new StatusIndicator("Accelerometer Cali... ");
+        StatusIndicator serialStatusIndicator = new StatusIndicator("Serial Connection");
+        StatusIndicator telemetryStatusIndicator = new StatusIndicator("Telemetry Status");
+        StatusIndicator systemStatusIndicator = new StatusIndicator("System Calibration");
+        StatusIndicator gyroStatusIndicator = new StatusIndicator("Gyroscope Calibration");
+        StatusIndicator magnetStatusIndicator = new StatusIndicator("Magnetometer Calibration");
+        StatusIndicator accelStatusIndicator = new StatusIndicator("Accelerometer Calibration");
         StatusIndicator amperageStatusIndicator = new StatusIndicator("Amperage Status      ");
 
         DataGraph voltageGraph = new DataGraph(0);
@@ -107,35 +107,34 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
 
         Switch KeyboardEnabled = new Switch("KeyboardEnabled", true);
 
-        rawData.setBounds(1690,210,300,200);
-        picker.setBounds(1280,0,400,20);
-        panel.setBounds(0,0,1280,720);
-        controllerInterface1.setBounds(1280,25,400,230);
-        controllerInterface2.setBounds(1280,255,400,230);
-        compass.setBounds(1280,485,140,160);
-        pitch.setBounds(1280,645,140,160);
-        roll.setBounds(1280,805,140,160);
+        picker.setBounds(0,0,300,20);
+        panel.setBounds(320,20,1280,720);
+        controllerInterface1.setBounds(0,25,300,200);
+        controllerInterface2.setBounds(0,225,300,200);
+        compass.setBounds(0,425,100,115);
+        pitch.setBounds(100,425,100,115);
+        roll.setBounds(200,425,100,115);
         for(int i = 0; i < thrustergraphs.length; i++){
-            thrusters[i].setBounds(1420,485+160*i,140,160);
+            thrusters[i].setBounds(100*i,540,100,115);
         }
-        gimbal1.setBounds(1560,485,140,160);
-        gimbal2.setBounds(1560,645,140,160);
-        gripper.setBounds(1560,805,140,160);
-        serialStatusIndicator.setBounds(1690,10,300,30);
-        telemetryStatusIndicator.setBounds(1690,40,300,30);
-        systemStatusIndicator.setBounds(1690,70,300,30);
-        gyroStatusIndicator.setBounds(1690,100,300,30);
-        magnetStatusIndicator.setBounds(1690,130,300,30);
-        accelStatusIndicator.setBounds(1690,160,300,30);
-        amperageStatusIndicator.setBounds(1690,190,300,30);
-        voltageGraph.setBounds(0,720,250,250);
-        amperageGraph.setBounds(250,720,250,250);
+        gimbal1.setBounds(0,655,100,115);
+        gimbal2.setBounds(100,655,100,115);
+        gripper.setBounds(200,655,100,115);
+        serialStatusIndicator.setBounds(1620,10,300,30);
+        telemetryStatusIndicator.setBounds(1620,40,300,30);
+        systemStatusIndicator.setBounds(1620,70,300,30);
+        gyroStatusIndicator.setBounds(1620,100,300,30);
+        magnetStatusIndicator.setBounds(1620,130,300,30);
+        accelStatusIndicator.setBounds(1620,160,300,30);
+        amperageStatusIndicator.setBounds(1620,190,300,30);
+        rawData.setBounds(1620,210,300,200);
+        voltageGraph.setBounds(0,760,250,250);
+        amperageGraph.setBounds(250,760,250,250);
         for(int i = 0; i < thrustergraphs.length; i++){
-            thrustergraphs[i].setBounds(i*250+500,720,250,250);
+            thrustergraphs[i].setBounds(i*250+500,760,250,250);
         }
-        KeyboardEnabled.setBounds(1690,440,300,50);
+        KeyboardEnabled.setBounds(1620,410,300,50);
 
-        add(rawData);
         add(picker);
         add(panel);
         add(controllerInterface1);
@@ -156,6 +155,7 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
         add(magnetStatusIndicator);
         add(accelStatusIndicator);
         add(amperageStatusIndicator);
+        add(rawData);
         add(voltageGraph);
         add(amperageGraph);
         for (DataGraph thrustergraph : thrustergraphs) {
@@ -163,7 +163,7 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
         }
         add(KeyboardEnabled);
 
-        setSize(1980,1040);
+        setSize(1920,1040);
         setVisible(true);
 
         java.util.Timer timer = new java.util.Timer();
@@ -171,11 +171,8 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
             public void run() {
                 //updating componenets with most recent info
                 KeyboardEnabled.updateposition();
-                if(KeyboardEnabled.getpositionchanged()){
-                    KeyboardEnabled.repaint();
-                }
-                controllerInterface1.repaint();
-                controllerInterface2.repaint();
+                controllerInterface1.smartRepaint();
+                controllerInterface2.smartRepaint();
                 ROVStatus rovStatus = ROVInfo.getMostRecentTelemetry();
                 if(SerialCommunication.isConnected()) {
                     serialStatusIndicator.setStatus(3);
@@ -218,8 +215,6 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
                         thrusterGraph.repaint();
                     }
                 }
-
-
             }
         },1000,30);
 

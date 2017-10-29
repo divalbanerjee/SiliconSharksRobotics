@@ -25,10 +25,16 @@ public class StatusIndicator extends JPanel{
     }
 
     public void paintComponent(Graphics g){
-        g.setColor(new Color(207,216,220));
-        g.setFont(font);
-        g.drawString(label,0,fontMetrics.getHeight()*3/4);
-        g.setColor(colors[status]);
-        g.fillRoundRect(fontMetrics.stringWidth(label)+5,0,45,fontMetrics.getHeight(),18,12);
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+        g2.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
+        g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g2.setColor(new Color(207,216,220));
+        g2.setFont(font);
+        g2.drawString(label,50,fontMetrics.getHeight()*4/5);
+        g2.setColor(colors[status]);
+        g2.fillRoundRect(2,0,45,fontMetrics.getHeight(),18,12);
     }
 }

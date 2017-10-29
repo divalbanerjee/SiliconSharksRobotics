@@ -8,7 +8,7 @@ NumGamepadConnectionAttempts 0
 GamepadConnectionAttemptRate 100
 SerialConnectionPauseDuration 300
 SerialConnectionAttemptRate 30
-SerialUpdateRate 10
+SerialUpdateRate 3
 SerialDurationBeforeDisconnect 300
 SerialBaudRate 57600
 NumROVStatusSaved 4000
