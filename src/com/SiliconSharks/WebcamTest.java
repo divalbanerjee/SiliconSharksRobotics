@@ -314,7 +314,7 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
                 panel.setImageSizeDisplayed(true);
                 panel.setFPSLimit(10);
                 panel.setFPSLimited(true);
-                panel.setBounds(0,0,1280,720);
+                panel.setBounds(320,20,1280,720);
 
                 add(panel);
 
