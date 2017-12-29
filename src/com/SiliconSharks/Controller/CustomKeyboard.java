@@ -2,6 +2,7 @@ package com.SiliconSharks.Controller;
 
 import com.SiliconSharks.ROVComponents.ROVStatus;
 import com.SiliconSharks.Settings;
+import javafx.scene.input.KeyCode;
 
 import static com.SiliconSharks.MainUpdateLoop.Message;
 
@@ -9,9 +10,10 @@ import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
 
 class CustomKeyboard {
-    private static int[] time = {0,0,0,0,0,0};
-    private static int[] taps = {0,0,0,0,0,0};
-    private static volatile boolean[] keyPressed = {false,false,false,false,false,false};
+    private static final int numkeys = 7;
+    private static int[] time = new int[numkeys];
+    private static int[] taps = new int[numkeys];
+    private static volatile boolean[] keyPressed = {false,false,false,false,false,false,false};
     private static int getKeyTaps(char c) {
         synchronized (CustomKeyboard.class) {
             switch(c){
@@ -21,6 +23,7 @@ class CustomKeyboard {
                 case 'D': return taps[3];
                 case 'Q': return taps[4];
                 case 'E': return taps[5];
+                case ' ': return taps[6];
             }
             return 0;
         }
@@ -33,6 +36,7 @@ class CustomKeyboard {
             case KeyEvent.VK_D: return 3;
             case KeyEvent.VK_Q: return 4;
             case KeyEvent.VK_E: return 5;
+            case KeyEvent.VK_SPACE: return 6;
             default: return -1;
         }
     }
@@ -92,6 +96,11 @@ class CustomKeyboard {
         rovStatus.setThruster(0,rovStatus.getThruster(0)+((double)(getKeyTaps('A')-getKeyTaps('D')))/maxtaps);
         rovStatus.setThruster(1,rovStatus.getThruster(1)-((double)(getKeyTaps('A')-getKeyTaps('D')))/maxtaps);
         rovStatus.setThruster(2,rovStatus.getThruster(2)+((double)(getKeyTaps('Q')-getKeyTaps('E')))/maxtaps);
+        if(keyPressed[KeyCodeToIndex(KeyEvent.VK_SPACE)]){
+            for(int i = 0; i < 3; i++){
+                rovStatus.setThruster(i,0);
+            }
+        }
         rovStatus.calibrate(0);
     }
 }

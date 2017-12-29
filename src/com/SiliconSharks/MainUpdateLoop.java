@@ -11,7 +11,7 @@ import java.util.TimerTask;
 
 public class MainUpdateLoop {
 
-    private final static boolean[] DebugPrintEnabled = {false, true, true, true}; // 0 is Repetitive Output from Timers, 1 is Non-Critical, 2 is Error and Redundancy handling, 3 is critical messages
+    private final static boolean[] DebugPrintEnabled = {true, true, true, true}; // 0 is Repetitive Output from Timers, 1 is Non-Critical, 2 is Error and Redundancy handling, 3 is critical messages
     private static boolean TimerTaskRunning = false;
     private static int GlobalTimeStamp = 0;
     private static TimerTask timerTask = new TimerTask() {

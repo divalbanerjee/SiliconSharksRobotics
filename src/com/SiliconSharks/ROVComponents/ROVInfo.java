@@ -56,7 +56,7 @@ public class ROVInfo{
     public static String getStatus(){
         ROVStatus avgStatus = new ROVStatus(-3);
         int counter = 0;
-        for (int i = numItems-1; i >= 0 ; i++) {
+        for (int i = numItems-1; i >= 0 ; i--) {
             if(rovStatuses[i].getTimeStamp() == -1) break;
             if(rovStatuses[i].isTelemetryUpdated()){
                 counter++;

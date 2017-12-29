@@ -101,25 +101,23 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
         StatusIndicator accelStatusIndicator = new StatusIndicator("Accelerometer Calibration");
         StatusIndicator amperageStatusIndicator = new StatusIndicator("Amperage Status      ");
 
-        DataGraph voltageGraph = new DataGraph(0);
-        DataGraph amperageGraph = new DataGraph(1);
-        DataGraph[] thrustergraphs = new DataGraph[]{new DataGraph(2), new DataGraph(3), new DataGraph(4)};
+        DataGraph[] graphs = new DataGraph[]{new DataGraph(0), new DataGraph(1), new DataGraph(2), new DataGraph(3), new DataGraph(4), new DataGraph(5)};
 
         Switch KeyboardEnabled = new Switch("KeyboardEnabled", true);
 
         picker.setBounds(0,0,300,20);
         panel.setBounds(320,20,1280,720);
-        controllerInterface1.setBounds(0,25,300,200);
-        controllerInterface2.setBounds(0,225,300,200);
-        compass.setBounds(0,425,100,115);
-        pitch.setBounds(100,425,100,115);
-        roll.setBounds(200,425,100,115);
-        for(int i = 0; i < thrustergraphs.length; i++){
-            thrusters[i].setBounds(100*i,540,100,115);
+        controllerInterface1.setBounds(0,20,300,190);
+        controllerInterface2.setBounds(0,210,300,190);
+        compass.setBounds(0,400,100,115);
+        pitch.setBounds(100,400,100,115);
+        roll.setBounds(200,400,100,115);
+        for(int i = 0; i < 3; i++){
+            thrusters[i].setBounds(100*i,515,100,115);
         }
-        gimbal1.setBounds(0,655,100,115);
-        gimbal2.setBounds(100,655,100,115);
-        gripper.setBounds(200,655,100,115);
+        gimbal1.setBounds(0,630,100,115);
+        gimbal2.setBounds(100,630,100,115);
+        gripper.setBounds(200,630,100,115);
         serialStatusIndicator.setBounds(1620,10,300,30);
         telemetryStatusIndicator.setBounds(1620,40,300,30);
         systemStatusIndicator.setBounds(1620,70,300,30);
@@ -128,10 +126,8 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
         accelStatusIndicator.setBounds(1620,160,300,30);
         amperageStatusIndicator.setBounds(1620,190,300,30);
         rawData.setBounds(1620,210,300,200);
-        voltageGraph.setBounds(0,760,250,250);
-        amperageGraph.setBounds(250,760,250,250);
-        for(int i = 0; i < thrustergraphs.length; i++){
-            thrustergraphs[i].setBounds(i*250+500,760,250,250);
+        for(int i = 0; i < graphs.length; i++){
+            graphs[i].setBounds(i*250,760,250,250);
         }
         KeyboardEnabled.setBounds(1620,410,300,50);
 
@@ -156,10 +152,8 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
         add(accelStatusIndicator);
         add(amperageStatusIndicator);
         add(rawData);
-        add(voltageGraph);
-        add(amperageGraph);
-        for (DataGraph thrustergraph : thrustergraphs) {
-            add(thrustergraph);
+        for (DataGraph graph : graphs) {
+            add(graph);
         }
         add(KeyboardEnabled);
 
@@ -169,10 +163,12 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
         java.util.Timer timer = new java.util.Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
+
                 //updating componenets with most recent info
                 KeyboardEnabled.updateposition();
-                controllerInterface1.smartRepaint();
-                controllerInterface2.smartRepaint();
+                controllerInterface1.repaint();
+                controllerInterface2.repaint();
+                //System.out.println("hi");
                 ROVStatus rovStatus = ROVInfo.getMostRecentTelemetry();
                 if(SerialCommunication.isConnected()) {
                     serialStatusIndicator.setStatus(3);
@@ -194,25 +190,31 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
                     }
                 }
                 if(rovStatus.getTimeStamp() != lastTelemetry.getTimeStamp()){
+                    System.out.println("hello");
                     rawData.setText(ROVInfo.getStatus());
                     lastTelemetry = rovStatus;
                     compass.setMyAngle((90-rovStatus.getSystem().getX())*Math.PI/180);
                     pitch.setMyAngle((90-rovStatus.getSystem().getY())*Math.PI/180);
                     roll.setMyAngle((90+rovStatus.getSystem().getZ())*Math.PI/180);
+                    compass.repaint();
+                    pitch.repaint();
+                    roll.repaint();
                     for(int i = 0; i < thrusters.length; i++){
                         thrusters[i].setMyAngle(rovStatus.getThruster(i)*-Math.PI*2/3+Math.PI/2);
+                        thrusters[i].repaint();
                     }
                     gimbal1.setMyAngle((0.5-rovStatus.getServo(0))*Math.PI);
                     gimbal2.setMyAngle((rovStatus.getServo(1)-0.5)*Math.PI);
                     gripper.setMyAngle(rovStatus.getServo(2)*Math.PI*2/3-Math.PI/6);
+                    gimbal1.repaint();
+                    gimbal2.repaint();
+                    gripper.repaint();
                     systemStatusIndicator.setStatus(rovStatus.getSystem().getCalibration());
                     gyroStatusIndicator.setStatus(rovStatus.getGyro().getCalibration());
                     magnetStatusIndicator.setStatus(rovStatus.getMagnet().getCalibration());
                     accelStatusIndicator.setStatus(rovStatus.getAccel().getCalibration());
-                    voltageGraph.repaint();
-                    amperageGraph.repaint();
-                    for(DataGraph thrusterGraph: thrustergraphs){
-                        thrusterGraph.repaint();
+                    for(DataGraph graph: graphs){
+                        graph.repaint();
                     }
                 }
             }

@@ -22,6 +22,7 @@ public class Compass extends JPanel{
         this.setSize(new Dimension(140,160));
         //setBackground(new Color(44, 62, 80));
         this.type = type;
+        setBackground(new Color(44,62,80));
     }
 
     public void setCompassLabel(String lbl){
@@ -36,7 +37,7 @@ public class Compass extends JPanel{
     }
 
     public void paintComponent(Graphics g){
-        //super.paintComponent(g);
+        super.paintComponent(g);
 
         Graphics2D g2 = (Graphics2D)g;
 

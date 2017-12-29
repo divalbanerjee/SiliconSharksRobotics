@@ -47,9 +47,9 @@ public class SerialCommunication {
     private static void trySendPackage(){
         SendPackageCounter++;
         if (SendPackageCounter >= Settings.getSetting("SerialUpdateRate")) {
-            Message(0, "Serial is currently connected");
+            //Message(0, "Serial is currently connected");
             SendPackageCounter = 0;
-            Message(0, "Sending Package...");
+            //Message(0, "Sending Package...");
             if (sendPackage()) {
                 Message(0, "Package Sent!");
             } else {
@@ -236,7 +236,9 @@ public class SerialCommunication {
                 if(serialPort.getInputBufferBytesCount() >= 80){
                     ROVStatus rovStatus = ROVInfo.update(getint());
                     if(rovStatus == null) return;
-                    rovStatus.setAmperage(getint());
+                    for(int i = 0; i < 5; i++){
+                        rovStatus.setAmperage(i,((double)getint())/68.0624);
+                    }
                     rovStatus.setVoltage(getint());
                     rovStatus.getSystem().setCalibration(getint());
                     rovStatus.getGyro().setCalibration(getint());

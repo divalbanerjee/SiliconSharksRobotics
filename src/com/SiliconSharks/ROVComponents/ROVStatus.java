@@ -2,6 +2,8 @@ package com.SiliconSharks.ROVComponents;
 
 import com.SiliconSharks.Settings;
 
+import java.text.DecimalFormat;
+
 public class ROVStatus {
     public class Sensor{
         private int calibration;
@@ -28,10 +30,10 @@ public class ROVStatus {
     }
     private int numThrusters = 3, numServos = 3;
     private double thrusters[] = new double[numThrusters];
-    private double thrusterAmperage[] = new double[numThrusters];
+    private double Amperage[] = new double[numThrusters+2];// 1 ammeter on each thruster, one for the overall amperage, and one for the servos
     private double servos[] = new double[numServos];
     private double AmpScale = -1, AmpExp;
-    private double Amperage = 0, Voltage = 0, Temperature =0;
+    private double Voltage = 0, Temperature =0;
     private Sensor System = new Sensor(), Magnet = new Sensor(), Accel = new Sensor(), Gyro = new Sensor(); // System sensor includes system calibration and orientation
     private int TimeStamp;
     private boolean TelemetryUpdated = false;
@@ -40,7 +42,7 @@ public class ROVStatus {
         numThrusters = Settings.getSetting("NumThrusters");
         numServos = Settings.getSetting("NumServos");
         for (int i = 0; i < numThrusters; i++) thrusters[i] = 0;
-        for (int i = 0; i < numThrusters; i++) thrusterAmperage[i] = 0;
+        for (int i = 0; i < numThrusters+2; i++) Amperage[i] = 0;
         for (int i = 0; i < numServos; i++) servos[i] = 0.5;
     }
     boolean isTelemetryUpdated() {return TelemetryUpdated; }
@@ -50,6 +52,7 @@ public class ROVStatus {
     public Sensor getGyro() { return Gyro; }
     public Sensor getMagnet() {return Magnet;}
     public Sensor getSystem() {return System;}
+    DecimalFormat df = new DecimalFormat("#,###,##0.00");
     private double trim(double a){
         a = (a > 1) ? 1: a;
         a = (a < -1) ? -1: a;
@@ -72,13 +75,11 @@ public class ROVStatus {
     public void setServo(int index, double value){servos[index] = trim(value);}
     public double getThruster(int index){return thrusters[index];}
     public double getServo(int index){return servos[index];}
-    public void setAmperage(int amperage) { Amperage = ((double)amperage)/67.381855; }
-    public void setThrusterAmperage(int amperage,int index) { thrusterAmperage[index] = ((double)amperage)/67.381855;}
+    public void setAmperage(int index,double amperage) { Amperage[index] = amperage;}
     public void setTemperature(double temperature) { Temperature = temperature; }
     public void setVoltage(int voltage) { Voltage = ((double)voltage)*5.015*3/5/1024; }
-    public double getAmperage(){return Amperage;}
+    public double getAmperage(int i){return Amperage[i];}
     public double getTemperature() { return Temperature;}
-    public double getThrusterAmperage(int index){return thrusterAmperage[index];}
     public double getVoltage() { return Voltage; }
     public double getAmpScale(){return AmpScale;}
     public String getString(String prefix){
@@ -93,17 +94,17 @@ public class ROVStatus {
     }
     private String[] getStringArray(String prefix){
         return new String[] {
-                prefix + " Timestamp: " + String.valueOf(TimeStamp),
-                prefix + " Thruster 1: " + String.valueOf(thrusters[0]*100) + "%",
-                prefix + " Thruster 2: " + String.valueOf(thrusters[1]*100) + "%",
-                prefix + " Thruster 3: " + String.valueOf(thrusters[2]*100) + "%",
-                prefix + " Expected Amperage: " + String.valueOf(AmpExp),
-                prefix + " Measured Amperage: " + String.valueOf(Amperage),
-                prefix + " Measured Voltage: " + String.valueOf(Voltage),
-                prefix + " Temperature: " + String.valueOf(Temperature),
-                prefix + " Left Gimbal: " + String.valueOf(servos[0]),
-                prefix + " Right Gimbal: " + String.valueOf(servos[1]),
-                prefix + " Gripper: " + String.valueOf(servos[2]),
+                prefix + " Timestamp: " + df.format(TimeStamp),
+                prefix + " Thruster 1: " + df.format(thrusters[0]*100) + "%",
+                prefix + " Thruster 2: " + df.format(thrusters[1]*100) + "%",
+                prefix + " Thruster 3: " + df.format(thrusters[2]*100) + "%",
+                prefix + " Expected Amperage: " + df.format(AmpExp),
+                prefix + " Measured Amperage: " + df.format(Amperage[0]),
+                prefix + " Measured Voltage: " + df.format(Voltage),
+                prefix + " Temperature: " + df.format(Temperature),
+                prefix + " Left Gimbal: " + df.format(servos[0]),
+                prefix + " Right Gimbal: " + df.format(servos[1]),
+                prefix + " Gripper: " + df.format(servos[2]),
         };
     }
     void Sum(ROVStatus rovStatus){
@@ -112,16 +113,17 @@ public class ROVStatus {
         this.getSystem().sum(rovStatus.getSystem());
         this.getGyro().sum(rovStatus.getGyro());
         this.getMagnet().sum(rovStatus.getMagnet());
-        this.Amperage += rovStatus.getAmperage();
         this.AmpExp += rovStatus.AmpExp;
         this.Voltage += rovStatus.getVoltage();
         this.Temperature += rovStatus.getTemperature();
         for (int i = 0; i < numThrusters; i++) {
-            this.setThruster(i,rovStatus.getThruster(i)+this.getThruster(i));
-            this.thrusterAmperage[i] += rovStatus.getThrusterAmperage(i);
+            this.thrusters[i] = rovStatus.getThruster(i)+this.getThruster(i);
+        }
+        for(int i = 0; i < numThrusters+2; i++){
+            this.setAmperage(i,rovStatus.getAmperage(i)+this.getAmperage(i));
         }
         for(int i = 0; i < numServos; i++){
-            this.setServo(i,rovStatus.getServo(i)+this.getServo(i));
+            this.servos[i] = rovStatus.getServo(i)+this.getServo(i);
         }
     }
     void Scale(double factor){
@@ -129,13 +131,14 @@ public class ROVStatus {
         this.getSystem().scale(factor);
         this.getGyro().scale(factor);
         this.getMagnet().scale(factor);
-        this.Amperage *= factor;
         this.AmpExp *= factor;
         this.Voltage *= factor;
         this.Temperature *= factor;
         for (int i = 0; i < numThrusters; i++) {
             this.thrusters[i] *= factor;
-            this.thrusterAmperage[i] *= factor;
+        }
+        for(int i = 0; i < numThrusters+2; i++){
+            this.Amperage[i] *= factor;
         }
         for(int i = 0; i < numServos; i++){
             this.servos[i] *= factor;

@@ -117,7 +117,7 @@ public class StatusBar extends JPanel {
         if (isNominal) {
             g2.drawString("ROV is nominal", (int) (this.getWidth() - this.getWidth() / 3), this.getHeight() / 2 - 30);
             g2.setFont(font10Pt);
-            g2.drawString("Voltage: " + df.format(rovStatus.getVoltage()) + "V, Amperage: " + df.format(rovStatus.getAmperage()) + "A, AmpScale Factor: " + df.format(rovStatus.getAmpScale()) + ", Temperature: " + df.format(rovStatus.getTemperature()), (int) (this.getWidth() / 3.8), this.getHeight() / 10);
+            g2.drawString("Voltage: " + df.format(rovStatus.getVoltage()) + "V, Amperage: " + df.format(rovStatus.getAmperage(0)) + "A, AmpScale Factor: " + df.format(rovStatus.getAmpScale()) + ", Temperature: " + df.format(rovStatus.getTemperature()), (int) (this.getWidth() / 3.8), this.getHeight() / 10);
             g2.drawString("Calibrations-- System: " + rovStatus.getSystem().getCalibration() + ", Accel: " + rovStatus.getAccel().getCalibration() + ", Magnet: " + rovStatus.getMagnet().getCalibration() + ", Gyro: " + rovStatus.getGyro().getCalibration(), (int) (this.getWidth() / 3.8), this.getHeight() * 2 / 10);
             g2.drawString("Thruster 1: " + df.format(rovStatus.getThruster(0)) + ", Thruster 2: " + df.format(rovStatus.getThruster(1)) + ", Thruster 3: " + df.format(rovStatus.getThruster(2)), (int) (this.getWidth() / 3.8), this.getHeight() * 3 / 10);
             g2.drawString("Orientation     - X: " + df.format(rovStatus.getSystem().getX()) + ", Y: " + df.format(rovStatus.getSystem().getY()) + ", Z: " + df.format(rovStatus.getSystem().getZ()), (int) (this.getWidth() / 3.8), this.getHeight() * 4 / 10);

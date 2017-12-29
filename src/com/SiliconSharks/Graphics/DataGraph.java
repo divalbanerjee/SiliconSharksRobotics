@@ -13,20 +13,20 @@ import java.awt.geom.AffineTransform;
 public class DataGraph extends JPanel{
     private ROVStatus[] rovStatuses;
     private int type;
+    int numitems;
     public DataGraph(int type){
         rovStatuses = ROVInfo.getRovStatuses();
+        numitems = rovStatuses.length;
         this.type = type;
+        setBackground(new Color(44,62,80));
     }
     private int getY1(ROVStatus rovStatus){
         if(rovStatus.getTimeStamp() <= -1) return 0;
         switch(type){
-            case 0: return (int)(rovStatus.getVoltage()*230/15);
-            case 1: return (int)(rovStatus.getAmperage()*230/30);
-            case 2: return (int)(rovStatus.getThrusterAmperage(0)*230/30);
-            case 3: return (int)(rovStatus.getThrusterAmperage(1)*230/30);
-            case 4: return (int)(rovStatus.getThrusterAmperage(2)*230/30);
+            case 0: return (int)((rovStatus.getVoltage()*230)/15);
+            case 5: return (int)(rovStatus.getAmperage(4)*230/6);
+            default: return (int) (rovStatus.getAmperage(type-1)*230/30);
         }
-        return 0;
     }
     private int getY2(ROVStatus rovStatus){
         if(rovStatus.getTimeStamp() <= -1) return 0;
@@ -39,8 +39,9 @@ public class DataGraph extends JPanel{
         return 0;
     }
     public void paintComponent(Graphics g){
+        super.paintComponent(g);
         Graphics2D g2 = (Graphics2D)g;
-        g2.setColor(Color.GREEN);
+        g2.setColor(Color.cyan);
         g2.drawLine(20,20,20,230);
         g2.drawLine(20,230,230,230);
         g2.setColor(Color.YELLOW);
@@ -62,6 +63,13 @@ public class DataGraph extends JPanel{
                 g2.drawLine(20,58,230,58);
                 break;
             }
+            case 5: {
+                g2.drawString("S Amperage", -35, -110);
+                g2.setTransform(orig);
+                g2.drawString("6", 0, 63);
+                g2.drawLine(20, 58, 230, 58);
+                break;
+            }
             default:{
                 g2.drawString("T"+ String.valueOf(type-1)+" Amperage",-42,-110);
                 g2.setTransform(orig);
@@ -70,20 +78,21 @@ public class DataGraph extends JPanel{
                 break;
             }
         }
-        int prevY = getY1(rovStatuses[0]);
+        int first = numitems - 105;
+        int prevY = getY1(rovStatuses[first]);
         int newY;
         g2.setColor(Color.RED);
-        for(int i = 0; i < 105; i++){
+        for(int i = first; i < numitems-1; i++){
             newY = getY1(rovStatuses[i+1]);
-            g2.drawLine(i*2+20,230-prevY,(i+1)*2+20,230-newY);
+            g2.drawLine((i-first)*2+20,230-prevY,(i+1-first)*2+20,230-newY);
             prevY = newY;
         }
         prevY = getY2(rovStatuses[0]);
-        g2.setColor(Color.cyan);
+        g2.setColor(Color.GREEN);
         if(type >= 1){
-            for(int i = 0; i < 105; i++){
+            for(int i = first; i < numitems-1; i++){
                 newY = getY2(rovStatuses[i+1]);
-                g2.drawLine(i*2+20,230-prevY,(i+1)*2+20,230-newY);
+                g2.drawLine((i-first)*2+20,230-prevY,(i+1-first)*2+20,230-newY);
                 prevY = newY;
             }
         }
