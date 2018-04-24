@@ -17,6 +17,7 @@ public class ControlSystem {
     private static Gamepad[] gamepads;
     public ControlSystem(){}
     public static void start(){
+        currentROVStatus = new ROVStatus(getGlobalTimeStamp());
         CustomKeyboard.start();
         switch (Settings.getSetting("NumGamepad")){
             case 0:{
@@ -41,7 +42,7 @@ public class ControlSystem {
     private static ROVStatus currentROVStatus;
     public static Gamepad getGamepad(int index) {return gamepads[index];}
     public static void timerRefresh(){
-        currentROVStatus = new ROVStatus(getGlobalTimeStamp());
+        ROVStatus newROVStatus = new ROVStatus(getGlobalTimeStamp());
         KeyboardRefreshCounter++;
         if(KeyboardRefreshCounter >= Settings.getSetting("KeyboardUpdateRate")){
             CustomKeyboard.TimerRefresh();
@@ -54,7 +55,7 @@ public class ControlSystem {
                     gamepad.setController(null);
                     Message(1, "Error polling controller, disconnecting...");
                 } else {
-                    gamepad.update(currentROVStatus);
+                    gamepad.update(newROVStatus,currentROVStatus);
                     GamepadConnection = true;
                 }
             } else {
@@ -67,10 +68,11 @@ public class ControlSystem {
             }
         }
         if(GamepadConnection){
-            if(Settings.getSettingB("KeyboardEnabled") && Settings.getSettingB("KeyboardEnabledWhileGamepadConnected")) CustomKeyboard.update(currentROVStatus);
+            if(Settings.getSettingB("KeyboardEnabled") && Settings.getSettingB("KeyboardEnabledWhileGamepadConnected")) CustomKeyboard.update(newROVStatus,currentROVStatus);
         }else{
-            if(Settings.getSettingB("KeyboardEnabled")) CustomKeyboard.update(currentROVStatus);
+            if(Settings.getSettingB("KeyboardEnabled")) CustomKeyboard.update(newROVStatus,currentROVStatus);
         }
+        currentROVStatus = newROVStatus;
     }
     private static void AttemptConnection(Gamepad gamepad){
         try{

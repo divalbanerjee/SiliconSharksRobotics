@@ -107,7 +107,7 @@ public class Gamepad {
         else s = "D";
         return s;
     }
-    void update(ROVStatus rovStatus){
+    void update(ROVStatus rovStatus, ROVStatus prevROVStatus){
         switch (type){
             case 0: rovStatus.setThruster(0,getAxis("LY"));
                     rovStatus.setThruster(1,getAxis("LY"));

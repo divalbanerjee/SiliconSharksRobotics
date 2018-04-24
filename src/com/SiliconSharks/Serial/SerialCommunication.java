@@ -18,10 +18,26 @@ public class SerialCommunication {
     private static String currentPort, successfulPort;
     private static int SendPackageCounter = 0, NotConnectedCounter= 0, NotReceivedCounter = 0, WaitSend = 0;
     private static String[] portNames = new String[]{};
+    private static int[] multipliers;
+    private static boolean thrustersactive = true;
+    public static void setThrustersactive(boolean b){
+        thrustersactive = b;
+    }
+    public static void setFlip(int index, boolean value){
+        if(value){
+            multipliers[index] = 1;
+        }else{
+            multipliers[index] = -1;
+        }
+    }
     public SerialCommunication(){}
     public static void start(){
         Connected = false;
         successfulPort =" ";
+        multipliers = new int[Settings.getSetting("NumThrusters")+Settings.getSetting("NumServos")];
+        for (int i = 0; i <multipliers.length ; i++) {
+            multipliers[i] = 1;
+        }
         Message(1,"Successful SerialCommunication Startup!");
     }
     public static void timerRefresh(){
@@ -51,7 +67,7 @@ public class SerialCommunication {
             SendPackageCounter = 0;
             //Message(0, "Sending Package...");
             if (sendPackage()) {
-                Message(0, "Package Sent!");
+                //Message(0, "Package Sent!");
             } else {
                 Message(1, "Package Not Sent! Scroll up for Exception Stack Trace");
             }
@@ -71,11 +87,21 @@ public class SerialCommunication {
             try{
                 ROVStatus rovStatus = ControlSystem.getCurrentROVStatus();
                 writeInt(rovStatus.getTimeStamp());
-                for(int i = 0; i < Settings.getSetting("NumThrusters"); i++) {
-                    writeFloat((float) rovStatus.getThruster(i));
+                int c = 0;
+                if(thrustersactive) {
+                    for (int i = 0; i < Settings.getSetting("NumThrusters"); i++) {
+                        writeFloat(multipliers[c] * ((float) rovStatus.getThruster(i)));
+                        c++;
+                    }
+                }else{
+                    for (int i = 0; i < Settings.getSetting("NumThrusters"); i++) {
+                        writeFloat(0.0f);
+                        c++;
+                    }
                 }
                 for(int i = 0; i < Settings.getSetting("NumServos"); i++) {
-                    writeFloat((float) rovStatus.getServo(i));
+                    writeFloat(multipliers[c]*((float) rovStatus.getServo(i)));
+                    c++;
                 }
             }catch(SerialPortException ex){
                 Message(0,"Error: Package Send Failed!");
@@ -233,11 +259,11 @@ public class SerialCommunication {
     private static void handleSerialEvent(SerialPortEvent serialPortEvent){
         if (serialPortEvent.isRXCHAR() && serialPortEvent.getEventValue() >= 1) {
             try {
-                if(serialPort.getInputBufferBytesCount() >= 80){
+                if(serialPort.getInputBufferBytesCount() >= 68){
                     ROVStatus rovStatus = ROVInfo.update(getint());
                     if(rovStatus == null) return;
                     for(int i = 0; i < 5; i++){
-                        rovStatus.setAmperage(i,((double)getint())/68.0624);
+                        rovStatus.setAmperage(i,(((double)getint())-512)/13.476371);
                     }
                     rovStatus.setVoltage(getint());
                     rovStatus.getSystem().setCalibration(getint());

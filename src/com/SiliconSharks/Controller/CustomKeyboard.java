@@ -10,10 +10,10 @@ import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
 
 class CustomKeyboard {
-    private static final int numkeys = 7;
+    private static final int numkeys = 13;
     private static int[] time = new int[numkeys];
     private static int[] taps = new int[numkeys];
-    private static volatile boolean[] keyPressed = {false,false,false,false,false,false,false};
+    private static volatile boolean[] keyPressed = {false,false,false,false,false,false,false,false,false,false,false,false,false};
     private static int getKeyTaps(char c) {
         synchronized (CustomKeyboard.class) {
             switch(c){
@@ -24,6 +24,10 @@ class CustomKeyboard {
                 case 'Q': return taps[4];
                 case 'E': return taps[5];
                 case ' ': return taps[6];
+                case 'u': return taps[7];
+                case 'd': return taps[8];
+                case 'l': return taps[9];
+                case 'r': return taps[10];
             }
             return 0;
         }
@@ -37,11 +41,15 @@ class CustomKeyboard {
             case KeyEvent.VK_Q: return 4;
             case KeyEvent.VK_E: return 5;
             case KeyEvent.VK_SPACE: return 6;
+            case KeyEvent.VK_UP: return 7;
+            case KeyEvent.VK_DOWN: return 8;
+            case KeyEvent.VK_LEFT: return 9;
+            case KeyEvent.VK_RIGHT: return 10;
             default: return -1;
         }
     }
     static void TimerRefresh(){
-        for(int i = 0; i < 6; i++) {
+        for(int i = 0; i < 11; i++) {
             if (time[i] == -1) {
                 if (keyPressed[i]) {
                     if(i==1 && taps[0]>0) taps[0] = 0;
@@ -89,10 +97,10 @@ class CustomKeyboard {
             });
         Message(1, "Successful CustomKeyboard Startup!");
     }
-    static void update(ROVStatus rovStatus){
+    static void update(ROVStatus rovStatus, ROVStatus prevROVStatus){
         int maxtaps = Settings.getSetting("KeyboardMaxTaps");
-        rovStatus.setThruster(0,rovStatus.getThruster(0)+((double)(getKeyTaps('W')-getKeyTaps('S')))/maxtaps);
-        rovStatus.setThruster(1,rovStatus.getThruster(1)+((double)(getKeyTaps('W')-getKeyTaps('S')))/maxtaps);
+        //rovStatus.setThruster(0,rovStatus.getThruster(0)+((double)(getKeyTaps('W')-getKeyTaps('S')))/maxtaps);
+        //rovStatus.setThruster(1,rovStatus.getThruster(1)+((double)(getKeyTaps('W')-getKeyTaps('S')))/maxtaps);
         rovStatus.setThruster(0,rovStatus.getThruster(0)+((double)(getKeyTaps('A')-getKeyTaps('D')))/maxtaps);
         rovStatus.setThruster(1,rovStatus.getThruster(1)-((double)(getKeyTaps('A')-getKeyTaps('D')))/maxtaps);
         rovStatus.setThruster(2,rovStatus.getThruster(2)+((double)(getKeyTaps('Q')-getKeyTaps('E')))/maxtaps);
@@ -100,6 +108,22 @@ class CustomKeyboard {
             for(int i = 0; i < 3; i++){
                 rovStatus.setThruster(i,0);
             }
+        }
+        if(keyPressed[KeyCodeToIndex(KeyEvent.VK_W)] && !keyPressed[KeyCodeToIndex(KeyEvent.VK_S)]){
+            rovStatus.setThruster(0,rovStatus.getThruster(0)+0.01);
+            rovStatus.setThruster(1,rovStatus.getThruster(1)+0.01);
+        }else if(!keyPressed[KeyCodeToIndex(KeyEvent.VK_W)] && keyPressed[KeyCodeToIndex(KeyEvent.VK_S)]){
+            rovStatus.setThruster(0,rovStatus.getThruster(0)-0.01);
+            rovStatus.setThruster(1,rovStatus.getThruster(1)-0.01);
+        }
+        if(time[KeyCodeToIndex(KeyEvent.VK_UP)] == 1){
+            prevROVStatus.getServo(0);
+            rovStatus.setServo(0,prevROVStatus.getServo(0)+0.25);
+            rovStatus.setServo(1,prevROVStatus.getServo(1)+0.25);
+        }
+        if(time[KeyCodeToIndex(KeyEvent.VK_DOWN)] == 1){
+            rovStatus.setServo(0,prevROVStatus.getServo(0)-0.25);
+            rovStatus.setServo(1,prevROVStatus.getServo(1)-0.25);
         }
         rovStatus.calibrate(0);
     }

@@ -103,7 +103,9 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
 
         DataGraph[] graphs = new DataGraph[]{new DataGraph(0), new DataGraph(1), new DataGraph(2), new DataGraph(3), new DataGraph(4), new DataGraph(5)};
 
-        Switch KeyboardEnabled = new Switch("KeyboardEnabled", true);
+        Switch KeyboardEnabled = new Switch("KeyboardEnabled", Settings.getSettingB("KeyboardEnabled"));
+        Switch[] flipthrusters = new Switch[]{new Switch("Flip Thruster 1",true,"R","F"),new Switch("Flip Thruster 2",true,"R","F"),new Switch("Flip Thruster 3",true,"R","F")};
+        Switch KillThrusters = new Switch("Kill Thrusters", false);
 
         picker.setBounds(0,0,300,20);
         panel.setBounds(320,20,1280,720);
@@ -129,7 +131,11 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
         for(int i = 0; i < graphs.length; i++){
             graphs[i].setBounds(i*250,760,250,250);
         }
-        KeyboardEnabled.setBounds(1620,410,300,50);
+        KeyboardEnabled.setBounds(1620,410,300,25);
+        for(int i = 0; i < flipthrusters.length; i++){
+            flipthrusters[i].setBounds(1620,438+28*i,300,25);
+        }
+        KillThrusters.setBounds(1620,522,300,25);
 
         add(picker);
         add(panel);
@@ -156,6 +162,10 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
             add(graph);
         }
         add(KeyboardEnabled);
+        for(Switch s : flipthrusters){
+            add(s);
+        }
+        add(KillThrusters);
 
         setSize(1920,1040);
         setVisible(true);
@@ -164,8 +174,12 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
 
-                //updating componenets with most recent info
+                //updating components with most recent info
                 KeyboardEnabled.updateposition();
+                for (Switch flipthruster : flipthrusters) {
+                    flipthruster.updateposition();
+                }
+                KillThrusters.updateposition();
                 controllerInterface1.repaint();
                 controllerInterface2.repaint();
                 //System.out.println("hi");
@@ -190,7 +204,7 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
                     }
                 }
                 if(rovStatus.getTimeStamp() != lastTelemetry.getTimeStamp()){
-                    System.out.println("hello");
+                    //System.out.println("hello");
                     rawData.setText(ROVInfo.getStatus());
                     lastTelemetry = rovStatus;
                     compass.setMyAngle((90-rovStatus.getSystem().getX())*Math.PI/180);
@@ -216,6 +230,10 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
                     for(DataGraph graph: graphs){
                         graph.repaint();
                     }
+                    for(int i = 0; i < flipthrusters.length; i++){
+                        SerialCommunication.setFlip(i,flipthrusters[i].getState());
+                    }
+                    SerialCommunication.setThrustersactive(!KillThrusters.getState());
                 }
             }
         },1000,30);

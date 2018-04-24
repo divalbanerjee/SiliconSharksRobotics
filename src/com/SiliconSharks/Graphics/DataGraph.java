@@ -13,7 +13,7 @@ import java.awt.geom.AffineTransform;
 public class DataGraph extends JPanel{
     private ROVStatus[] rovStatuses;
     private int type;
-    int numitems;
+    private int numitems;
     public DataGraph(int type){
         rovStatuses = ROVInfo.getRovStatuses();
         numitems = rovStatuses.length;
@@ -60,21 +60,21 @@ public class DataGraph extends JPanel{
                 g2.drawString("Amperage",-35,-110);
                 g2.setTransform(orig);
                 g2.drawString("25",0,63);
-                g2.drawLine(20,58,230,58);
+                g2.drawLine(20,38,230,38);
                 break;
             }
             case 5: {
                 g2.drawString("S Amperage", -35, -110);
                 g2.setTransform(orig);
                 g2.drawString("6", 0, 63);
-                g2.drawLine(20, 58, 230, 58);
+                g2.drawLine(20, 38, 230, 38);
                 break;
             }
             default:{
                 g2.drawString("T"+ String.valueOf(type-1)+" Amperage",-42,-110);
                 g2.setTransform(orig);
                 g2.drawString("25",0,63);
-                g2.drawLine(20,58,230,58);
+                g2.drawLine(20,38,230,38);
                 break;
             }
         }

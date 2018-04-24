@@ -12,18 +12,25 @@ public class Switch extends JPanel {
     private double position;
     private String label;
     private int start,height;
+    private boolean checkedstate;
+    private String txtoff, txton;
     public Switch(String label){
-        this(label,false);
+        this(label,false, "OFF","ON");
     }
-    public Switch(String label, boolean switchstate){
+    public Switch(String label, boolean switchstate) { this(label,switchstate,"OFF","ON");}
+    public Switch(String label, boolean switchstate, String txtoff, String txton){
         this.switchstate = switchstate;
+        checkedstate =switchstate;
         if(switchstate) position = 0;
         else position = 1;
         this.label = label;
         fontMetrics = getFontMetrics(font30Pt);
-        start = fontMetrics.stringWidth(label)+3;
+        //start = fontMetrics.stringWidth(label)+3;
+        start = 0;
         height = fontMetrics.getHeight();
         addMouseListener(new MouseEventListener());
+        this.txtoff = txtoff;
+        this.txton = txton;
     }
     public void updateposition(){
         double idealposition = 1;
@@ -58,10 +65,10 @@ public class Switch extends JPanel {
         g2.setColor(Color.BLACK);
         g2.setFont(font30Pt);
         g2.setColor(Color.WHITE);
-        g2.drawString(label,0,height);
+        g2.drawString(label,85,height);
         g2.setColor(Color.BLACK);
-        g2.drawString("OFF",start+21-fontMetrics.stringWidth("OFF")/2,height+1);
-        g2.drawString("ON",start+61-fontMetrics.stringWidth("ON")/2,height+1);
+        g2.drawString(txtoff,start+21-fontMetrics.stringWidth(txtoff)/2,height);
+        g2.drawString(txton,start+60-fontMetrics.stringWidth(txton)/2,height);
         g2.fillRoundRect(start+(int)(position*42),0,42,height+8,10,10);
         g2.setColor(Color.LIGHT_GRAY);
         g2.fillRoundRect(start+2+(int)(position*42),2,38,height+4,8,8);

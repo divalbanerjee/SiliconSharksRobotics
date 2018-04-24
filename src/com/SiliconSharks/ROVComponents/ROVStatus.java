@@ -52,7 +52,7 @@ public class ROVStatus {
     public Sensor getGyro() { return Gyro; }
     public Sensor getMagnet() {return Magnet;}
     public Sensor getSystem() {return System;}
-    DecimalFormat df = new DecimalFormat("#,###,##0.00");
+    private DecimalFormat df = new DecimalFormat("#,###,##0.00");
     private double trim(double a){
         a = (a > 1) ? 1: a;
         a = (a < -1) ? -1: a;
@@ -70,6 +70,7 @@ public class ROVStatus {
         }else{
             AmpScale = -1;
         }
+        AmpExp = ((Math.abs(thrusters[0])+Math.abs(thrusters[1])+Math.abs(thrusters[2]))*25.0);
     }
     public void setThruster(int index, double value){thrusters[index] = trim(value);}
     public void setServo(int index, double value){servos[index] = trim(value);}
@@ -77,12 +78,12 @@ public class ROVStatus {
     public double getServo(int index){return servos[index];}
     public void setAmperage(int index,double amperage) { Amperage[index] = amperage;}
     public void setTemperature(double temperature) { Temperature = temperature; }
-    public void setVoltage(int voltage) { Voltage = ((double)voltage)*5.015*3/5/1024; }
+    public void setVoltage(int voltage) { Voltage = ((double)voltage)*5.015*2.9572/1024; }
     public double getAmperage(int i){return Amperage[i];}
     public double getTemperature() { return Temperature;}
     public double getVoltage() { return Voltage; }
     public double getAmpScale(){return AmpScale;}
-    public String getString(String prefix){
+    String getString(String prefix){
         StringBuilder sb = new StringBuilder();
         sb.append("<html>");
         String[] strings = getStringArray(prefix);

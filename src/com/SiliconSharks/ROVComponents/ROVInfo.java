@@ -4,6 +4,7 @@ import com.SiliconSharks.MainUpdateLoop;
 import com.SiliconSharks.Settings;
 
 import static com.SiliconSharks.MainUpdateLoop.Message;
+import static com.SiliconSharks.MainUpdateLoop.getGlobalTimeStamp;
 
 public class ROVInfo{
     private static ROVStatus[] rovStatuses;
@@ -34,7 +35,7 @@ public class ROVInfo{
                 return rovStatus;
             }
         }
-        Message(2,s.toString());
+        Message(2,"ROVInfo 37: "+Integer.toString(TimeStamp) +", "  + Integer.toString(getGlobalTimeStamp()) +", "+ s.toString());
         return null;
     }
     public static ROVStatus getMostRecentSentStatus(){
