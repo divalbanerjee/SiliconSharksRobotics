@@ -10,6 +10,7 @@ import java.util.TimerTask;
 
 import javax.swing.*;
 
+import com.SiliconSharks.Controller.ControlSystem;
 import com.SiliconSharks.Graphics.*;
 import com.SiliconSharks.ROVComponents.ROVInfo;
 import com.SiliconSharks.ROVComponents.ROVStatus;
@@ -106,6 +107,8 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
         Switch KeyboardEnabled = new Switch("KeyboardEnabled", Settings.getSettingB("KeyboardEnabled"));
         Switch[] flipthrusters = new Switch[]{new Switch("Flip Thruster 1",true,"R","F"),new Switch("Flip Thruster 2",true,"R","F"),new Switch("Flip Thruster 3",true,"R","F")};
         Switch KillThrusters = new Switch("Kill Thrusters", false);
+        Switch[] flipservos = new Switch[]{new Switch("Flip Servo 1",true,"R","F"),new Switch("Flip Servo 2",true,"R","F"),new Switch("Flip Gripper",true,"R","F")};
+        Switch DisplayTelemetry = new Switch("Telemetry or Sent", true, "S","T");
 
         picker.setBounds(0,0,300,20);
         panel.setBounds(320,20,1280,720);
@@ -136,6 +139,10 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
             flipthrusters[i].setBounds(1620,438+28*i,300,25);
         }
         KillThrusters.setBounds(1620,522,300,25);
+        for(int i = 0; i < flipservos.length; i++){
+            flipservos[i].setBounds(1620,550+28*i,300,25);
+        }
+        DisplayTelemetry.setBounds(1620,634,300,25);
 
         add(picker);
         add(panel);
@@ -166,6 +173,10 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
             add(s);
         }
         add(KillThrusters);
+        for(Switch s : flipservos){
+            add(s);
+        }
+        add(DisplayTelemetry);
 
         setSize(1920,1040);
         setVisible(true);
@@ -180,10 +191,19 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
                     flipthruster.updateposition();
                 }
                 KillThrusters.updateposition();
+                for(Switch s : flipservos){
+                    s.updateposition();
+                }
+                DisplayTelemetry.updateposition();
                 controllerInterface1.repaint();
                 controllerInterface2.repaint();
                 //System.out.println("hi");
-                ROVStatus rovStatus = ROVInfo.getMostRecentTelemetry();
+                ROVStatus rovStatus;
+                if(DisplayTelemetry.getState()) {
+                    rovStatus = ROVInfo.getMostRecentTelemetry();
+                }else{
+                    rovStatus = ControlSystem.getCurrentROVStatus(false);
+                }
                 if(SerialCommunication.isConnected()) {
                     serialStatusIndicator.setStatus(3);
                 }else{
@@ -218,7 +238,7 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
                         thrusters[i].repaint();
                     }
                     gimbal1.setMyAngle((0.5-rovStatus.getServo(0))*Math.PI);
-                    gimbal2.setMyAngle((rovStatus.getServo(1)-0.5)*Math.PI);
+                    gimbal2.setMyAngle(-(rovStatus.getServo(1)-0.5)*Math.PI);
                     gripper.setMyAngle(rovStatus.getServo(2)*Math.PI*2/3-Math.PI/6);
                     gimbal1.repaint();
                     gimbal2.repaint();
@@ -234,6 +254,9 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
                         SerialCommunication.setFlip(i,flipthrusters[i].getState());
                     }
                     SerialCommunication.setThrustersactive(!KillThrusters.getState());
+                    for(int i = 0; i < flipservos.length; i++){
+                        SerialCommunication.setFlip(flipthrusters.length+i,flipservos[i].getState());
+                    }
                 }
             }
         },1000,30);

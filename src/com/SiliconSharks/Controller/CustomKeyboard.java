@@ -101,29 +101,42 @@ class CustomKeyboard {
         int maxtaps = Settings.getSetting("KeyboardMaxTaps");
         //rovStatus.setThruster(0,rovStatus.getThruster(0)+((double)(getKeyTaps('W')-getKeyTaps('S')))/maxtaps);
         //rovStatus.setThruster(1,rovStatus.getThruster(1)+((double)(getKeyTaps('W')-getKeyTaps('S')))/maxtaps);
-        rovStatus.setThruster(0,rovStatus.getThruster(0)+((double)(getKeyTaps('A')-getKeyTaps('D')))/maxtaps);
-        rovStatus.setThruster(1,rovStatus.getThruster(1)-((double)(getKeyTaps('A')-getKeyTaps('D')))/maxtaps);
-        rovStatus.setThruster(2,rovStatus.getThruster(2)+((double)(getKeyTaps('Q')-getKeyTaps('E')))/maxtaps);
-        if(keyPressed[KeyCodeToIndex(KeyEvent.VK_SPACE)]){
-            for(int i = 0; i < 3; i++){
-                rovStatus.setThruster(i,0);
-            }
-        }
+
         if(keyPressed[KeyCodeToIndex(KeyEvent.VK_W)] && !keyPressed[KeyCodeToIndex(KeyEvent.VK_S)]){
-            rovStatus.setThruster(0,rovStatus.getThruster(0)+0.01);
-            rovStatus.setThruster(1,rovStatus.getThruster(1)+0.01);
+            rovStatus.setThruster(0,prevROVStatus.getThruster(0)+0.01);
+            rovStatus.setThruster(1,prevROVStatus.getThruster(1)+0.01);
         }else if(!keyPressed[KeyCodeToIndex(KeyEvent.VK_W)] && keyPressed[KeyCodeToIndex(KeyEvent.VK_S)]){
-            rovStatus.setThruster(0,rovStatus.getThruster(0)-0.01);
-            rovStatus.setThruster(1,rovStatus.getThruster(1)-0.01);
+            rovStatus.setThruster(0,prevROVStatus.getThruster(0)-0.01);
+            rovStatus.setThruster(1,prevROVStatus.getThruster(1)-0.01);
+        }else{
+            rovStatus.setThruster(0,prevROVStatus.getThruster(0));
+            rovStatus.setThruster(1,prevROVStatus.getThruster(1));
+        }
+        if(keyPressed[KeyCodeToIndex(KeyEvent.VK_LEFT)] && !keyPressed[KeyCodeToIndex(KeyEvent.VK_RIGHT)]){
+            rovStatus.setServo(2,prevROVStatus.getServo(2)+0.01);
+        }else if(!keyPressed[KeyCodeToIndex(KeyEvent.VK_LEFT)] && keyPressed[KeyCodeToIndex(KeyEvent.VK_RIGHT)]){
+            rovStatus.setServo(2,prevROVStatus.getServo(2)-0.01);
+        }else{
+            rovStatus.setServo(2,prevROVStatus.getServo(2));
         }
         if(time[KeyCodeToIndex(KeyEvent.VK_UP)] == 1){
             prevROVStatus.getServo(0);
             rovStatus.setServo(0,prevROVStatus.getServo(0)+0.25);
             rovStatus.setServo(1,prevROVStatus.getServo(1)+0.25);
-        }
-        if(time[KeyCodeToIndex(KeyEvent.VK_DOWN)] == 1){
+        }else if(time[KeyCodeToIndex(KeyEvent.VK_DOWN)] == 1){
             rovStatus.setServo(0,prevROVStatus.getServo(0)-0.25);
             rovStatus.setServo(1,prevROVStatus.getServo(1)-0.25);
+        }else{
+            rovStatus.setServo(0,prevROVStatus.getServo(0));
+            rovStatus.setServo(1,prevROVStatus.getServo(1));
+        }
+        rovStatus.setThruster(0,rovStatus.getThruster(0)+((double)(getKeyTaps('A')-getKeyTaps('D'))*0.5)/maxtaps);
+        rovStatus.setThruster(1,rovStatus.getThruster(1)-((double)(getKeyTaps('A')-getKeyTaps('D'))*0.5)/maxtaps);
+        rovStatus.setThruster(2,rovStatus.getThruster(2)+((double)(getKeyTaps('Q')-getKeyTaps('E'))*0.5)/maxtaps);
+        if(keyPressed[KeyCodeToIndex(KeyEvent.VK_SPACE)]){
+            for(int i = 0; i < 3; i++){
+                rovStatus.setThruster(i,0);
+            }
         }
         rovStatus.calibrate(0);
     }

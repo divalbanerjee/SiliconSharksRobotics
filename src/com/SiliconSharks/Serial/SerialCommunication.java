@@ -85,7 +85,7 @@ public class SerialCommunication {
     private static boolean sendPackage(){
         if(Connected) {
             try{
-                ROVStatus rovStatus = ControlSystem.getCurrentROVStatus();
+                ROVStatus rovStatus = ControlSystem.getCurrentROVStatus(true);
                 writeInt(rovStatus.getTimeStamp());
                 int c = 0;
                 if(thrustersactive) {

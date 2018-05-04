@@ -27,15 +27,15 @@ public class ROVInfo{
         return rovStatuses;
     }
     public static ROVStatus update(int TimeStamp){
-        StringBuilder s = new StringBuilder();
+        //StringBuilder s = new StringBuilder();
         for (int i = rovStatuses.length-1; i >= 0; i--) {
             ROVStatus rovStatus = rovStatuses[i];
-            s.append(rovStatus.getTimeStamp()).append(' ');
+            //s.append(rovStatus.getTimeStamp()).append(' ');
             if (!rovStatus.isTelemetryUpdated() && rovStatus.getTimeStamp() == TimeStamp) {
                 return rovStatus;
             }
         }
-        Message(2,"ROVInfo 37: "+Integer.toString(TimeStamp) +", "  + Integer.toString(getGlobalTimeStamp()) +", "+ s.toString());
+        //Message(2,"ROVInfo 37: "+Integer.toString(TimeStamp) +", "  + Integer.toString(getGlobalTimeStamp()) +", "+ s.toString());
         return null;
     }
     public static ROVStatus getMostRecentSentStatus(){

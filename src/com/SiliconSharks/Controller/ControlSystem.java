@@ -109,9 +109,11 @@ public class ControlSystem {
         // Create object with default constructor
         return constructor.newInstance();
     }
-    public static ROVStatus getCurrentROVStatus() {
+    public static ROVStatus getCurrentROVStatus(boolean ROVInfoInsert) {
         //DO NOT CALL THIS METHOD OUTSIDE OF SERIALCOMMUNICATION
-        ROVInfo.insert(currentROVStatus);
+        if(ROVInfoInsert){
+            ROVInfo.insert(currentROVStatus);
+        }
         return currentROVStatus;
     }
 }
