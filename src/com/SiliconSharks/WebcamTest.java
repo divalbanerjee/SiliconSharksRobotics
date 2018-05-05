@@ -336,7 +336,10 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
     public void itemStateChanged(ItemEvent e) {
         if (e.getItem() != webcam) {
             if (webcam != null) {
-
+                if(!e.getItem().toString().contains("USB")){
+                    //System.out.println(webcam.getName());
+                    return;
+                }
                 panel.stop();
 
                 remove(panel);

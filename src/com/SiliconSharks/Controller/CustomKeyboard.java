@@ -24,10 +24,10 @@ class CustomKeyboard {
                 case 'Q': return taps[4];
                 case 'E': return taps[5];
                 case ' ': return taps[6];
-                case 'u': return taps[7];
-                case 'd': return taps[8];
-                case 'l': return taps[9];
-                case 'r': return taps[10];
+                case '1': return taps[7];
+                case '2': return taps[8];
+                case '3': return taps[9];
+                case '4': return taps[10];
             }
             return 0;
         }
@@ -41,10 +41,10 @@ class CustomKeyboard {
             case KeyEvent.VK_Q: return 4;
             case KeyEvent.VK_E: return 5;
             case KeyEvent.VK_SPACE: return 6;
-            case KeyEvent.VK_UP: return 7;
-            case KeyEvent.VK_DOWN: return 8;
-            case KeyEvent.VK_LEFT: return 9;
-            case KeyEvent.VK_RIGHT: return 10;
+            case KeyEvent.VK_LEFT: return 7;
+            case KeyEvent.VK_RIGHT: return 8;
+            case KeyEvent.VK_UP: return 9;
+            case KeyEvent.VK_DOWN: return 10;
             default: return -1;
         }
     }
@@ -115,13 +115,23 @@ class CustomKeyboard {
             rovStatus.setThruster(1,prevROVStatus.getThruster(1));
         }*/
         if(keyPressed[KeyCodeToIndex(KeyEvent.VK_LEFT)] && !keyPressed[KeyCodeToIndex(KeyEvent.VK_RIGHT)]){
-            rovStatus.setServo(2,prevROVStatus.getServo(2)+0.01);
+            rovStatus.setServo(2,prevROVStatus.getServo(2)+0.015);
         }else if(!keyPressed[KeyCodeToIndex(KeyEvent.VK_LEFT)] && keyPressed[KeyCodeToIndex(KeyEvent.VK_RIGHT)]){
-            rovStatus.setServo(2,prevROVStatus.getServo(2)-0.01);
+            rovStatus.setServo(2,prevROVStatus.getServo(2)-0.015);
         }else{
             rovStatus.setServo(2,prevROVStatus.getServo(2));
         }
-        if(time[KeyCodeToIndex(KeyEvent.VK_UP)] == 1){
+        if(keyPressed[KeyCodeToIndex(KeyEvent.VK_UP)] && !keyPressed[KeyCodeToIndex(KeyEvent.VK_DOWN)]){
+            rovStatus.setServo(0,prevROVStatus.getServo(0)+2);
+            rovStatus.setServo(1,prevROVStatus.getServo(1)+2);
+        }else if(!keyPressed[KeyCodeToIndex(KeyEvent.VK_UP)] && keyPressed[KeyCodeToIndex(KeyEvent.VK_DOWN)]){
+            rovStatus.setServo(0,prevROVStatus.getServo(0)-2);
+            rovStatus.setServo(1,prevROVStatus.getServo(1)-2);
+        }else{
+            rovStatus.setServo(0,prevROVStatus.getServo(0));
+            rovStatus.setServo(1,prevROVStatus.getServo(1));
+        }
+        /*if(time[KeyCodeToIndex(KeyEvent.VK_1)] == 1){
             prevROVStatus.getServo(0);
             rovStatus.setServo(0,prevROVStatus.getServo(0)+2);
             rovStatus.setServo(1,prevROVStatus.getServo(1)+2);
@@ -131,7 +141,7 @@ class CustomKeyboard {
         }else{
             rovStatus.setServo(0,prevROVStatus.getServo(0));
             rovStatus.setServo(1,prevROVStatus.getServo(1));
-        }
+        }*/
         if(keyPressed[KeyCodeToIndex(KeyEvent.VK_SPACE)]){
             for(int i = 0; i < 3; i++){
                 rovStatus.setThruster(i,0);
