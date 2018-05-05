@@ -239,7 +239,7 @@ public class WebcamTest extends JFrame implements Runnable, WebcamListener, Wind
                     }
                     gimbal1.setMyAngle((0.5-rovStatus.getServo(0))*Math.PI);
                     gimbal2.setMyAngle(-(rovStatus.getServo(1)-0.5)*Math.PI);
-                    gripper.setMyAngle(rovStatus.getServo(2)*Math.PI*2/3-Math.PI/6);
+                    gripper.setMyAngle(rovStatus.getServo(2)*Math.PI/3+Math.PI/6);
                     gimbal1.repaint();
                     gimbal2.repaint();
                     gripper.repaint();

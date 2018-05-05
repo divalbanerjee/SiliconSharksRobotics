@@ -6,7 +6,7 @@ KeyboardCounterResetRate 30
 NumGamepad 2
 NumGamepadConnectionAttempts 1
 GamepadConnectionAttemptRate 100
-SerialConnectionPauseDuration 300
+SerialConnectionPauseDuration 400
 // Number of timer calls that the arduino allows after connection before it starts to send packages
 // Recommended: 200-300
 // Note: Increase if the arduino does not reset in time

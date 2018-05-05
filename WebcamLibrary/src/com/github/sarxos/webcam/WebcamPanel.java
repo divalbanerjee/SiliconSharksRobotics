@@ -342,11 +342,17 @@ public class WebcamPanel extends JPanel implements WebcamListener, PropertyChang
             g2.setColor(Color.YELLOW);
 			rovStatus = ROVInfo.getMostRecentTelemetry();
             //get sensor readouts
+			//normally, heading = X, pitch = Y, roll = Z
+			//since the hardware is bad, we need pitch = roll - 90, roll = heading, heading = pitch
 			double pitch = rovStatus.getSystem().getY();
 			double roll = rovStatus.getSystem().getZ();
+			double heading = rovStatus.getSystem().getX();
+			pitch = rovStatus.getSystem().getZ() - 90;
+			roll = rovStatus.getSystem().getY();
+			heading = -rovStatus.getSystem().getX()+ 180;
+			// Y -> Z, Z -> Y
 			//pitch = -8.5;
 			//roll = -16;
-			double heading = rovStatus.getSystem().getX();
 			//heading = -16;
             double rollr = -roll*Math.PI/180.0;
 			//draw all rotated objects first
@@ -377,8 +383,8 @@ public class WebcamPanel extends JPanel implements WebcamListener, PropertyChang
             int px=0;
             int py=0;
             double ax = rovStatus.getAccel().getX();//ax =0.1;
-            double ay = rovStatus.getAccel().getY();//ay = -0.1;
-            double az = rovStatus.getAccel().getZ();//az = 1;
+            double ay = rovStatus.getAccel().getZ();//ay = -0.1;
+            double az = rovStatus.getAccel().getY();//az = 1;
             if(az != 0){
                 px = (int)(18*90*Math.atan2(ax,az));
                 py = (int)(18*90*Math.atan2(ay,az));
@@ -401,10 +407,10 @@ public class WebcamPanel extends JPanel implements WebcamListener, PropertyChang
             //draw the center
             g2.drawLine(w/2-8,h/2-8,w/2+8,h/2+8);
             g2.drawLine(w/2+8,h/2-8,w/2-8,h/2+8);
-
+			/*
             double gx = rovStatus.getGyro().getX();gx /= 10;//gx = Math.PI/14;
-            double gy = rovStatus.getGyro().getY(); gy /= 10;//gy = -Math.PI/19;
-            double gz = rovStatus.getGyro().getZ(); gz /= 10;//gz = -2.5*Math.PI/32;
+            double gy = rovStatus.getGyro().getZ(); gy /= 10;//gy = -Math.PI/19;
+            double gz = rovStatus.getGyro().getY(); gz /= 10;//gz = -2.5*Math.PI/32;
 
             if(Math.abs(gx) > Math.PI){
                 gx *= ((Math.PI)/Math.abs(gx));
@@ -436,7 +442,7 @@ public class WebcamPanel extends JPanel implements WebcamListener, PropertyChang
             }else{
                 g2.drawLine(endx, endy, endx + (int) (Math.cos(Math.PI * ratio + 3 * Math.PI / 4) * 25 * (-ratio)), endy - (int) (Math.sin(Math.PI * ratio + 3 * Math.PI / 4) * 25*(-ratio)));
                 g2.drawLine(endx, endy, endx + (int) (Math.cos(Math.PI * ratio + Math.PI / 4) * 25*(-ratio)), endy - (int) (Math.sin(Math.PI * ratio + Math.PI / 4) * 25*(-ratio)));
-            }
+            }*/
 			g2.setRenderingHint(KEY_ANTIALIASING, antialiasing);
 			g2.setRenderingHint(KEY_RENDERING, rendering);
 		}

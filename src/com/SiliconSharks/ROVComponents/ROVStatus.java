@@ -43,7 +43,7 @@ public class ROVStatus {
         numServos = Settings.getSetting("NumServos");
         for (int i = 0; i < numThrusters; i++) thrusters[i] = 0;
         for (int i = 0; i < numThrusters+2; i++) Amperage[i] = 0;
-        for (int i = 0; i < numServos; i++) servos[i] = 0.5;
+        for (int i = 0; i < numServos; i++) servos[i] = 0;
     }
     boolean isTelemetryUpdated() {return TelemetryUpdated; }
     public void setTelemetryUpdated(boolean telemetryUpdated) { TelemetryUpdated = telemetryUpdated; }
